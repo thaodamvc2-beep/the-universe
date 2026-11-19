@@ -3,14 +3,16 @@ import type { ReactNode } from 'react';
 import { SiteProvider } from '@/components/site-provider';
 import './globals.css';
 
-const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? 'http://localhost:3000';
+const appUrl =
+  process.env.NEXT_PUBLIC_SITE_URL ??
+  'https://thaodamvc2-beep.github.io/the-universe/';
 
 export const metadata: Metadata = {
   metadataBase: new URL(appUrl),
   title: { default: 'THE UNIVERSE — A Quiet Place Beyond the Stars', template: '%s | THE UNIVERSE' },
   description: 'A quiet place beyond the stars. Begin your journey from Earth.',
   applicationName: 'THE UNIVERSE',
-  robots: { index: false, follow: false },
+  robots: { index: true, follow: true },
 };
 
 export const viewport: Viewport = {
