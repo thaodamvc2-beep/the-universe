@@ -1,6 +1,6 @@
 # THE UNIVERSE — Gói 05 Decision Log
 
-**Version:** 1.0  
+**Version:** 1.1  
 **Date:** 2026-11-20  
 **Authority:** Owner-approved delivery-sequence adjustment and Gói 05 authorization.
 
@@ -32,4 +32,5 @@
 
 | ID | Date | Change | Status |
 |---|---|---|---|
-| P05-CH-01 | 2026-11-20 | Created the initial Solar System catalogue contract and bilingual catalogue presentation under the owner-authorized Gói 05. | In progress; pending acceptance |
+| P05-CH-01 | 2026-11-20 | Created the initial Solar System catalogue contract and bilingual catalogue presentation under the owner-authorized Gói 05. | Recorded |
+| P05-CH-02 | 2026-11-20 | 10 celestial records and bilingual detail data delivered; 11 package-scoped tests, lint, typecheck, production build and GitHub Pages deployment passed. Manual browser/device review remains for owner review. | READY FOR OWNER REVIEW — NOT ACCEPTED |
