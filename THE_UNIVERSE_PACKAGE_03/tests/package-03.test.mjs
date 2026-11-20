@@ -26,9 +26,9 @@ test('homepage has a guest-first entry and preserves Earth as Home World', async
   const game = await read('apps/web/src/features/game/universe-game.tsx');
   assert.match(game, /<Canvas/);
   assert.match(game, /ArrowUp/);
-  assert.match(game, /Move forward/);
+  assert.match(game, /FlightScene/);
   assert.match(game, /guestIdentity/);
-  assert.match(game, /OrbitControls/);
+  assert.match(game, /NEXT_PUBLIC_UNIVERSE_REALTIME_URL/);
   assert.match(await read('apps/web/src/components/cosmic-map.tsx'), /SiteHeader/);
   assert.doesNotMatch(page, /sign.?up|register|create account/i);
 });
