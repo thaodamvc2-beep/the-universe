@@ -40,3 +40,21 @@
  .explorer-controls{left:12px;bottom:18px;gap:7px}.explorer-controls .game-control-copy span{max-width:170px;font-size:8px}.explorer-controls .game-dpad{grid-template-columns:repeat(3,34px);grid-template-rows:repeat(2,31px)}.flight-vertical button{min-width:50px;min-height:28px;font-size:9px}
  .explorer-actions{right:10px;bottom:18px;max-width:145px;gap:6px}.explorer-actions button{min-height:30px;padding:0 7px;font-size:8px}.multiplayer-indicator{right:12px;bottom:164px;max-width:145px;text-align:right;line-height:1.4;font-size:8px}
 }
+
+/* Quiet panoramic solar-system opening and readable surface labels */
+.universe-explorer .game-identity{top:clamp(92px,12vh,126px);left:clamp(20px,4vw,54px);max-width:300px;opacity:.9}
+.universe-explorer .game-identity h1{max-width:280px;font-size:clamp(24px,3vw,34px);line-height:1.12}
+.universe-explorer .game-identity p{max-width:250px;font-size:10px;line-height:1.55}
+.universe-explorer .game-player{top:92px}
+.universe-explorer .universe-expansion{top:auto;bottom:clamp(118px,18vh,168px);left:clamp(18px,4vw,54px);max-width:235px}
+.universe-explorer .universe-expansion>small{font-size:8px}
+.universe-explorer .destination-detail small{line-height:1.5}
+@media(max-width:680px){
+ .universe-explorer .game-identity{top:82px;left:14px;max-width:205px}
+ .universe-explorer .game-identity h1{max-width:205px;font-size:23px}
+ .universe-explorer .game-identity p{max-width:190px;font-size:9px}
+ .universe-explorer .game-player{top:auto;bottom:150px}
+ .universe-explorer .universe-expansion{bottom:196px;left:10px;max-width:175px}
+ .universe-explorer .universe-expansion>span{font-size:8px}
+ .universe-explorer .universe-expansion button{font-size:8px}
+}
