@@ -44,7 +44,7 @@ export function UniverseGame(){
   let socket:WebSocket;
   try{
    socket=new WebSocket(endpoint);
-   socket.onopen=()=>{setNetworkStatus('Đã kết nối máy chủ · đang đồng bộ');socket.send(JSON.stringify({type:'join',player:{id:guestIdentity?.id??'guest',nickname,avatarId}}))};
+   socket.onopen=()=>{setNetworkStatus('Đã kết nối máy chủ · đang đồng bộ');socket.send(JSON.stringify({type:'join',player:{id:guestIdentity?.guestId??'guest',nickname,avatarId}}))};
    socket.onmessage=e=>{try{const msg=JSON.parse(String(e.data)) as {type?:string;players?:RemotePlayer[]};if(msg.type==='players'&&Array.isArray(msg.players))setRemotePlayers(msg.players.filter(p=>p.id!==(guestIdentity?.id??'guest')))}catch{/* Ignore malformed realtime messages. */}};
    socket.onerror=()=>setNetworkStatus('Không thể kết nối máy chủ nhiều người chơi');
    socket.onclose=()=>setNetworkStatus('Máy chủ nhiều người chơi đã ngắt kết nối');
