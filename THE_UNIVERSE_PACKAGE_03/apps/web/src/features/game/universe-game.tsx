@@ -270,7 +270,7 @@ export function UniverseGame() {
       <p>{language === 'vi' ? 'Bạn đang ở nhà. Hãy thong thả bước đi và ngắm nhìn không gian.' : 'You are home. Wander slowly and watch the universe breathe.'}</p>
     </section>
     <div className="game-player">
-      <span className="game-player-orb" />
+      <span className={`avatar-portrait avatar-${avatarId} game-player-avatar`} aria-hidden="true" />
       <span><small>{language === 'vi' ? 'NGƯỜI ĐANG DU HÀNH' : 'TRAVELER'}</small><strong>{nickname}</strong></span>
       <Link href="/avatar" aria-label={language === 'vi' ? 'Đổi avatar và tên' : 'Change avatar and name'}>↗</Link>
     </div>
