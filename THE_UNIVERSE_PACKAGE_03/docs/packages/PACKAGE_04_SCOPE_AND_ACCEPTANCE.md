@@ -1,7 +1,7 @@
 # THE UNIVERSE — PACKAGE 04 SCOPE & ACCEPTANCE
 
 **Document ID:** TU-PKG-04-001  
-**Version:** 1.1  
+**Version:** 1.2  
 **Date:** 2026-11-20  
 **Status:** READY FOR OWNER REVIEW — DEPLOYED; MANUAL BROWSER REVIEW PENDING  
 **Package:** 04 — Avatar & Nickname  
@@ -37,13 +37,13 @@ Give every visitor a personal, lightweight identity from the first guest visit: 
 - A versioned guest identity contract with a stable local guest ID.
 - Automatic first-visit identity creation with a default avatar and generated guest nickname.
 - A responsive avatar selection and nickname editing page.
-- A small set of distinct, source-authored/procedural avatar appearances; no external image, font, model, texture or audio dependency.
+- Six distinct, cute human-style character portraits with clear faces, hairstyles, outfits and recognizable visual identities, using original locally bundled AI-generated artwork; no runtime third-party image dependency.
 - Local-device persistence using browser localStorage, with defensive parsing and safe fallback for invalid or unavailable storage.
 - EN/VI interface strings using the existing language provider.
 - A visible optional sign-in entry point and an honest account information page.
 - Clear UI disclosure that cloud sign-in and cross-device synchronization are not active in this release.
 - Automated tests for identity defaults, nickname validation, local persistence contract, localization parity, and prohibited social features.
-- Integration into the shared site navigation and guest entry path.
+- Integration into the shared site navigation, main homepage hero and guest entry path; selected avatar and nickname remain visible as the visitor moves between routes.
 
 ## 5. Out of scope
 
@@ -83,7 +83,8 @@ The browser record is untrusted input. Validate every field when reading it. If 
 - Guest entry must never be blocked by the avatar editor or sign-in.
 - New visitors receive a default avatar and a generated nickname automatically.
 - Provide a clear `MY AVATAR` / `AVATAR CỦA TÔI` entry in site navigation.
-- Avatar choices must be visually distinct, keyboard/touch selectable, and expose accessible names and selected state.
+- Avatar choices must be cute human characters, not abstract orbs; each must be visually distinct, keyboard/touch selectable, and expose accessible names and selected state.
+- The selected character and nickname must be visible on the main homepage and shared navigation so the new design is part of the actual website, not isolated on the editor route.
 - Nickname input must show validation feedback and must not silently truncate.
 - Save changes locally and provide clear confirmation.
 - Optional sign-in remains visible, but the account page must state that authentication and cloud sync are not yet enabled.
@@ -117,11 +118,11 @@ Environment: GitHub Actions, Node.js 22.23.5, npm 10.9.9. Workflow run: [4466143
 | GitHub Pages deployment | PASS | GitHub Actions run 44661437139 |
 | Manual browser interaction (desktop/mobile) | NOT RUN | Owner visual and interaction review remains pending |
 
-Automated tests cover guest identity creation, six avatar IDs, nickname validation, local persistence, malformed/blocked storage fallback, identity updates and truthful optional sign-in disclosure. Automated checks do not replace real browser/device review.
+Automated tests cover guest identity creation, six stable human-character IDs, locally bundled generated portrait artwork, homepage/header integration, nickname validation, local persistence, malformed/blocked storage fallback, identity updates and truthful optional sign-in disclosure. Automated checks do not replace real browser/device review.
 
 ## 11. Acceptance status
 
-**READY FOR OWNER REVIEW — DEPLOYED; NOT ACCEPTED.** The implementation is live on GitHub Pages. The owner must still review the avatar picker, nickname editor, local persistence across reloads and responsive layout on desktop/mobile. No real authentication, cloud sync or multiplayer avatar synchronization is claimed.
+**READY FOR OWNER REVIEW — UPDATED ARTWORK AND HOMEPAGE INTEGRATION IMPLEMENTED; DEPLOYMENT VERIFICATION PENDING.** The implementation is live on GitHub Pages. The owner must still review the avatar picker, nickname editor, local persistence across reloads and responsive layout on desktop/mobile. No real authentication, cloud sync or multiplayer avatar synchronization is claimed. The avatar portraits are 2D character artwork; they are not rigged 3D characters.
 
 ## 12. Handover
 
