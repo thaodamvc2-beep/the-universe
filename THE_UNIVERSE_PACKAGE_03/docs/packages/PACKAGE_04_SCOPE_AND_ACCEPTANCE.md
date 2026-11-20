@@ -1,9 +1,9 @@
 # THE UNIVERSE — PACKAGE 04 SCOPE & ACCEPTANCE
 
 **Document ID:** TU-PKG-04-001  
-**Version:** 1.0  
+**Version:** 1.1  
 **Date:** 2026-11-20  
-**Status:** AUTHORIZED — IMPLEMENTATION IN PROGRESS  
+**Status:** READY FOR OWNER REVIEW — DEPLOYED; MANUAL BROWSER REVIEW PENDING  
 **Package:** 04 — Avatar & Nickname  
 **Authority:** The project owner explicitly instructed on 2026-11-20 to execute Gói 04 now and then integrate the available packages into the public website. This supersedes the prior temporary deferral of Gói 04.
 
@@ -104,12 +104,25 @@ The browser record is untrusted input. Validate every field when reading it. If 
 | P04-AC-09 | Earth remains the Home World and guest entry remains available | Existing product regression tests |
 | P04-AC-10 | Lint, typecheck, package tests and static production build pass | GitHub Actions evidence |
 
-## 10. Verification and acceptance status
+## 10. Actual verification record
 
-No criterion is considered passed until the corresponding automated test or browser check is actually executed and recorded. GitHub Actions provides automated build/test evidence; owner review of the live desktop and mobile UI remains a separate acceptance step.
+Environment: GitHub Actions, Node.js 22.23.5, npm 10.9.9. Workflow run: [44661437139](https://github.com/thaodamvc2-beep/the-universe/actions/runs/44661437139), commit `ef66790b2bd2822054f16ba953856d8b5c5812dc`.
 
-**Current status:** AUTHORIZED — IMPLEMENTATION IN PROGRESS. Not yet accepted.
+| Check | Result | Evidence |
+|---|---|---|
+| Package 03 + Package 05 + Package 04 automated tests | PASS | 18 tests passed, 0 failed |
+| ESLint | PASS | GitHub Actions run 44661437139 |
+| TypeScript typecheck | PASS | GitHub Actions run 44661437139 |
+| Next.js static production build | PASS | GitHub Actions run 44661437139 |
+| GitHub Pages deployment | PASS | GitHub Actions run 44661437139 |
+| Manual browser interaction (desktop/mobile) | NOT RUN | Owner visual and interaction review remains pending |
 
-## 11. Handover
+Automated tests cover guest identity creation, six avatar IDs, nickname validation, local persistence, malformed/blocked storage fallback, identity updates and truthful optional sign-in disclosure. Automated checks do not replace real browser/device review.
+
+## 11. Acceptance status
+
+**READY FOR OWNER REVIEW — DEPLOYED; NOT ACCEPTED.** The implementation is live on GitHub Pages. The owner must still review the avatar picker, nickname editor, local persistence across reloads and responsive layout on desktop/mobile. No real authentication, cloud sync or multiplayer avatar synchronization is claimed.
+
+## 12. Handover
 
 After implementation, run the package-specific tests, existing Gói 03/Gói 05 regression tests, ESLint, TypeScript typecheck and production static build. Deploy through the single GitHub Pages workflow. Record the exact commit and workflow run. Do not claim real sign-in, cloud persistence, multiplayer visibility or full 3D avatar functionality.
