@@ -1,7 +1,6 @@
 'use client';
 
 import { useMemo, useState } from 'react';
-import type { CSSProperties } from 'react';
 import Link from 'next/link';
 import { SiteHeader } from '@/components/site-header';
 import { useSite } from '@/components/site-provider';
@@ -23,7 +22,7 @@ export default function WorldsPage() {
       <section className="worlds-layout" aria-label={t('selectWorld')}>
         <div className="worlds-grid">
           {bodies.map((body) => (
-            <button key={body.id} type="button" className="world-card" style={{ '--orb': body.id === 'earth' ? '#2c83ba' : '#b9a0a0' } as CSSProperties} aria-pressed={selectedId === body.id} onClick={() => setSelectedId(body.id)}>
+            <button key={body.id} type="button" className="world-card" aria-pressed={selectedId === body.id} onClick={() => setSelectedId(body.id)}>
               <span className={`world-orb ${body.id}`} aria-hidden="true" />
               <span className="world-card-name">{body.name.toUpperCase()}</span>
               <span className="world-card-kind">{body.kind.toUpperCase()}</span>
