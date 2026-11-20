@@ -21,10 +21,10 @@ function Planet({body}:{body:Body}){
   {!body.real&&<mesh scale={1.12}><sphereGeometry args={[body.radius,20,16]}/><meshBasicMaterial color="#d6c6ff" wireframe transparent opacity={.16}/></mesh>}
  </group>;
 }
-function Avatar({avatarId,flightRef}:{avatarId:AvatarId;flightRef:MutableRefObject<FlightState>}){
+function Avatar({avatarId,flightRef,bodies}:{avatarId:AvatarId;flightRef:MutableRefObject<FlightState>;bodies:Body[]}){
  const ref=useRef<Group>(null);const colors=AVATAR_PALETTE[avatarId]??AVATAR_PALETTE.stardust;
  const up=new Vector3(0,1,0);
- useFrame(()=>{if(!ref.current)return;const f=flightRef.current;ref.current.position.copy(f.position);ref.current.quaternion.setFromUnitVectors(up,new Vector3(0,1,0));if(f.groundedId){const bodyUp=f.position.clone();const center=bodyUp.clone();center.set(0,0,0);const n=bodyUp.sub(center).normalize();ref.current.quaternion.setFromUnitVectors(up,n)}ref.current.rotateY(f.yaw)});
+ useFrame(()=>{if(!ref.current)return;const f=flightRef.current;ref.current.position.copy(f.position);ref.current.quaternion.setFromUnitVectors(up,new Vector3(0,1,0));if(f.groundedId){const body=bodies.find(b=>b.id===f.groundedId);if(body){const n=f.position.clone().sub(new Vector3(...body.position)).normalize();ref.current.quaternion.setFromUnitVectors(up,n)}}ref.current.rotateY(f.yaw)});
  return <group ref={ref}>
   <mesh position={[0,.19,0]} castShadow><capsuleGeometry args={[.105,.2,5,10]}/><meshStandardMaterial color={colors.suit}/></mesh>
   <mesh position={[0,.39,.015]} castShadow><sphereGeometry args={[.115,20,16]}/><meshStandardMaterial color="#f0d9c9"/></mesh>
@@ -65,6 +65,6 @@ export function FlightScene({bodies,avatarId,flightRef,inputRef,targetId,onArriv
  });
  return <>
   <color attach="background" args={['#040713']}/><ambientLight intensity={.72}/><directionalLight position={[-4,8,6]} intensity={2} color="#d9e9ff"/><pointLight position={[-30,0,0]} intensity={95} distance={95} color="#ffc27c"/>
-  <Stars/>{bodies.map(body=><Planet key={body.id} body={body}/>)}{remotePlayers.map(player=><OtherAvatar key={player.id} player={player}/>)}<Avatar avatarId={avatarId} flightRef={flightRef}/>
+  <Stars/>{bodies.map(body=><Planet key={body.id} body={body}/>)}{remotePlayers.map(player=><OtherAvatar key={player.id} player={player}/>)}<Avatar avatarId={avatarId} flightRef={flightRef} bodies={bodies}/>
  </>;
 }
