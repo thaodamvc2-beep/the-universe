@@ -22,6 +22,7 @@ This instruction supersedes the earlier temporary decision to defer Gói 04. Do 
 - Public website: https://thaodamvc2-beep.github.io/the-universe/
 - Celestial catalogue: https://thaodamvc2-beep.github.io/the-universe/worlds/
 - Avatar and nickname: https://thaodamvc2-beep.github.io/the-universe/avatar/
+- Main homepage: https://thaodamvc2-beep.github.io/the-universe/
 - Optional sign-in information: https://thaodamvc2-beep.github.io/the-universe/account/
 - Active website source: `THE_UNIVERSE_PACKAGE_03/apps/web/`
 - Active GitHub Pages workflow: `.github/workflows/static.yml`
@@ -71,7 +72,7 @@ Decision record:
 - Gói 01 v1.1: owner-approved product/architecture baseline.
 - Gói 02: provisionally approved for transition to Gói 03; technical verification gaps remain open. Do not call it fully accepted.
 - Gói 03: homepage, EN/VI language foundation and isolated R3F Earth prototype exist. Manual browser/device review and formal owner acceptance remain open. R3F is a prototype candidate only; D01 engine choice remains open pending mobile comparison with Babylon.js and PlayCanvas.
-- Gói 04: previously deferred, then explicitly reopened and authorized by the owner on 2026-11-20. Implemented and deployed: automatic guest identity, six built-in cosmic avatar appearances, editable nickname, local persistence, bilingual UI and an honest optional sign-in information route. Status: READY FOR OWNER REVIEW — NOT ACCEPTED.
+- Gói 04: previously deferred, then explicitly reopened and authorized by the owner on 2026-11-20. The owner clarified that avatars must be cute human characters, not abstract orbs, and that the selected avatar must be integrated into the main website. The six abstract orb placeholders have now been replaced by six original locally bundled 3D animated-film-style human character portraits (Luna, Noah, Rosie, Milo, Ivy, Stella). The selected avatar and nickname appear in the homepage hero and shared site header, while the avatar editor retains selection and nickname editing. Existing stable avatar IDs and local guest data remain compatible. This visual revision is implemented in source; its CI/deployment result is pending.
 - Gói 05: implemented and deployed; Solar System catalogue includes Sun, eight planets and Earth's Moon, bilingual details, NASA references and Earth as sole Home World. Manual browser review and explicit owner acceptance remain open.
 - Gói 06: Cosmic Travel Map was previously authorized after Gói 05 acceptance; do not silently begin it until its gate is resolved or the owner explicitly changes the instruction.
 - Gói 07–15: not implemented as a complete product; follow the Master Spec roadmap and package approvals.
@@ -92,10 +93,9 @@ Important: The owner now wants Gói 04 implemented and the currently delivered w
 - GitHub Pages workflow performs package-scoped tests, ESLint, TypeScript typecheck, static build and deploy.
 
 Latest integrated release evidence:
-- Commit: `ef66790b2bd2822054f16ba953856d8b5c5812dc`.
-- GitHub Actions run: [44661437139](https://github.com/thaodamvc2-beep/the-universe/actions/runs/44661437139) — success.
-- 18 automated tests passed, 0 failed; ESLint, TypeScript typecheck, static production build and GitHub Pages deployment all passed.
-- The workflow tests the combined current Gói 03/04/05 source. Manual browser/device review remains pending.
+- Previous integrated release commit: `18945ff5845e792c2b69bd901397237ca268d475`.
+- Previous GitHub Actions run: [44661753954](https://github.com/thaodamvc2-beep/the-universe/actions/runs/44661753954) — success, 18 tests, lint, typecheck, static build and GitHub Pages deployment.
+- The cute-human-avatar revision is newer than that release. Check latest `main` and GitHub Actions before stating that the new artwork is live. Manual browser/device review remains pending.
 
 Known verification gaps:
 - Legacy Gói 02 tests assume dynamic Cache-Control and configurable HTTP security headers; static GitHub Pages cannot provide these response headers. These failures must remain documented, not falsely marked as passing.
@@ -120,4 +120,4 @@ Known verification gaps:
 
 Paste this after the document when starting a new conversation:
 
-"Đọc toàn bộ PROJECT_CONTINUITY_BRIEF.md và các tài liệu bắt buộc được nêu trong đó từ repo GitHub hiện tại. Kiểm tra commit main và GitHub Actions mới nhất. Tiếp tục từ trạng thái mới nhất trong brief: Gói 04 đã triển khai và deploy, hãy đọc tài liệu hiện tại, kiểm tra commit main và GitHub Actions mới nhất, kiểm tra website thật trên desktop/mobile, sửa lỗi thực tế và cập nhật brief. Tự làm toàn bộ phần kỹ thuật qua GitHub; không yêu cầu tôi dùng terminal, sửa code hay tải ZIP. Giữ nguyên các nguyên tắc cốt lõi của THE UNIVERSE."
+"Đọc toàn bộ PROJECT_CONTINUITY_BRIEF.md và các tài liệu bắt buộc được nêu trong đó từ repo GitHub hiện tại. Kiểm tra commit main và GitHub Actions mới nhất. Tiếp tục từ trạng thái mới nhất trong brief: kiểm tra commit main và GitHub Actions mới nhất, xác minh bộ avatar nhân vật người dễ thương và phần hiển thị avatar/nickname trên trang chủ đã deploy chưa. Nếu CI lỗi thì sửa trực tiếp. Tiếp tục tích hợp thiết kế vào website chính, không để tính năng nằm tách riêng ở trang avatar. Tự làm toàn bộ phần kỹ thuật qua GitHub; không yêu cầu tôi dùng terminal, sửa code hay tải ZIP. Giữ nguyên các nguyên tắc cốt lõi của THE UNIVERSE."
