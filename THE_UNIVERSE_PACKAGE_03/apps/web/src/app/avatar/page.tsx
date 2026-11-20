@@ -11,6 +11,7 @@ export default function AvatarPage() {
   const [avatarId, setAvatarId] = useState<AvatarId>('stardust');
   const [nickname, setNickname] = useState('');
   const [saved, setSaved] = useState(false);
+  const [storageFailed, setStorageFailed] = useState(false);
 
   useEffect(() => {
     if (!guestIdentity) return;
@@ -24,6 +25,7 @@ export default function AvatarPage() {
     if (!validation.valid) return;
     const persisted = updateGuestIdentity({ avatarId, nickname: validation.value });
     setSaved(persisted);
+    setStorageFailed(!persisted);
   }
 
   return (
@@ -58,7 +60,7 @@ export default function AvatarPage() {
                   type="button"
                   className="avatar-option"
                   aria-pressed={avatarId === avatar.id}
-                  onClick={() => { setAvatarId(avatar.id); setSaved(false); }}
+                  onClick={() => { setAvatarId(avatar.id); setSaved(false); setStorageFailed(false); }}
                 >
                   <span className={`avatar-portrait avatar-${avatar.id}`} aria-hidden="true"><i /><b /></span>
                   <span>{t(`avatarName_${avatar.id}` as never)}</span>
@@ -71,7 +73,7 @@ export default function AvatarPage() {
               id="guest-nickname"
               className="nickname-input"
               value={nickname}
-              onChange={(event) => { setNickname(event.target.value); setSaved(false); }}
+              onChange={(event) => { setNickname(event.target.value); setSaved(false); setStorageFailed(false); }}
               autoComplete="nickname"
               spellCheck={false}
               aria-describedby="nickname-help nickname-feedback"
@@ -84,7 +86,7 @@ export default function AvatarPage() {
               {t('saveIdentity')}
             </button>
             <p className="avatar-save-status" role="status" aria-live="polite">
-              {saved ? t('identitySaved') : t('identityLocalNote')}
+              {saved ? t('identitySaved') : storageFailed ? t('identityMemoryOnly') : t('identityLocalNote')}
             </p>
             <Link className="avatar-signin-link" href="/account">{t('optionalSignIn')}</Link>
           </div>
