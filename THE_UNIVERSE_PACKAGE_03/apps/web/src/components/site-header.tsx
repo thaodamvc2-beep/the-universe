@@ -16,6 +16,8 @@ export function SiteHeader() {
         <Link className="header-link" href="/#experience">{t('navExperience')}</Link>
         <Link className="header-link" href="/#home-world">{t('navHome')}</Link>
         <Link className="header-link" href="/worlds">{t('navWorlds')}</Link>
+        <Link className="header-link" href="/avatar">{t('navAvatar')}</Link>
+        <Link className="header-link" href="/account">{t('navSignIn')}</Link>
         <label className="language-control">
           <span className="sr-only">{t('languageLabel')}</span>
           <select
