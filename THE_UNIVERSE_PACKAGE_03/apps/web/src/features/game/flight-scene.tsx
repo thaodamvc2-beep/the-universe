@@ -14,7 +14,7 @@ function Stars(){
  useFrame((_s,d)=>{if(ref.current)ref.current.rotation.y+=d*.00035});
  const positions=useRef<Float32Array|null>(null);
  if(!positions.current){const a=new Float32Array(2600*3);let seed=197903;const rand=()=>{seed=(seed*16807)%2147483647;return(seed-1)/2147483646};for(let i=0;i<2600;i++){const r=28+rand()*300,t=rand()*Math.PI*2,p=Math.acos(2*rand()-1);a[i*3]=r*Math.sin(p)*Math.cos(t);a[i*3+1]=r*Math.cos(p);a[i*3+2]=r*Math.sin(p)*Math.sin(t)}positions.current=a}
- return <group ref={ref}><points><bufferGeometry><bufferAttribute attach="attributes-position" args={[positions.current,3]}/></bufferGeometry><pointsMaterial color="#dce8ff" size={.095} sizeAttenuation transparent opacity={.82}/></points></group>;
+ return <group ref={ref}><points><bufferGeometry><bufferAttribute attach="attributes-position" args={[positions.current,3]}/></bufferGeometry><pointsMaterial color="#f1f5ff" size={.13} sizeAttenuation transparent opacity={.94}/></points></group>;
 }
 function PlanetLabel({body}:{body:Body}){
  const [texture,setTexture]=useState<CanvasTexture|null>(null);
@@ -64,13 +64,13 @@ function moveAvoidingBodies(start:Vector3,displacement:Vector3,bodies:Body[],ign
  for(const body of bodies){if(body.id===ignoreId)continue;const center=new Vector3(...body.position);const minimum=body.radius+.72;const distance=candidate.distanceTo(center);const startDistance=start.distanceTo(center);if(distance<minimum&&!(startDistance<minimum&&distance>startDistance)){const normal=candidate.clone().sub(center);if(normal.lengthSq()<.001)normal.copy(start).sub(center);if(normal.lengthSq()<.001)normal.set(0,1,0);candidate.copy(center).addScaledVector(normal.normalize(),minimum)}}
  return candidate;
 }
-export function FlightScene({bodies,avatarId,flightRef,inputRef,targetId,onArrive,remotePlayers}:{bodies:Body[];avatarId:AvatarId;flightRef:MutableRefObject<FlightState>;inputRef:MutableRefObject<InputState>;targetId:string|null;onArrive:(id:string)=>void;remotePlayers:RemotePlayer[]}){
- const {camera}=useThree();const forward=new Vector3();const right=new Vector3();const desired=new Vector3();const look=new Vector3();const playerUp=new Vector3(0,1,0);const previousTarget=useRef<string|null>(null);const sun=bodies.find(b=>b.id==='sun');
+export function FlightScene({bodies,avatarId,flightRef,inputRef,targetId,onArrive,onLandRequest,remotePlayers}:{bodies:Body[];avatarId:AvatarId;flightRef:MutableRefObject<FlightState>;inputRef:MutableRefObject<InputState>;targetId:string|null;onArrive:(id:string)=>void;onLandRequest:(id:string)=>void;remotePlayers:RemotePlayer[]}){
+ const {camera}=useThree();const forward=new Vector3();const right=new Vector3();const desired=new Vector3();const look=new Vector3();const playerUp=new Vector3(0,1,0);const smoothedCameraUp=useRef(new Vector3(0,1,0));const previousTarget=useRef<string|null>(null);const sun=bodies.find(b=>b.id==='sun');
  useFrame((_s,delta)=>{
   const dt=Math.min(delta,.04),f=flightRef.current,i=inputRef.current,body=f.groundedId?bodies.find(b=>b.id===f.groundedId):undefined;
-  const cruise=(i.boost?4.2:1.75),step=cruise*dt;
+  const cruise=(i.boost?5.2:2.25),step=cruise*dt;
   if(!targetId)previousTarget.current=null;
-  if(targetId){const target=bodies.find(b=>b.id===targetId);if(target){const center=new Vector3(...target.position),dir=center.clone().sub(f.position),distance=dir.length(),stop=target.radius+(target.landable ? 0.2 : 1.8);if(distance>stop){dir.normalize();const amount=Math.min((i.boost?5:2.25)*dt,distance-stop);f.position.copy(moveAvoidingBodies(f.position,dir.multiplyScalar(amount),bodies,target.id));f.yaw=Math.atan2(dir.x,-dir.z);f.pitch=Math.asin(Math.max(-.95,Math.min(.95,dir.y)))}else if(previousTarget.current!==targetId){previousTarget.current=targetId;f.position.copy(center).addScaledVector(f.position.clone().sub(center).normalize(),stop);if(target.landable)f.groundedId=target.id;onArrive(targetId)}}}
+  if(targetId){const target=bodies.find(b=>b.id===targetId);if(target){const center=new Vector3(...target.position),dir=center.clone().sub(f.position),distance=dir.length(),stop=target.radius+(target.landable ? 0.24 : 1.8);if(distance>stop){dir.normalize();const amount=Math.min((i.boost?6.2:2.8)*dt,distance-stop);f.position.copy(moveAvoidingBodies(f.position,dir.multiplyScalar(amount),bodies,target.id));f.yaw=Math.atan2(dir.x,-dir.z);f.pitch=Math.asin(Math.max(-.95,Math.min(.95,dir.y)))}else if(previousTarget.current!==targetId){previousTarget.current=targetId;f.position.copy(center).addScaledVector(f.position.clone().sub(center).normalize(),stop);if(target.landable){f.groundedId=target.id;f.pitch=0}onArrive(targetId)}}}
   else if(body){
    const center=new Vector3(...body.position),normal=f.position.clone().sub(center).normalize();playerUp.copy(normal);
    forward.set(Math.sin(f.yaw),0,-Math.cos(f.yaw)).projectOnPlane(normal).normalize();if(forward.lengthSq()<.001)forward.set(1,0,0).projectOnPlane(normal).normalize();
@@ -81,16 +81,16 @@ export function FlightScene({bodies,avatarId,flightRef,inputRef,targetId,onArriv
    forward.set(Math.sin(f.yaw)*Math.cos(f.pitch),Math.sin(f.pitch),-Math.cos(f.yaw)*Math.cos(f.pitch)).normalize();right.set(Math.cos(f.yaw),0,Math.sin(f.yaw)).normalize();
    const move=new Vector3();if(i.forward)move.add(forward);if(i.back)move.sub(forward);if(i.right)move.add(right);if(i.left)move.sub(right);if(i.up)move.y+=1;if(i.down)move.y-=1;
    if(move.lengthSq()>0)f.position.copy(moveAvoidingBodies(f.position,move.normalize().multiplyScalar(step),bodies,null));
-   if(i.land){const nearest=bodies.filter(b=>b.landable).map(b=>({body:b,d:f.position.distanceTo(new Vector3(...b.position))})).sort((a,b)=>a.d-b.d)[0];if(nearest&&nearest.d<=nearest.body.radius+2.6){const center=new Vector3(...nearest.body.position),normal=f.position.clone().sub(center).normalize();f.position.copy(center).addScaledVector(normal,nearest.body.radius+.19);f.groundedId=nearest.body.id;onArrive(nearest.body.id)}i.land=false}
+   if(i.land){const nearest=bodies.filter(b=>b.landable).map(b=>({body:b,d:f.position.distanceTo(new Vector3(...b.position))})).sort((a,b)=>a.d-b.d)[0];if(nearest){if(nearest.d<=nearest.body.radius+2.6){const center=new Vector3(...nearest.body.position),normal=f.position.clone().sub(center).normalize();f.position.copy(center).addScaledVector(normal,nearest.body.radius+.24);f.groundedId=nearest.body.id;f.pitch=0;onArrive(nearest.body.id)}else{onLandRequest(nearest.body.id)}}i.land=false}
    i.takeoff=false;
   }
-  if(!body)playerUp.set(0,1,0);
+  const landedBody=f.groundedId?bodies.find(b=>b.id===f.groundedId):undefined;if(landedBody)playerUp.copy(f.position).sub(new Vector3(...landedBody.position)).normalize();else playerUp.set(0,1,0);
   forward.set(Math.sin(f.yaw)*Math.cos(f.pitch),Math.sin(f.pitch),-Math.cos(f.yaw)*Math.cos(f.pitch)).normalize();
-  const cameraUp=f.groundedId?playerUp:new Vector3(0,1,0);desired.copy(f.position).addScaledVector(forward,-5.3).addScaledVector(cameraUp,2.25);
-  camera.position.lerp(desired,1-Math.exp(-3.6*dt));camera.up.copy(cameraUp);look.copy(f.position).addScaledVector(forward,2.3);camera.lookAt(look);
+  smoothedCameraUp.current.lerp(playerUp,1-Math.exp(-4.8*dt)).normalize();desired.copy(f.position).addScaledVector(forward,-5.3).addScaledVector(smoothedCameraUp.current,2.25);
+  camera.position.lerp(desired,1-Math.exp(-4.8*dt));camera.up.copy(smoothedCameraUp.current);look.copy(f.position).addScaledVector(forward,2.3);camera.lookAt(look);
  });
  return <>
-  <color attach="background" args={['#040713']}/><ambientLight intensity={.22}/><pointLight position={sun?.position??[-15.6,0,0]} intensity={420} distance={230} decay={2} color="#fff0d8"/>
+  <color attach="background" args={['#0a1a36']}/><ambientLight intensity={.38}/><hemisphereLight args={['#b8dcff','#55436f',.28]}/><pointLight position={sun?.position??[-15.6,0,0]} intensity={470} distance={260} decay={2} color="#fff1d2"/>
   <Stars/>{bodies.map(body=><Planet key={body.id} body={body}/>)}{remotePlayers.map(player=><OtherAvatar key={player.id} player={player}/>)}<Avatar avatarId={avatarId} flightRef={flightRef} inputRef={inputRef} bodies={bodies}/>
  </>;
 }

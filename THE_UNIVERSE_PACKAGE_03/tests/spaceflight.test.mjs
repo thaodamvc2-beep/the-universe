@@ -50,5 +50,9 @@ test('spaceflight now slows down, avoids planets and lands gently with visible w
  assert.match(scene,/PlanetLabel/);
  assert.ok(scene.includes("camera.lookAt"));
  assert.match(scene,/seated/);
- assert.ok(scene.includes("4.2:1.75"));
+ assert.ok(scene.includes("5.2:2.25"));
+ assert.match(scene,/smoothedCameraUp/);
+ assert.match(scene,/onLandRequest\(nearest\.body\.id\)/);
 });
+
+test('Sun and giant planets support the playful landing mechanic',async()=>{const data=await read('apps/web/src/features/game/universe-data.ts');for(const id of ['sun','jupiter','saturn','uranus','neptune']){const start=data.indexOf(`id:'${id}'`);const end=data.indexOf('},',start);assert.match(data.slice(start,end),/landable:true/)}});

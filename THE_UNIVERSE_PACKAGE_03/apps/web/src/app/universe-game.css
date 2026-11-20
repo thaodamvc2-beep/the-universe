@@ -58,3 +58,7 @@
  .universe-explorer .universe-expansion>span{font-size:8px}
  .universe-explorer .universe-expansion button{font-size:8px}
 }
+
+/* Brighter, calmer deep-space palette */
+.universe-explorer .game-vignette{background:linear-gradient(180deg,rgba(8,17,39,.42),transparent 24%,transparent 68%,rgba(8,17,39,.48)),radial-gradient(ellipse at center,transparent 48%,rgba(12,22,48,.16) 100%)}
+.universe-explorer .game-identity h1{text-shadow:0 2px 22px rgba(6,14,34,.72)}
