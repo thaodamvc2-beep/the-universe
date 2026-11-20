@@ -12,7 +12,7 @@ type SiteContextValue = {
   t: (key: TranslationKey) => string;
   guestIdentity: GuestIdentity | null;
   identityReady: boolean;
-  updateGuestIdentity: (changes: { nickname: string; avatarId: AvatarId }) => void;
+  updateGuestIdentity: (changes: { nickname: string; avatarId: AvatarId }) => boolean;
 };
 
 const SiteContext = createContext<SiteContextValue | null>(null);
@@ -26,13 +26,12 @@ export function SiteProvider({ children }: Readonly<{ children: ReactNode }>) {
   }, []);
 
   const updateIdentity = useCallback((changes: { nickname: string; avatarId: AvatarId }) => {
-    setGuestIdentity((current) => {
-      if (!current) return current;
-      const next = applyGuestIdentityChanges(current, changes);
-      saveGuestIdentity(next);
-      return next;
-    });
-  }, []);
+    if (!guestIdentity) return false;
+    const next = applyGuestIdentityChanges(guestIdentity, changes);
+    const persisted = saveGuestIdentity(next);
+    setGuestIdentity(next);
+    return persisted;
+  }, [guestIdentity]);
 
   useEffect(() => {
     document.documentElement.lang = language;
