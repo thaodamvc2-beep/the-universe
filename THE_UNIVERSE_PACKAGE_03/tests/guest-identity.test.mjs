@@ -28,9 +28,28 @@ test('new guests receive a valid avatar identity without registration', () => {
   assert.equal(isGuestIdentity(identity), true);
 });
 
-test('avatar catalogue contains multiple stable options', () => {
-  assert.ok(AVATAR_OPTIONS.length >= 6);
-  assert.equal(new Set(AVATAR_OPTIONS.map((item) => item.id)).size, AVATAR_OPTIONS.length);
+test('avatar catalogue contains six stable human character portraits', () => {
+  assert.equal(AVATAR_OPTIONS.length, 6);
+  assert.equal(new Set(AVATAR_OPTIONS.map((item) => item.id)).size, 6);
+});
+
+test('generated character artwork is bundled locally and integrated into the homepage', async () => {
+  const { readFile, stat } = await import('node:fs/promises');
+  const { resolve } = await import('node:path');
+  const root = resolve(import.meta.dirname, '..');
+  const artworkPath = resolve(root, 'apps/web/public/avatars/celestial-avatars.webp');
+  const artwork = await readFile(artworkPath);
+  const artworkStats = await stat(artworkPath);
+  assert.equal(artwork.subarray(0, 4).toString(), 'RIFF');
+  assert.ok(artworkStats.size > 1000);
+  const homePage = await readFile(resolve(root, 'apps/web/src/app/page.tsx'), 'utf8');
+  const header = await readFile(resolve(root, 'apps/web/src/components/site-header.tsx'), 'utf8');
+  const styles = await readFile(resolve(root, 'apps/web/src/app/globals.css'), 'utf8');
+  assert.match(homePage, /hero-identity-card/);
+  assert.match(homePage, /guestIdentity\.avatarId/);
+  assert.match(header, /header-identity/);
+  assert.match(styles, /celestial-avatars\.webp/);
+  assert.match(styles, /avatar-stardust\{background-position:0 0\}/);
 });
 
 test('nickname validation trims whitespace and enforces Unicode-safe rules', () => {
