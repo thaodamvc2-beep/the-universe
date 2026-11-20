@@ -17,7 +17,7 @@ function Stars(){
 function Planet({body}:{body:Body}){
  const ref=useRef<Group>(null);useFrame((_s,d)=>{if(ref.current)ref.current.rotation.y+=d*(body.id === 'earth' ? 0.018 : 0.006)});
  return <group ref={ref} position={body.position}>
-  <mesh><sphereGeometry args={[body.radius,36,32]}/><meshStandardMaterial color={body.color} roughness={.9} emissive={body.id==='sun'?'#d97825':'#000000'} emissiveIntensity={body.id==='sun'?.8:0}/></mesh>
+  <mesh><sphereGeometry args={[body.radius,36,32]}/><meshStandardMaterial color={body.color} roughness={.9} emissive={body.id==='sun'?'#d97825':'#000000'} emissiveIntensity={body.id === 'sun' ? 0.8 : 0}/></mesh>
   {body.id==='earth'&&<mesh scale={1.035}><sphereGeometry args={[body.radius,32,24]}/><meshBasicMaterial color="#73c8ff" transparent opacity={.13} side={BackSide}/></mesh>}
   {body.id==='saturn'&&<mesh rotation={[Math.PI/2.25,0,0]}><torusGeometry args={[body.radius*1.55,body.radius*.22,5,72]}/><meshStandardMaterial color="#cdbb9c" transparent opacity={.78}/></mesh>}
   {!body.real&&<mesh scale={1.12}><sphereGeometry args={[body.radius,20,16]}/><meshBasicMaterial color="#d6c6ff" wireframe transparent opacity={.16}/></mesh>}
