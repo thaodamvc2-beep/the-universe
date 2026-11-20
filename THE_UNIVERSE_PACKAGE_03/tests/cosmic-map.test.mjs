@@ -37,7 +37,7 @@ test('homepage and direct map route share avatar identity and canonical world da
   const home = await read('apps/web/src/app/page.tsx');
   const mapPage = await read('apps/web/src/app/map/page.tsx');
   const map = await read('apps/web/src/components/cosmic-map.tsx');
-  assert.match(home, /CosmicMap/);
+  assert.match(home, /UniverseGame/);
   assert.match(mapPage, /CosmicMap/);
   assert.match(map, /guestIdentity\.avatarId/);
   assert.match(map, /@\/data\/celestial-bodies\.json/);
