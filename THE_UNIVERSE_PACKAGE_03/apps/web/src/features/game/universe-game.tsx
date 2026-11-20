@@ -1,294 +1,81 @@
 'use client';
-
-import { Suspense, useEffect, useMemo, useRef, useState } from 'react';
-import type { MutableRefObject } from 'react';
+import { Suspense, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import type { PointerEvent as ReactPointerEvent } from 'react';
 import Link from 'next/link';
-import { Canvas, useFrame, useThree } from '@react-three/fiber';
-import { BackSide, Group, Vector3 } from 'three';
-import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+import { Canvas } from '@react-three/fiber';
+import { Vector3 } from 'three';
 import { useSite } from '@/components/site-provider';
+import { FlightScene, type FlightState, type InputState, type RemotePlayer } from './flight-scene';
+import { makeImaginedWorlds, REAL_DESTINATIONS, type AvatarId } from './universe-data';
 
-type AvatarId = 'stardust' | 'lunar' | 'nebula' | 'crystal' | 'aurora' | 'solar';
-type Direction = 'forward' | 'back' | 'left' | 'right';
-type InputState = Record<Direction, boolean>;
+export function UniverseGame(){
+ const {language,setLanguage,guestIdentity}=useSite();
+ const [contextLost,setContextLost]=useState(false),[sector,setSector]=useState(0),[selectedId,setSelectedId]=useState('mars'),[targetId,setTargetId]=useState<string|null>(null),[currentBodyId,setCurrentBodyId]=useState<string|null>('earth'),[audioEnabled,setAudioEnabled]=useState(false),[aiStatus,setAiStatus]=useState(''),[networkStatus,setNetworkStatus]=useState('Chưa kết nối máy chủ nhiều người chơi'),[remotePlayers,setRemotePlayers]=useState<RemotePlayer[]>([]),[showDestinations,setShowDestinations]=useState(false);
+ const input=useRef<InputState>({forward:false,back:false,left:false,right:false,up:false,down:false,land:false,takeoff:false,boost:false});
+ const flightRef=useRef<FlightState>({position:new Vector3(0,0,2.39),yaw:Math.PI/2,pitch:0,groundedId:'earth'});
+ const drag=useRef({active:false,x:0,y:0});
+ const avatarId=(guestIdentity?.avatarId??'stardust') as AvatarId;
+ const nickname=guestIdentity?.nickname??(language==='vi'?'Người du hành':'Traveler');
+ const imagined=useMemo(()=>Array.from({length:sector},(_,i)=>makeImaginedWorlds(i+1)).flat(),[sector]);
+ const bodies=useMemo(()=>[...REAL_DESTINATIONS,...imagined],[imagined]);
+ const selected=bodies.find(b=>b.id===selectedId)??REAL_DESTINATIONS[3];
+ const current=bodies.find(b=>b.id===currentBodyId);
+ const onArrive=useCallback((id:string)=>{setCurrentBodyId(id);setTargetId(null)},[]);
 
-const palette: Record<AvatarId, { suit: string; trim: string; glow: string }> = {
-  stardust: { suit: '#7774bb', trim: '#e6dfff', glow: '#b9a8ff' },
-  lunar: { suit: '#a6aec6', trim: '#f4f1e8', glow: '#dce8ff' },
-  nebula: { suit: '#a765bd', trim: '#ffd9f4', glow: '#f5a8e7' },
-  crystal: { suit: '#58aebd', trim: '#d8ffff', glow: '#9cf4f2' },
-  aurora: { suit: '#5eaa91', trim: '#e5ffd9', glow: '#a8f2cb' },
-  solar: { suit: '#d78b48', trim: '#fff1c8', glow: '#ffd38c' },
-};
+ useEffect(()=>{
+  const keys:Record<string,keyof Pick<InputState,'forward'|'back'|'left'|'right'|'up'|'down'>>={w:'forward',ArrowUp:'forward',s:'back',ArrowDown:'back',a:'left',ArrowLeft:'left',d:'right',ArrowRight:'right',' ':'up',Spacebar:'up',c:'down',Control:'down'};
+  const down=(e:KeyboardEvent)=>{const el=e.target as HTMLElement|null;if(el&&['INPUT','TEXTAREA','SELECT'].includes(el.tagName))return;const key=keys[e.key];if(key){e.preventDefault();input.current[key]=true}if(e.key.toLowerCase()==='e'){e.preventDefault();input.current.land=true}if(e.key==='Shift')input.current.boost=true};
+  const up=(e:KeyboardEvent)=>{const key=keys[e.key];if(key){e.preventDefault();input.current[key]=false}if(e.key==='Shift')input.current.boost=false};
+  const clear=()=>{input.current={forward:false,back:false,left:false,right:false,up:false,down:false,land:false,takeoff:false,boost:false}};
+  window.addEventListener('keydown',down);window.addEventListener('keyup',up);window.addEventListener('blur',clear);
+  return()=>{window.removeEventListener('keydown',down);window.removeEventListener('keyup',up);window.removeEventListener('blur',clear)};
+ },[]);
 
-function StarField() {
-  const positions = useMemo(() => {
-    const values = new Float32Array(1450 * 3);
-    let seed = 197903;
-    const random = () => { seed = (seed * 16807) % 2147483647; return (seed - 1) / 2147483646; };
-    for (let i = 0; i < 1450; i += 1) {
-      const radius = 8 + random() * 37;
-      const theta = random() * Math.PI * 2;
-      const phi = Math.acos(2 * random() - 1);
-      values[i * 3] = radius * Math.sin(phi) * Math.cos(theta);
-      values[i * 3 + 1] = radius * Math.cos(phi);
-      values[i * 3 + 2] = radius * Math.sin(phi) * Math.sin(theta);
-    }
-    return values;
-  }, []);
-  return <points>
-    <bufferGeometry><bufferAttribute attach="attributes-position" args={[positions, 3]} /></bufferGeometry>
-    <pointsMaterial color="#dce8ff" size={0.045} sizeAttenuation transparent opacity={0.8} />
-  </points>;
-}
+ useEffect(()=>{
+  if(!audioEnabled)return;
+  const ctx=new AudioContext(),master=ctx.createGain(),filter=ctx.createBiquadFilter();
+  master.gain.value=.045;filter.type='lowpass';filter.frequency.value=480;filter.connect(master);master.connect(ctx.destination);
+  const oscs=[55,82.41,110].map((hz,i)=>{const osc=ctx.createOscillator(),gain=ctx.createGain();osc.type=i===1?'triangle':'sine';osc.frequency.value=hz;gain.gain.value=i===1?.22:.13;osc.connect(gain);gain.connect(filter);osc.start();return osc});
+  void ctx.resume();return()=>{oscs.forEach(o=>o.stop());void ctx.close()};
+ },[audioEnabled]);
 
-function Avatar({ avatarId, input, resetRef }: {
-  avatarId: AvatarId; input: MutableRefObject<InputState>;
-  resetRef: React.MutableRefObject<boolean>;
-}) {
-  const person = useRef<Group>(null);
-  const latitude = useRef(0.34);
-  const longitude = useRef(0);
-  const normal = useMemo(() => new Vector3(), []);
-  const up = useMemo(() => new Vector3(0, 1, 0), []);
-  const colors = palette[avatarId] ?? palette.stardust;
+ useEffect(()=>{
+  const endpoint=process.env.NEXT_PUBLIC_UNIVERSE_REALTIME_URL;if(!endpoint)return;
+  let socket:WebSocket;
+  try{
+   socket=new WebSocket(endpoint);
+   socket.onopen=()=>{setNetworkStatus('Đã kết nối máy chủ · đang đồng bộ');socket.send(JSON.stringify({type:'join',player:{id:guestIdentity?.id??'guest',nickname,avatarId}}))};
+   socket.onmessage=e=>{try{const msg=JSON.parse(String(e.data)) as {type?:string;players?:RemotePlayer[]};if(msg.type==='players'&&Array.isArray(msg.players))setRemotePlayers(msg.players.filter(p=>p.id!==(guestIdentity?.id??'guest')))}catch{/* Ignore malformed realtime messages. */}};
+   socket.onerror=()=>setNetworkStatus('Không thể kết nối máy chủ nhiều người chơi');
+   socket.onclose=()=>setNetworkStatus('Máy chủ nhiều người chơi đã ngắt kết nối');
+   const heartbeat=window.setInterval(()=>{if(socket.readyState===WebSocket.OPEN)socket.send(JSON.stringify({type:'state',player:{id:guestIdentity?.id??'guest',nickname,avatarId,position:flightRef.current.position.toArray()}}))},180);
+   return()=>{window.clearInterval(heartbeat);socket.close()};
+  }catch{setNetworkStatus('Không thể khởi tạo kết nối nhiều người chơi')}
+ },[avatarId,guestIdentity?.id,nickname]);
 
-  useFrame((_state, delta) => {
-    if (!person.current) return;
-    if (resetRef.current) {
-      latitude.current = 0.34;
-      longitude.current = 0;
-      resetRef.current = false;
-    }
-    const step = Math.min(delta, 0.05) * 0.7;
-    if (input.current.left) longitude.current += step;
-    if (input.current.right) longitude.current -= step;
-    if (input.current.forward) latitude.current = Math.min(1.18, latitude.current + step);
-    if (input.current.back) latitude.current = Math.max(-1.18, latitude.current - step);
-    const lat = latitude.current;
-    const lon = longitude.current;
-    normal.set(Math.cos(lat) * Math.sin(lon), Math.sin(lat), Math.cos(lat) * Math.cos(lon)).normalize();
-    person.current.position.copy(normal).multiplyScalar(1.515);
-    person.current.quaternion.setFromUnitVectors(up, normal);
-  });
+ const resetHome=()=>{flightRef.current.position.set(0,0,2.39);flightRef.current.yaw=Math.PI/2;flightRef.current.pitch=0;flightRef.current.groundedId='earth';setCurrentBodyId('earth');setTargetId(null);input.current={forward:false,back:false,left:false,right:false,up:false,down:false,land:false,takeoff:false,boost:false}};
+ const takeoff=()=>{if(flightRef.current.groundedId){const b=bodies.find(x=>x.id===flightRef.current.groundedId);if(b){const n=flightRef.current.position.clone().sub(new Vector3(...b.position)).normalize();flightRef.current.position.addScaledVector(n,1.25)}flightRef.current.groundedId=null;setCurrentBodyId(null)}input.current.takeoff=true};
+ const setDirection=(key:keyof Pick<InputState,'forward'|'back'|'left'|'right'|'up'|'down'>,active:boolean)=>{input.current[key]=active};
+ const onPointerDown=(e:ReactPointerEvent<HTMLDivElement>)=>{drag.current={active:true,x:e.clientX,y:e.clientY};e.currentTarget.setPointerCapture(e.pointerId)};
+ const onPointerMove=(e:ReactPointerEvent<HTMLDivElement>)=>{if(!drag.current.active)return;const dx=e.clientX-drag.current.x,dy=e.clientY-drag.current.y;drag.current.x=e.clientX;drag.current.y=e.clientY;flightRef.current.yaw-=dx*.004;flightRef.current.pitch=Math.max(-1.25,Math.min(1.25,flightRef.current.pitch-dy*.003)};
+ const onPointerUp=()=>{drag.current.active=false};
+ const flyTo=()=>{if(selected.real===false||selected.real===true){if(selected.id!==flightRef.current.groundedId){setTargetId(selected.id);setShowDestinations(false)}}};
+ const newSector=()=>{setSector(s=>s+1);setAiStatus('Đã mở thêm vùng không gian procedural. Đây là thế giới hư cấu do thuật toán tạo, chưa phải nội dung AI.')};
+ const requestAI=async()=>{const endpoint=process.env.NEXT_PUBLIC_UNIVERSE_AI_ENDPOINT;if(!endpoint){setAiStatus('AI chưa kết nối: cần dịch vụ AI phía máy chủ. Vùng procedural vẫn có thể mở rộng để khám phá.');return}setAiStatus('Đang yêu cầu máy chủ AI sáng tạo…');try{const r=await fetch(endpoint,{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({language,theme:'peaceful cosmic exploration',seed:Date.now()})});if(!r.ok)throw new Error('AI service unavailable');const data=await r.json() as {message?:string};setAiStatus(data.message??'AI đã phản hồi; cần bộ chuyển đổi dữ liệu thế giới để đưa kết quả vào game.')}catch{setAiStatus('Không kết nối được dịch vụ AI. Các vùng procedural vẫn hoạt động.')}};
 
-  return <group ref={person}>
-    <mesh position={[0, 0.19, 0]} castShadow>
-      <capsuleGeometry args={[0.105, 0.2, 5, 10]} />
-      <meshStandardMaterial color={colors.suit} roughness={0.58} />
-    </mesh>
-    <mesh position={[0, 0.39, 0.015]} castShadow>
-      <sphereGeometry args={[0.115, 20, 16]} />
-      <meshStandardMaterial color="#f0d9c9" roughness={0.82} />
-    </mesh>
-    <mesh position={[0, 0.405, 0.108]}>
-      <sphereGeometry args={[0.073, 20, 12]} />
-      <meshStandardMaterial color={colors.trim} metalness={0.16} roughness={0.2} />
-    </mesh>
-    <mesh position={[0, 0.19, -0.105]}>
-      <boxGeometry args={[0.17, 0.19, 0.09]} />
-      <meshStandardMaterial color={colors.trim} roughness={0.6} />
-    </mesh>
-    {[-1, 1].map((side) => <group key={side} position={[side * 0.14, 0.2, 0]}>
-      <mesh rotation={[0, 0, side * -0.22]} position={[side * 0.012, -0.01, 0]}>
-        <capsuleGeometry args={[0.035, 0.14, 4, 8]} />
-        <meshStandardMaterial color={colors.suit} />
-      </mesh>
-      <mesh position={[0, -0.17, 0.025]}>
-        <sphereGeometry args={[0.045, 12, 10]} />
-        <meshStandardMaterial color={colors.trim} />
-      </mesh>
-    </group>)}
-    {[-1, 1].map((side) => <mesh key={side} position={[side * 0.055, 0.035, 0.005]}>
-      <capsuleGeometry args={[0.04, 0.11, 4, 8]} />
-      <meshStandardMaterial color={colors.suit} />
-    </mesh>)}
-    <pointLight position={[0, 0.46, 0.12]} color={colors.glow} intensity={0.32} distance={0.8} />
-  </group>;
-}
-
-function EarthWorld({ avatarId, input, resetRef, reducedMotion }: {
-  avatarId: AvatarId; input: React.MutableRefObject<InputState>;
-  resetRef: React.MutableRefObject<boolean>; reducedMotion: boolean;
-}) {
-  const earth = useRef<Group>(null);
-  useFrame((_state, delta) => {
-    if (!reducedMotion && earth.current) earth.current.rotation.y += delta * 0.018;
-  });
-  return <group ref={earth}>
-    <mesh>
-      <sphereGeometry args={[1.5, 64, 64]} />
-      <meshStandardMaterial color="#286b91" roughness={0.96} />
-    </mesh>
-    <mesh scale={1.018}>
-      <sphereGeometry args={[1.5, 48, 48]} />
-      <meshBasicMaterial color="#73c8ff" transparent opacity={0.09} wireframe />
-    </mesh>
-    <mesh scale={1.045}>
-      <sphereGeometry args={[1.5, 48, 48]} />
-      <meshBasicMaterial color="#72c5ff" transparent opacity={0.14} side={BackSide} />
-    </mesh>
-    <mesh position={[0.08, 1.46, 0.2]} rotation={[0.15, 0.4, -0.25]} scale={[0.72, 0.12, 0.38]}>
-      <sphereGeometry args={[1, 24, 18]} /><meshStandardMaterial color="#6b9b76" roughness={1} />
-    </mesh>
-    <mesh position={[-0.86, 0.43, 1.08]} rotation={[0.3, -0.6, 0.2]} scale={[0.38, 0.1, 0.52]}>
-      <sphereGeometry args={[1, 20, 16]} /><meshStandardMaterial color="#719a78" roughness={1} />
-    </mesh>
-    <mesh position={[0.96, -0.72, 0.72]} rotation={[0.5, 0.2, 0.8]} scale={[0.48, 0.1, 0.24]}>
-      <sphereGeometry args={[1, 20, 16]} /><meshStandardMaterial color="#759d79" roughness={1} />
-    </mesh>
-    <mesh position={[-0.45, -1.12, -0.95]} rotation={[0.2, 0.7, -0.4]} scale={[0.52, 0.09, 0.28]}>
-      <sphereGeometry args={[1, 20, 16]} /><meshStandardMaterial color="#759d79" roughness={1} />
-    </mesh>
-    <Avatar avatarId={avatarId} input={input} resetRef={resetRef} />
-  </group>;
-}
-
-function Moon() {
-  const moon = useRef<Group>(null);
-  useFrame(({ clock }) => {
-    if (!moon.current) return;
-    const angle = clock.getElapsedTime() * 0.055;
-    moon.current.position.set(Math.cos(angle) * 3.15, Math.sin(angle * 0.7) * 0.55, Math.sin(angle) * 3.15);
-    moon.current.rotation.y += 0.0007;
-  });
-  return <group ref={moon}>
-    <mesh><sphereGeometry args={[0.24, 28, 24]} /><meshStandardMaterial color="#b9bfd0" roughness={0.94} /></mesh>
-    <mesh position={[0.09, 0.13, 0.15]} scale={[0.07, 0.035, 0.05]}>
-      <sphereGeometry args={[1, 12, 10]} /><meshStandardMaterial color="#858da4" />
-    </mesh>
-  </group>;
-}
-
-function CameraControls() {
-  const { camera, gl } = useThree();
-  useEffect(() => {
-    const controls = new OrbitControls(camera, gl.domElement);
-    controls.target.set(0, 0.05, 0);
-    controls.enablePan = false;
-    controls.enableDamping = true;
-    controls.dampingFactor = 0.06;
-    controls.rotateSpeed = 0.42;
-    controls.zoomSpeed = 0.55;
-    controls.minDistance = 4.1;
-    controls.maxDistance = 8.5;
-    controls.minPolarAngle = 0.18;
-    controls.maxPolarAngle = 2.85;
-    return () => controls.dispose();
-  }, [camera, gl]);
-  return null;
-}
-
-function Scene({ avatarId, input, resetRef, reducedMotion }: {
-  avatarId: AvatarId; input: React.MutableRefObject<InputState>;
-  resetRef: React.MutableRefObject<boolean>; reducedMotion: boolean;
-}) {
-  return <>
-    <color attach="background" args={['#050916']} />
-    <fog attach="fog" args={['#050916', 16, 44]} />
-    <ambientLight intensity={0.72} />
-    <directionalLight position={[-4, 4, 5]} intensity={2.15} color="#d9e9ff" />
-    <pointLight position={[4, -2, -4]} intensity={18} distance={18} color="#557dff" />
-    <StarField />
-    <EarthWorld avatarId={avatarId} input={input} resetRef={resetRef} reducedMotion={reducedMotion} />
-    <Moon />
-    <CameraControls />
-  </>;
-}
-
-export function UniverseGame() {
-  const { language, setLanguage, guestIdentity } = useSite();
-  const [reducedMotion, setReducedMotion] = useState(false);
-  const [contextLost, setContextLost] = useState(false);
-  const input = useRef<InputState>({ forward: false, back: false, left: false, right: false });
-  const resetRef = useRef(false);
-  const avatarId = (guestIdentity?.avatarId ?? 'stardust') as AvatarId;
-  const nickname = guestIdentity?.nickname ?? (language === 'vi' ? 'Người du hành' : 'Traveler');
-
-  useEffect(() => {
-    const preference = window.matchMedia('(prefers-reduced-motion: reduce)');
-    const update = () => setReducedMotion(preference.matches);
-    update();
-    preference.addEventListener('change', update);
-    return () => preference.removeEventListener('change', update);
-  }, []);
-
-  useEffect(() => {
-    const keys: Record<string, Direction> = {
-      w: 'forward', ArrowUp: 'forward', s: 'back', ArrowDown: 'back',
-      a: 'left', ArrowLeft: 'left', d: 'right', ArrowRight: 'right',
-    };
-    const down = (event: KeyboardEvent) => {
-      const target = event.target as HTMLElement | null;
-      if (target?.tagName === 'INPUT' || target?.tagName === 'TEXTAREA' || target?.tagName === 'SELECT') return;
-      const direction = keys[event.key];
-      if (direction) { event.preventDefault(); input.current[direction] = true; }
-    };
-    const up = (event: KeyboardEvent) => {
-      const direction = keys[event.key];
-      if (direction) { event.preventDefault(); input.current[direction] = false; }
-    };
-    const clear = () => { input.current = { forward: false, back: false, left: false, right: false }; };
-    window.addEventListener('keydown', down);
-    window.addEventListener('keyup', up);
-    window.addEventListener('blur', clear);
-    return () => {
-      window.removeEventListener('keydown', down);
-      window.removeEventListener('keyup', up);
-      window.removeEventListener('blur', clear);
-    };
-  }, []);
-
-  const setDirection = (direction: Direction, active: boolean) => { input.current[direction] = active; };
-  const resetHome = () => { resetRef.current = true; input.current = { forward: false, back: false, left: false, right: false }; };
-
-  return <main id="main-content" className="universe-game">
-    <div className="game-canvas" aria-label={language === 'vi' ? 'Vũ trụ 3D có thể điều khiển' : 'Interactive 3D universe'}>
-      {!contextLost ? <Canvas
-        camera={{ position: [0, 2.25, 5.65], fov: 38 }}
-        dpr={[1, 1.35]}
-        gl={{ antialias: false, alpha: false, powerPreference: 'low-power' }}
-        onCreated={({ gl }) => gl.domElement.addEventListener('webglcontextlost', () => setContextLost(true), { once: true })}
-        fallback={<div className="game-fallback">{language === 'vi' ? 'Thiết bị chưa hỗ trợ cảnh 3D. Hãy thử trình duyệt khác.' : 'This device cannot display the 3D scene. Try another browser.'}</div>}
-      >
-        <Suspense fallback={null}><Scene avatarId={avatarId} input={input} resetRef={resetRef} reducedMotion={reducedMotion} /></Suspense>
-      </Canvas> : <div className="game-fallback">{language === 'vi' ? 'Cảnh 3D đã tạm dừng do thiết bị thiếu bộ nhớ đồ họa.' : 'The 3D scene paused because the device lost its graphics context.'}</div>}
-    </div>
-    <div className="game-vignette" aria-hidden="true" />
-    <header className="game-topbar">
-      <Link className="game-brand" href="/"><span className="game-brand-mark">✦</span> THE UNIVERSE</Link>
-      <nav className="game-nav" aria-label="Game navigation">
-        <Link href="/map">{language === 'vi' ? 'Bản đồ' : 'Map'}</Link>
-        <Link href="/worlds">{language === 'vi' ? 'Thiên thể' : 'Worlds'}</Link>
-        <Link href="/avatar">{language === 'vi' ? 'Avatar' : 'Avatar'}</Link>
-        <button type="button" className="game-language" onClick={() => setLanguage(language === 'vi' ? 'en' : 'vi')}>{language.toUpperCase()}</button>
-      </nav>
-    </header>
-    <section className="game-identity">
-      <span className="game-eyebrow">{language === 'vi' ? 'ĐIỂM KHỞI HÀNH · TRÁI ĐẤT' : 'HOME WORLD · EARTH'}</span>
-      <h1>{language === 'vi' ? 'Một góc bình yên giữa vũ trụ' : 'A quiet place among the stars'}</h1>
-      <p>{language === 'vi' ? 'Bạn đang ở nhà. Hãy thong thả bước đi và ngắm nhìn không gian.' : 'You are home. Wander slowly and watch the universe breathe.'}</p>
-    </section>
-    <div className="game-player">
-      <span className={`avatar-portrait avatar-${avatarId} game-player-avatar`} aria-hidden="true" />
-      <span><small>{language === 'vi' ? 'NGƯỜI ĐANG DU HÀNH' : 'TRAVELER'}</small><strong>{nickname}</strong></span>
-      <Link href="/avatar" aria-label={language === 'vi' ? 'Đổi avatar và tên' : 'Change avatar and name'}>↗</Link>
-    </div>
-    <div className="game-controls">
-      <div className="game-control-copy">
-        <strong>{language === 'vi' ? 'Di chuyển' : 'Move'}</strong>
-        <span>{language === 'vi' ? 'WASD / phím mũi tên · Kéo để xoay góc nhìn' : 'WASD / arrow keys · Drag to look around'}</span>
-      </div>
-      <div className="game-dpad" aria-label={language === 'vi' ? 'Nút điều khiển di chuyển' : 'Movement controls'}>
-        <button className="dpad-up" type="button" aria-label="Move forward" onPointerDown={() => setDirection('forward', true)} onPointerUp={() => setDirection('forward', false)} onPointerLeave={() => setDirection('forward', false)} onPointerCancel={() => setDirection('forward', false)}>↑</button>
-        <button className="dpad-left" type="button" aria-label="Move left" onPointerDown={() => setDirection('left', true)} onPointerUp={() => setDirection('left', false)} onPointerLeave={() => setDirection('left', false)} onPointerCancel={() => setDirection('left', false)}>←</button>
-        <button className="dpad-down" type="button" aria-label="Move backward" onPointerDown={() => setDirection('back', true)} onPointerUp={() => setDirection('back', false)} onPointerLeave={() => setDirection('back', false)} onPointerCancel={() => setDirection('back', false)}>↓</button>
-        <button className="dpad-right" type="button" aria-label="Move right" onPointerDown={() => setDirection('right', true)} onPointerUp={() => setDirection('right', false)} onPointerLeave={() => setDirection('right', false)} onPointerCancel={() => setDirection('right', false)}>→</button>
-      </div>
-    </div>
-    <div className="game-bottom-actions">
-      <button type="button" onClick={resetHome}>⌖ {language === 'vi' ? 'Về điểm xuất phát' : 'Return to start'}</button>
-      <span>{language === 'vi' ? 'Mặt Trăng đang lặng lẽ chuyển động quanh bạn' : 'The Moon is quietly orbiting nearby'}</span>
-    </div>
-  </main>;
+ return <main id="main-content" className="universe-game universe-explorer">
+  <div className="game-canvas" aria-label="Vũ trụ 3D có thể bay và khám phá" onPointerDown={onPointerDown} onPointerMove={onPointerMove} onPointerUp={onPointerUp} onPointerCancel={onPointerUp}>
+   {!contextLost?<Canvas camera={{position:[0,2.6,8],fov:48}} dpr={[1,1.4]} gl={{antialias:false,alpha:false,powerPreference:'low-power'}} onCreated={({gl})=>gl.domElement.addEventListener('webglcontextlost',()=>setContextLost(true),{once:true})} fallback={<div className="game-fallback">Thiết bị chưa hỗ trợ cảnh 3D.</div>}><Suspense fallback={null}><FlightScene bodies={bodies} avatarId={avatarId} flightRef={flightRef} inputRef={input} targetId={targetId} onArrive={onArrive} remotePlayers={remotePlayers}/></Suspense></Canvas>:<div className="game-fallback">Cảnh 3D tạm dừng do thiết bị thiếu bộ nhớ đồ họa.</div>}
+  </div>
+  <div className="game-vignette" aria-hidden="true"/>
+  <header className="game-topbar"><Link className="game-brand" href="/">✦ THE UNIVERSE</Link><nav className="game-nav"><button type="button" onClick={()=>setShowDestinations(v=>!v)}>Điểm đến</button><Link href="/map">Bản đồ</Link><Link href="/worlds">Thiên thể</Link><Link href="/avatar">Avatar</Link><button className="game-language" type="button" onClick={()=>setLanguage(language==='vi'?'en':'vi')}>{language.toUpperCase()}</button></nav></header>
+  <section className="game-identity"><span className="game-eyebrow">{current?.name.toUpperCase()??'KHÔNG GIAN SÂU'}</span><h1>{language==='vi'?'Vũ trụ rộng mở chờ bạn':'A universe waiting to be explored'}</h1><p>{language==='vi'?'Bay tự do, ghé thăm các thế giới và ngắm nhìn không gian từ một góc nhìn mới.':'Fly freely, visit distant worlds and discover new perspectives.'}</p></section>
+  <div className="game-player"><span className={`avatar-portrait avatar-${avatarId} game-player-avatar`}/><span><small>NGƯỜI ĐANG DU HÀNH</small><strong>{nickname}</strong></span><Link href="/avatar">↗</Link></div>
+  <div className="explorer-status"><span>{current?'ĐANG Ở TRÊN BỀ MẶT':'ĐANG BAY TỰ DO'}</span><strong>{current?.name??'Không gian'}</strong><small>{networkStatus}</small></div>
+  {showDestinations&&<aside className="destination-panel"><div className="destination-panel-head"><strong>Chọn điểm đến</strong><button type="button" onClick={()=>setShowDestinations(false)}>×</button></div><div className="destination-list">{bodies.map(b=><button key={b.id} type="button" className={selectedId===b.id?'destination-selected':''} onClick={()=>setSelectedId(b.id)}><i className={b.real?'real-dot':'imagined-dot'}/><span><strong>{b.name}</strong><small>{b.kind}</small></span></button>)}</div><div className="destination-detail"><strong>{selected.name}</strong><p>{selected.description}</p><small>{selected.real?'THIÊN THỂ THỰC · DỮ LIỆU THAM KHẢO':'THẾ GIỚI HƯ CẤU · PROCEDURAL'}</small><button type="button" onClick={flyTo}>Bay tới đây ↗</button>{selected.sourceUrl&&<a href={selected.sourceUrl} target="_blank" rel="noreferrer">Nguồn tham khảo</a>}</div></aside>}
+  <div className="game-controls explorer-controls"><div className="game-control-copy"><strong>Điều khiển phi hành gia</strong><span>WASD · Space / C · Shift · E · Kéo chuột để nhìn</span></div><div className="game-dpad"><button className="dpad-up" type="button" onPointerDown={()=>setDirection('forward',true)} onPointerUp={()=>setDirection('forward',false)} onPointerLeave={()=>setDirection('forward',false)}>↑</button><button className="dpad-left" type="button" onPointerDown={()=>setDirection('left',true)} onPointerUp={()=>setDirection('left',false)} onPointerLeave={()=>setDirection('left',false)}>←</button><button className="dpad-down" type="button" onPointerDown={()=>setDirection('back',true)} onPointerUp={()=>setDirection('back',false)} onPointerLeave={()=>setDirection('back',false)}>↓</button><button className="dpad-right" type="button" onPointerDown={()=>setDirection('right',true)} onPointerUp={()=>setDirection('right',false)} onPointerLeave={()=>setDirection('right',false)}>→</button></div><div className="flight-vertical"><button type="button" onPointerDown={()=>setDirection('up',true)} onPointerUp={()=>setDirection('up',false)} onPointerLeave={()=>setDirection('up',false)}>↑ Lên</button><button type="button" onPointerDown={()=>setDirection('down',true)} onPointerUp={()=>setDirection('down',false)} onPointerLeave={()=>setDirection('down',false)}>↓ Xuống</button></div></div>
+  <div className="game-bottom-actions explorer-actions"><button type="button" onClick={takeoff}>↑ Cất cánh / Bay</button><button type="button" onClick={()=>input.current.land=true}>⌄ Hạ cánh (E)</button><button type="button" onClick={resetHome}>⌖ Trở về Trái Đất</button><button type="button" onClick={()=>setAudioEnabled(v=>!v)}>{audioEnabled?'♫ Tắt âm thanh':'♫ Bật âm thanh'}</button></div>
+  <aside className="universe-expansion"><strong>Vũ trụ mở rộng</strong><span>{sector*4} thế giới hư cấu đã mở</span><div><button type="button" onClick={newSector}>＋ Mở vùng mới</button><button type="button" onClick={requestAI}>✧ Sáng tạo bằng AI</button></div>{aiStatus&&<small>{aiStatus}</small>}</aside>
+  <aside className="multiplayer-indicator"><i className={remotePlayers.length?'online-dot':'offline-dot'}/>{remotePlayers.length?remotePlayers.length+' người chơi cùng khu vực':'Multiplayer: chờ máy chủ đồng bộ'}</aside>
+ </main>;
 }
