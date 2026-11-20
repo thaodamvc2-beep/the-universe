@@ -62,3 +62,27 @@ test('Gói 03 keeps engine selection open until real-device comparison', async (
   assert.match(scope, /PlayCanvas/);
   assert.match(decisions, /OPEN — NOT LOCKED/);
 });
+
+
+test('integrated game generates coordinate-seeded worlds locally with no AI API controls or warnings', async () => {
+  const game = await read('apps/web/src/features/game/universe-game.tsx');
+  const data = await read('apps/web/src/features/game/universe-data.ts');
+  assert.match(game, /makeProceduralRegion/);
+  assert.match(game, /setInterval/);
+  assert.match(game, /Mở vùng không gian mới/);
+  assert.doesNotMatch(game, /NEXT_PUBLIC_UNIVERSE_AI_ENDPOINT|requestAI|Sáng tạo bằng AI|AI chưa kết nối/);
+  assert.match(data, /export function makeProceduralRegion/);
+  assert.match(data, /Math\.imul/);
+  assert.match(data, /position/);
+});
+
+test('flight uses slow collision-aware travel, gentle landing, planetary labels and local viewpoint lighting', async () => {
+  const scene = await read('apps/web/src/features/game/flight-scene.tsx');
+  assert.match(scene, /moveAvoidingBodies/);
+  assert.match(scene, /target\.landable/);
+  assert.match(scene, /PlanetLabel/);
+  assert.match(scene, /CanvasTexture/);
+  assert.match(scene, /pointLight position=\{sun\?\.position/);
+  assert.match(scene, /camera\.lookAt/);
+  assert.match(scene, /seated/);
+});
