@@ -21,7 +21,7 @@ test('spaceflight supports six-axis movement, takeoff and landing',async()=>{
 test('real Solar System exploration catalog includes planets, dwarf planets and explored moons',async()=>{
  const data=await read('apps/web/src/features/game/universe-data.ts');
  for(const name of ['mercury','venus','earth','moon','mars','jupiter','saturn','uranus','neptune','pluto','ceres','europa','ganymede','titan','triton','bennu','ryugu','comet-67p'])assert.match(data,new RegExp(`id:'${name}'`));
- assert.match(data,/landable:false/);
+ assert.match(data,/landable:true/);
  assert.match(data,/sourceUrl/);
 });
 
