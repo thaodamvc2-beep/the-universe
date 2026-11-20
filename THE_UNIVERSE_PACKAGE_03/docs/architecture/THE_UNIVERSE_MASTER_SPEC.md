@@ -673,7 +673,7 @@ Do not overwrite the approved baseline. After approval, increment the document v
 - Gói 02: provisionally approved by the owner on 2026-11-19 for transition to Gói 03; technical verification remains open. Status: PROVISIONALLY APPROVED FOR TRANSITION — FINAL TECHNICAL VERIFICATION PENDING.
 - Gói 02 implementation: dependency installation, lint, typecheck, production build and browser/device verification remain outstanding; the prior authoring environment could not reach the npm registry.
 - D02: package-level web/backend direction recorded in `docs/decisions/P02-DECISION-LOG.md`.
-- D01 and D03–D14: remain pending unless explicitly resolved in the Gói 02 decision log; no downstream decision is silently approved.
+- D01 and D03–D09, D11–D14: remain pending unless explicitly resolved in their package decision records. D10 is resolved for the initial Gói 04 release as documented in `docs/decisions/P04-DECISION-LOG.md`; advanced 3D avatar assets remain future scope.
 - Gói 03: explicitly authorized by the owner on 2026-11-19; homepage, language foundation and initial R3F prototype are prepared. Status: READY FOR OWNER REVIEW — RUNTIME/DEVICE VERIFICATION PENDING; not accepted.
 - Delivery sequence update (2026-11-20): the owner first deferred Gói 04 to prioritize Gói 05, then explicitly superseded that deferral and reauthorized Gói 04 immediately. Gói 04 is implemented and deployed, ready for owner review but not accepted. Gói 05 is implemented and deployed, also awaiting owner review. Gói 02 technical gaps and Gói 03 runtime/device acceptance remain open. Gói 06 implementation has not been started.
 
