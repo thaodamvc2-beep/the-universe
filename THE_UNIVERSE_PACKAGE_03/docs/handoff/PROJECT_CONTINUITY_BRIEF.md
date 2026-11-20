@@ -8,12 +8,14 @@
 The owner explicitly instructed on 2026-11-20:
 
 - Provisionally accept all existing packages Gói 01–06.
-- Consolidate every existing package into one coherent game; opening the website should enter the game directly.
-- The default scene must show the player's avatar and nickname on Earth, with a quietly moving universe and controllable avatar movement.
-- Integrate and deploy the playable experience on GitHub Pages; the owner gives product direction and does not want technical setup tasks.
+- Consolidate everything into one guest-first web game; opening the root page enters the game directly.
+- Integrate the previously designed six avatars and saved nickname; add six-axis flight, travel between worlds, landing, and new viewpoints from other worlds.
+- Include the spacecraft-explored planets and representative moons, dwarf planets, asteroids and comets; distinguish real objects from fictional worlds.
+- Expand the universe continuously, add ambient sound, and deliver real AI generation and networked multiplayer.
+- Finish the integrated build and deploy it to GitHub Pages for desktop/mobile testing. The owner gives product direction and does not want technical setup tasks.
 - Continue technical work directly in GitHub and keep this brief current.
 
-This instruction supersedes the earlier package-by-package pending owner review for the existing Gói 01–06 baseline. Provisional acceptance does not erase known technical/device verification gaps. Gói 07+ is not authorized.
+This explicitly authorizes Gói 07. Gói 01–06 remain provisionally accepted; their recorded technical/device gaps are not erased. Gói 08+ is not authorized.
 
 ## 2. Repository and public site
 
@@ -77,26 +79,32 @@ Decision record:
 - Gói 06: implemented and deployed as an integrated schematic Solar System navigation map. The map is the guest-first homepage (`/`) and also available at `/map/`; it uses canonical Gói 05 IDs, shows avatar/nickname, supports destination selection/details, simulated route preview and Earth recovery. It does NOT implement actual travel, six-axis flight, planetary surface exploration or production 3D universe rendering. GitHub Actions run 44700029296 passed 23/23 tests, ESLint, TypeScript, production build and GitHub Pages deployment. Manual desktop/mobile visual review remains outstanding. Code verification commit: 0bfbade4a3d3e095c80b78743f1760414fd741ca.
 - Unified game homepage: [GitHub Pages](https://thaodamvc2-beep.github.io/the-universe/) — opens directly into the 3D Earth scene. Avatar movement: WASD/arrow keys or on-screen directional buttons; drag to rotate the camera. The player's saved nickname appears in the HUD. The Earth rotates slowly and the Moon orbits nearby.
 - Canonical map: `/map/`; celestial catalogue: `/worlds/`; avatar editor: `/avatar/`.
-- Gói 07–15: not implemented as a complete product; Gói 07+ has not been authorized.
+- Gói 07: explicitly authorized on 2026-11-20 and in progress. Current code replaces walk-only movement with six-axis flight, takeoff, destination approach, manual landing on supported solid bodies, Earth return, expanded real destinations, procedural fictional sectors and optional Web Audio ambience. The avatar reuses the existing six stable IDs and guest nickname; the 3D suit palette follows the selected avatar and the portrait remains in the HUD.
+- AI generation and global multiplayer are not live: the frontend adapters require a secure AI endpoint and a realtime WebSocket server. The deterministic procedural generator is not AI. No API secrets are embedded in the static site. The backend contract is documented in `docs/architecture/UNIVERSE_BACKEND_CONTRACT.md`.
+- Latest confirmed deployed flight slice: [GitHub Actions run 44706080178](https://github.com/thaodamvc2-beep/the-universe/actions/runs/44706080178), success; 23 tests, ESLint, TypeScript, static build and GitHub Pages deployment passed at commit `3df3f351a5c1366ba294b84eb41e24e2ee2fd831`. Later polish commits are being checked; latest source commit in this brief: `f694462c4a5f191b1dec8c3c42cbacf2f6e1df20`.
+- Gói 08+ is not authorized.
 
-Important: The owner now wants Gói 04 implemented and the currently delivered website integrated for testing. This does not make unimplemented systems (real auth, cloud sync, multiplayer, six-axis flight, full AI world generation) magically available. Clearly label prototypes and limitations.
+Important: The owner authorized Gói 07. Six-axis flight and destination landing are implemented in the current code slice. True AI generation and global multiplayer still require secure server services; never fake these capabilities or call procedural generation AI. Real authentication/cloud sync remain deferred.
 
 ## 6. Existing implementation
 
 - Next.js App Router + React + TypeScript.
-- React Three Fiber powers the current playable 3D Earth homepage slice; D01 engine choice remains open and is not locked.
+- React Three Fiber powers the current playable 3D spaceflight homepage slice; D01 engine choice remains open and is not locked.
 - Static export configured for GitHub Pages.
-- Homepage route `/` — playable 3D Earth game.
+- Homepage route `/` — playable 3D spaceflight game with Earth as the Home World.
 - `/prototype/` remains the earlier isolated camera-orbit prototype.
 - Real celestial catalogue route `/worlds/`.
 - EN/VI translations.
 - Canonical data: `apps/web/src/data/celestial-bodies.json`.
 - Site header and language provider under `apps/web/src/components/`.
 - GitHub Pages workflow performs package-scoped tests, ESLint, TypeScript typecheck, static build and deploy.
+- Flight source: `apps/web/src/features/game/flight-scene.tsx`, `universe-game.tsx`, `universe-data.ts`.
+- Secure backend contracts: `docs/architecture/UNIVERSE_BACKEND_CONTRACT.md`.
 
 Latest integrated release evidence:
 - Unified playable game homepage deployment: [GitHub Actions run 44701854209](https://github.com/thaodamvc2-beep/the-universe/actions/runs/44701854209) — success; 23 tests, ESLint, TypeScript, static production build and GitHub Pages deployment passed. Latest game code commit: `0e8bcf611ce970ac361e6a991898028605ab63e8`.
 - The homepage game is live at `https://thaodamvc2-beep.github.io/the-universe/`.
+- Gói 07 flight slice was deployed at commit `3df3f351a5c1366ba294b84eb41e24e2ee2fd831`; subsequent polish commit `f694462c4a5f191b1dec8c3c42cbacf2f6e1df20` awaits its own CI/deployment confirmation.
 - Previous integrated release commit: `18945ff5845e792c2b69bd901397237ca268d475`.
 - Previous GitHub Actions run: [44661753954](https://github.com/thaodamvc2-beep/the-universe/actions/runs/44661753954) — success, 18 tests, lint, typecheck, static build and GitHub Pages deployment.
 - - Latest visual revision commit: `90cee727c5afee42362bb873501b62714a1744a3`.
