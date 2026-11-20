@@ -45,7 +45,10 @@ test('generated character artwork is bundled locally and integrated into the hom
   const homePage = await readFile(resolve(root, 'apps/web/src/app/page.tsx'), 'utf8');
   const header = await readFile(resolve(root, 'apps/web/src/components/site-header.tsx'), 'utf8');
   const styles = await readFile(resolve(root, 'apps/web/src/app/globals.css'), 'utf8');
-  assert.match(homePage, /CosmicMap/);
+  assert.match(homePage, /UniverseGame/);
+  const game = await readFile(resolve(root, 'apps/web/src/features/game/universe-game.tsx'), 'utf8');
+  assert.match(game, /guestIdentity\?\.avatarId/);
+  assert.match(game, /<Avatar avatarId=/);
   const map = await readFile(resolve(root, 'apps/web/src/components/cosmic-map.tsx'), 'utf8');
   assert.match(map, /guestIdentity\.avatarId/);
   assert.match(header, /header-identity/);
