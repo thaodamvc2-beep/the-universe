@@ -53,7 +53,6 @@ export const REAL_DESTINATIONS:Body[] = [
 const COLORS=['#8d7de0','#62b8b2','#d58c73','#8da9db','#b9a1c9','#8fbf91','#e0a9c8','#75a9d5','#c8a77a','#77b8a4'];
 const NAMES=['Asterion','Lumen Vale','Nacre','Veloria','Serein','Eidolon','Mira Sol','Orphia','Caligo','Auralis','Thalassa','Elaris'];
 export function makeProceduralRegion(cx:number,cy:number,cz:number):Body[] {
- const key=`${cx}:${cy}:${cz}`;
  let seed=0x45d9f3b^Math.imul(cx+4099,0x27d4eb2d)^Math.imul(cy+8191,0x165667b1)^Math.imul(cz+12289,0x1b873593);
  seed|=0;const random=()=>{seed=(Math.imul(seed,1664525)+1013904223)|0;return(seed>>>0)/4294967296};
  const base:[number,number,number]=[cx*84,cy*84,cz*84];
@@ -64,7 +63,7 @@ export function makeProceduralRegion(cx:number,cy:number,cz:number):Body[] {
   const radius=.42+random()*.85;
   const color=COLORS[Math.floor(random()*COLORS.length)];
   const position:[number,number,number]=[base[0]+16+random()*52,base[1]+(random()-.5)*48,base[2]+(random()-.5)*48];
-  return {id:`proc-${key.replaceAll(':','-')}-${i}`,name:`${name} ${Math.abs(cx+cy+cz)%97+1}`,kind:'Hành tinh hư cấu · Sinh tự động',position,radius,color:color||hue,landable:true,real:false,description:'Thế giới được sinh trực tiếp trong trình duyệt bằng thuật toán xác định theo tọa độ không gian; không sử dụng API AI.'};
+  return {id:`proc-${key.replaceAll(':','-')}-${i}`,name:`${name} ${Math.abs(cx+cy+cz)%97+1}`,kind:'Hành tinh hư cấu · Sinh tự động',position,radius,color:color||hue,landable:true,real:false,description:'Thế giới được sinh trực tiếp trong trình duyệt bằng thuật toán xác định theo tọa độ không gian; không gọi dịch vụ bên ngoài.'};
  });
 }
 export function makeImaginedWorlds(sector:number):Body[] {
