@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { useSite } from '@/components/site-provider';
 
 export function SiteHeader() {
-  const { language, setLanguage, t } = useSite();
+  const { language, setLanguage, t, guestIdentity } = useSite();
 
   return (
     <header className="site-header">
@@ -18,6 +18,12 @@ export function SiteHeader() {
         <Link className="header-link" href="/worlds">{t('navWorlds')}</Link>
         <Link className="header-link" href="/avatar">{t('navAvatar')}</Link>
         <Link className="header-link" href="/account">{t('navSignIn')}</Link>
+        {guestIdentity ? (
+          <Link className="header-identity" href="/avatar" aria-label={`${guestIdentity.nickname} — ${t('navAvatar')}`}>
+            <span className={`avatar-portrait avatar-${guestIdentity.avatarId} header-identity-portrait`} aria-hidden="true" />
+            <span className="header-identity-name">{guestIdentity.nickname}</span>
+          </Link>
+        ) : null}
         <label className="language-control">
           <span className="sr-only">{t('languageLabel')}</span>
           <select
