@@ -1,9 +1,9 @@
 # THE UNIVERSE — PACKAGE 05 SCOPE & ACCEPTANCE
 
 **Document ID:** TU-PKG-05-001  
-**Version:** 1.0  
+**Version:** 1.1  
 **Date:** 2026-11-20  
-**Status:** AUTHORIZED — IN PROGRESS  
+**Status:** READY FOR OWNER REVIEW — MANUAL BROWSER REVIEW PENDING  
 **Package:** 05 — Celestial Data  
 **Authority:** Owner explicitly approved the sequence adjustment on 2026-11-20: defer Gói 04 and prioritize Gói 05, followed by Gói 06.
 
@@ -56,11 +56,27 @@ Establish the first canonical, typed celestial catalogue for the Solar System an
 ## 7. Test plan
 Run workspace commands: `npm run lint`, `npm run typecheck`, `node --test tests/package-03.test.mjs tests/celestial-catalog.test.mjs`, and `npm run build`. Browser review must test desktop and narrow mobile layouts, select all catalogue cards, verify bilingual detail updates, check source links and confirm Earth is the default.
 
-## 8. Known limitations
+## 8. Actual verification record
+
+Environment: GitHub Actions, Node.js 22, npm 10.9.9.
+
+| Check | Result | Evidence |
+|---|---|---|
+| Dependency installation | PASS | GitHub Actions run 44659882005 |
+| Package 03 + Package 05 automated tests | PASS | 11 tests passed, 0 failed |
+| ESLint | PASS | GitHub Actions run 44659882005 |
+| TypeScript typecheck | PASS | GitHub Actions run 44659882005 |
+| Next.js production static build | PASS | GitHub Actions run 44659882005 |
+| GitHub Pages deployment | PASS | GitHub Actions run 44659882005; commit b0ba26e9af57b4e1dfc752fe40edd47340466d19 |
+| Manual browser review (desktop/mobile) | NOT RUN | Owner visual review remains pending |
+
+The full legacy `npm test` suite was attempted during verification and exposed two pre-existing Gói 02 foundation assertions: the static health route is expected to contain a dynamic `Cache-Control` header, and the static GitHub Pages host is expected to provide an HTTP `X-Content-Type-Options` header. GitHub Pages does not provide configurable response headers for static exports. These Gói 02 verification gaps remain open and are not represented as passing. The package-scoped test command is used for Gói 05 acceptance evidence.
+
+## 9. Known limitations
 - AU distances and radii are rounded reference values, not real-time positions.
 - This package does not implement travel, orbit rendering, or 3D planet models.
 - The full legacy `npm test` suite also runs Gói 02 foundation checks. Those currently fail on assumptions that a static GitHub Pages host can emit dynamic `Cache-Control` and HTTP security headers. Those Gói 02 limitations remain open and are not represented as passing; Gói 05 runs its package-scoped tests separately.
 - Physical-device performance and Gói 03 acceptance remain separate open items.
 
-## 9. Handover
-After acceptance, Gói 06 may begin. Do not begin Gói 06 implementation before owner review and explicit acceptance of Gói 05. Gói 04 remains deferred, not cancelled.
+## 10. Handover
+The Gói 05 implementation is ready for owner review. Do not begin Gói 06 implementation before owner review and explicit acceptance of Gói 05. Gói 04 remains deferred, not cancelled.
