@@ -13,8 +13,8 @@ export function SiteHeader() {
         <span className="brand-name">THE UNIVERSE</span>
       </Link>
       <nav className="header-actions" aria-label="Main navigation">
-        <Link className="header-link" href="/#experience">{t('navExperience')}</Link>
-        <Link className="header-link" href="/#home-world">{t('navHome')}</Link>
+        <Link className="header-link" href="/map">{t('navExperience')}</Link>
+        <Link className="header-link" href="/map">{t('navHome')}</Link>
         <Link className="header-link" href="/worlds">{t('navWorlds')}</Link>
         <Link className="header-link" href="/avatar">{t('navAvatar')}</Link>
         <Link className="header-link" href="/account">{t('navSignIn')}</Link>

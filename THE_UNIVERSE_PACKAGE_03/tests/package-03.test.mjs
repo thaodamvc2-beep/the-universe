@@ -22,9 +22,9 @@ test('English and Vietnamese dictionaries expose the same UI keys', async () => 
 
 test('homepage has a guest-first entry and preserves Earth as Home World', async () => {
   const page = await read('apps/web/src/app/page.tsx');
-  assert.match(page, /href="\/prototype"/);
-  assert.match(page, /home-world/);
-  assert.match(page, /SiteHeader/);
+  assert.match(page, /CosmicMap/);
+  assert.match(page, /CosmicMap/);
+  assert.match(await read('apps/web/src/components/cosmic-map.tsx'), /SiteHeader/);
   assert.doesNotMatch(page, /sign.?up|register|create account/i);
 });
 

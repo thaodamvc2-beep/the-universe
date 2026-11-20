@@ -3,7 +3,7 @@
 **Document ID:** TU-PKG-05-001  
 **Version:** 1.1  
 **Date:** 2026-11-20  
-**Status:** READY FOR OWNER REVIEW — MANUAL BROWSER REVIEW PENDING  
+**Status:** PROVISIONALLY ACCEPTED BY OWNER — CORRECTIONS REMAIN ALLOWED  
 **Package:** 05 — Celestial Data  
 **Authority:** Owner explicitly approved the sequence adjustment on 2026-11-20: defer Gói 04 and prioritize Gói 05, followed by Gói 06.
 
@@ -78,5 +78,5 @@ The full legacy `npm test` suite was attempted during verification and exposed t
 - The full legacy `npm test` suite also runs Gói 02 foundation checks. Those currently fail on assumptions that a static GitHub Pages host can emit dynamic `Cache-Control` and HTTP security headers. Those Gói 02 limitations remain open and are not represented as passing; Gói 05 runs its package-scoped tests separately.
 - Physical-device performance and Gói 03 acceptance remain separate open items.
 
-## 10. Handover
-The Gói 05 implementation is ready for owner review. Do not begin Gói 06 implementation before owner review and explicit acceptance of Gói 05. Gói 04 remains deferred, not cancelled.
+## 10. Owner review and handover
+On 2026-11-20 the owner explicitly granted provisional acceptance of Gói 05 and authorized immediate Gói 06 implementation. This is not a claim that manual browser/device review has occurred. Gói 05 remains editable: factual corrections, content improvements, accessibility fixes and integration adjustments may be made without discarding its canonical IDs or Home World invariant. Gói 06 uses the current canonical data and must not imply that the map is a physically accurate orbital simulation. Gói 04 remains implemented and available for owner review.

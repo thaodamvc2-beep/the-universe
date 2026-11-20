@@ -128,3 +128,75 @@
 .hero-identity-copy em{color:#a8afca;font-size:.48rem;font-style:normal;letter-spacing:.08em}
 @media(max-width:760px){.hero-identity-card{bottom:1%;left:0;min-width:190px;padding:.55rem}.hero-identity-portrait{width:3rem;height:3rem}.header-identity-name{max-width:4.5rem}}
 @media(max-width:520px){.hero-identity-card{bottom:-1%;left:0;min-width:175px}.hero-art{min-height:390px}.hero-earth{width:58%}.hero-identity-copy>span{font-size:.42rem}.hero-identity-copy strong{font-size:.95rem}.hero-identity-copy em{font-size:.42rem}}
+
+
+/* Gói 06 — integrated Solar System navigation */
+.cosmic-map-page{position:relative;isolation:isolate;min-height:100svh;overflow:hidden;background:radial-gradient(ellipse at 52% 40%,rgba(52,63,132,.2),transparent 52%),#060916;color:#f0effb}
+.map-starfield{position:absolute;z-index:-1;inset:0;pointer-events:none;opacity:.38;background-image:radial-gradient(1px 1px at 12% 18%,#fff 98%,transparent),radial-gradient(1px 1px at 28% 78%,#c9d6ff 98%,transparent),radial-gradient(1px 1px at 57% 13%,#fff 98%,transparent),radial-gradient(1px 1px at 84% 26%,#d7dfff 98%,transparent),radial-gradient(1px 1px at 73% 84%,#fff 98%,transparent);background-size:330px 280px}
+.map-heading{display:flex;width:min(100% - 9vw,1440px);align-items:flex-end;justify-content:space-between;gap:2rem;margin:2.2rem auto 1.5rem}
+.map-heading .eyebrow{margin-bottom:.8rem}
+.map-heading h1{margin:0;font-family:Georgia,"Times New Roman",serif;font-size:clamp(2rem,4vw,3.6rem);font-weight:400;letter-spacing:-.045em;line-height:1.08}
+.map-description{max-width:650px;margin:.75rem 0 .55rem;color:#adb4d0;font-size:.84rem;line-height:1.7}
+.map-hierarchy{margin:0;color:#8f9bc1;font-size:.56rem;letter-spacing:.17em}
+.map-companion{display:flex;align-items:center;gap:.75rem;flex:none;padding:.55rem .8rem;border:1px solid rgba(190,196,236,.16);background:rgba(13,18,39,.72);color:#f2efff;text-decoration:none}
+.map-companion .avatar-portrait{width:2.8rem;height:2.8rem}
+.map-companion small,.map-companion strong{display:block}
+.map-companion small{color:#a99fff;font-size:.48rem;letter-spacing:.1em}
+.map-companion strong{margin-top:.25rem;font-size:.78rem;font-weight:550}
+.map-workspace{display:grid;width:min(100% - 9vw,1440px);grid-template-columns:minmax(0,1.8fr) minmax(285px,.8fr);gap:1.2rem;margin:0 auto 2rem}
+.map-main-column{min-width:0}
+.cosmic-map-stage{position:relative;min-height:430px;aspect-ratio:1000/520;overflow:hidden;border:1px solid rgba(178,190,239,.18);background:radial-gradient(ellipse at 50% 50%,rgba(31,44,94,.42),rgba(7,12,30,.82) 65%,rgba(4,7,19,.96));box-shadow:inset 0 0 100px rgba(78,85,166,.12)}
+.map-nebula{position:absolute;width:42%;height:36%;border-radius:50%;filter:blur(55px);opacity:.2;pointer-events:none}
+.map-nebula-one{top:10%;left:18%;background:#6a4fb8}
+.map-nebula-two{right:3%;bottom:4%;background:#267c9a}
+.map-orbits{position:absolute;inset:0;width:100%;height:100%;overflow:visible}
+.map-orbits ellipse{fill:none;stroke:rgba(159,174,225,.14);stroke-width:1.2;stroke-dasharray:3 8}
+.map-marker{position:absolute;z-index:2;display:flex;min-width:2.6rem;flex-direction:column;align-items:center;gap:.28rem;transform:translate(-50%,-50%);padding:.25rem;border:0;background:transparent;color:#cbd2eb;cursor:pointer}
+.map-marker-orb{display:block;width:clamp(13px,1.7vw,21px);height:clamp(13px,1.7vw,21px);border:1px solid rgba(255,255,255,.5);border-radius:50%;background:radial-gradient(circle at 32% 28%,#f5f0d2,#9a8a5a 50%,#27203b 83%);box-shadow:0 0 13px rgba(220,210,255,.25);transition:transform .2s,box-shadow .2s}
+.map-marker-earth .map-marker-orb{width:clamp(21px,2.8vw,34px);height:clamp(21px,2.8vw,34px);background:radial-gradient(circle at 30% 25%,#b6f2ff,#2877ba 48%,#10254e 82%);box-shadow:0 0 24px rgba(81,178,255,.62)}
+.map-marker-moon .map-marker-orb{background:radial-gradient(circle at 32% 28%,#fff,#a9b2c7 52%,#343c58 84%)}
+.map-marker-mars .map-marker-orb{background:radial-gradient(circle at 30% 25%,#ffc5a1,#b94e35 52%,#50233b 85%)}
+.map-marker-jupiter .map-marker-orb{width:clamp(24px,3vw,37px);height:clamp(24px,3vw,37px);background:repeating-linear-gradient(0deg,#c49b71 0 4px,#e7d1ae 4px 7px,#9c7159 7px 10px)}
+.map-marker-saturn .map-marker-orb{width:clamp(21px,2.6vw,31px);height:clamp(21px,2.6vw,31px);background:radial-gradient(circle at 30% 28%,#f7e4b5,#b78c5b 58%,#4d3b55 86%);box-shadow:0 0 0 5px rgba(203,178,139,.22),0 0 0 8px rgba(203,178,139,.1)}
+.map-marker-uranus .map-marker-orb{background:radial-gradient(circle at 32% 25%,#d5ffff,#6ebdc5 52%,#294c78 86%)}
+.map-marker-neptune .map-marker-orb{background:radial-gradient(circle at 30% 24%,#a5c8ff,#3157b5 54%,#151d54 86%)}
+.map-marker-venus .map-marker-orb{background:radial-gradient(circle at 32% 25%,#fff0c5,#d2a76a 54%,#674a56 86%)}
+.map-marker-mercury .map-marker-orb{background:radial-gradient(circle at 32% 25%,#ddd6cc,#807d82 55%,#343344 86%)}
+.map-marker-sun .map-marker-orb{width:clamp(28px,4vw,48px);height:clamp(28px,4vw,48px);background:radial-gradient(circle at 35% 30%,#fff9cf,#ffb34d 55%,#a64e43 85%);box-shadow:0 0 26px rgba(255,175,88,.48)}
+.map-marker-name{font-size:clamp(.48rem,.65vw,.62rem);text-shadow:0 1px 7px #050916;white-space:nowrap}
+.map-marker.is-selected .map-marker-orb{transform:scale(1.2);box-shadow:0 0 0 5px rgba(187,174,255,.19),0 0 26px rgba(172,158,255,.75)}
+.map-marker.is-selected .map-marker-name{color:#fff}
+.map-home-pin{padding:.18rem .35rem;border:1px solid rgba(111,202,223,.4);background:rgba(10,46,67,.8);color:#9feaff;font-size:.42rem;letter-spacing:.08em;white-space:nowrap}
+.map-coordinate{position:absolute;z-index:1;color:#8490b3;font-size:.47rem;letter-spacing:.14em;pointer-events:none}
+.map-coordinate-top{top:1rem;left:1rem}
+.map-coordinate-bottom{right:1rem;bottom:.8rem;font-size:.4rem}
+.map-scale-note{margin:.6rem 0 .8rem;color:#858eae;font-size:.57rem;line-height:1.6}
+.map-destination-strip{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:.45rem}
+.map-destination-chip{display:flex;min-width:0;min-height:48px;align-items:center;gap:.42rem;padding:.45rem .5rem;border:1px solid rgba(173,185,225,.13);background:rgba(12,17,38,.72);color:#cbd1e7;font-size:.63rem;text-align:left;cursor:pointer}
+.map-destination-chip.is-selected{border-color:rgba(183,168,255,.65);background:rgba(76,67,126,.25);color:#fff}
+.map-chip-orb{width:15px;height:15px;flex:none}
+.map-destination-chip small{margin-left:auto;color:#91dce9;font-size:.4rem}
+.map-detail-panel{position:relative;display:flex;min-width:0;flex-direction:column;padding:1.2rem;border:1px solid rgba(181,190,230,.17);background:linear-gradient(155deg,rgba(20,25,54,.94),rgba(7,11,27,.96))}
+.map-detail-top{display:flex;justify-content:space-between;gap:.6rem;color:#b8adff;font-size:.49rem;letter-spacing:.12em}
+.map-detail-planet{width:clamp(3.4rem,6vw,5rem);height:clamp(3.4rem,6vw,5rem);margin:1.15rem auto .7rem;border-radius:50%;box-shadow:0 0 34px rgba(152,154,255,.18)}
+.map-detail-panel h2{margin:0;text-align:center;font-family:Georgia,"Times New Roman",serif;font-size:1.8rem;font-weight:400}
+.map-detail-kind{margin:.3rem 0 .7rem;color:#9ea8c7;font-size:.58rem;text-align:center}
+.map-home-status{margin:0 0 .8rem;color:#8edce7;font-size:.53rem;letter-spacing:.09em;text-align:center}
+.map-detail-description{margin:.4rem 0;color:#b8bfd6;font-size:.7rem;line-height:1.65}
+.map-facts{display:grid;grid-template-columns:1fr 1fr;gap:.65rem;margin:.8rem 0;padding:.75rem 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.map-facts span,.map-facts strong{display:block}
+.map-facts span{color:#8791b0;font-size:.47rem;letter-spacing:.06em}
+.map-facts strong{margin-top:.25rem;color:#e7e8f7;font-size:.66rem;font-weight:500;line-height:1.45}
+.map-exploration-note{margin:.2rem 0;color:#b7bdd2;font-size:.67rem;line-height:1.6}
+.map-giant-notice{margin:.6rem 0 0;padding:.55rem;border-left:2px solid #d3a977;background:rgba(135,94,51,.12);color:#e3c69e;font-size:.58rem;line-height:1.55}
+.map-detail-panel .world-source{margin:.75rem 0}
+.map-preview-button{min-height:2.65rem;margin-top:.45rem;border:1px solid rgba(192,181,255,.55);background:rgba(115,99,188,.2);color:#f3efff;font-size:.57rem;letter-spacing:.1em;cursor:pointer}
+.map-preview-status{margin:.5rem 0 0;color:#9ce2d0;font-size:.62rem;line-height:1.5}
+.map-recovery-actions{display:grid;grid-template-columns:1fr 1fr;gap:.5rem;margin-top:.8rem}
+.map-recovery-actions button{min-height:2.5rem;padding:.45rem;border:1px solid rgba(137,205,219,.32);background:rgba(29,92,110,.14);color:#b9e9ef;font-size:.5rem;letter-spacing:.06em;cursor:pointer}
+.map-preview-disclaimer{margin:.65rem 0 0;color:#828ba9;font-size:.52rem;line-height:1.5}
+.map-footer{display:flex;width:min(100% - 9vw,1440px);justify-content:space-between;gap:1rem;margin:0 auto;padding:1rem 0 1.6rem;border-top:1px solid rgba(197,200,238,.1);color:#818ba8;font-size:.53rem;line-height:1.6}
+.map-footer a{color:#c8beff;text-decoration:none;white-space:nowrap}
+@media(max-width:980px){.map-workspace{grid-template-columns:minmax(0,1.4fr) minmax(270px,.9fr)}.map-destination-strip{grid-template-columns:repeat(5,minmax(0,1fr))}.map-destination-chip{justify-content:center;padding:.4rem .2rem}.map-destination-chip span:nth-child(2){font-size:.52rem}}
+@media(max-width:760px){.map-heading,.map-workspace,.map-footer{width:calc(100% - 2rem)}.map-heading{align-items:flex-start;margin-top:2rem}.map-companion{display:none}.map-workspace{grid-template-columns:1fr;gap:.8rem}.cosmic-map-stage{min-height:340px}.map-detail-panel{padding:1rem}.map-detail-description{font-size:.75rem}.map-destination-strip{grid-template-columns:repeat(5,minmax(0,1fr));gap:.3rem}.map-destination-chip{min-height:54px;flex-direction:column;gap:.2rem}.map-destination-chip small{display:none}.map-footer{flex-direction:column}}
+@media(max-width:460px){.map-heading h1{font-size:2.25rem}.cosmic-map-stage{min-height:310px}.map-coordinate{font-size:.38rem}.map-marker{min-width:1.7rem}.map-marker-name{font-size:.43rem}.map-destination-chip span:nth-child(2){font-size:.47rem}.map-detail-panel h2{font-size:1.6rem}}
