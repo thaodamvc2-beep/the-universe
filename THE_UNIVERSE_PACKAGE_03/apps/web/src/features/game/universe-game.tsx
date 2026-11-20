@@ -45,13 +45,13 @@ export function UniverseGame(){
   try{
    socket=new WebSocket(endpoint);
    socket.onopen=()=>{setNetworkStatus('Đã kết nối máy chủ · đang đồng bộ');socket.send(JSON.stringify({type:'join',player:{id:guestIdentity?.guestId??'guest',nickname,avatarId}}))};
-   socket.onmessage=e=>{try{const msg=JSON.parse(String(e.data)) as {type?:string;players?:RemotePlayer[]};if(msg.type==='players'&&Array.isArray(msg.players))setRemotePlayers(msg.players.filter(p=>p.id!==(guestIdentity?.id??'guest')))}catch{/* Ignore malformed realtime messages. */}};
+   socket.onmessage=e=>{try{const msg=JSON.parse(String(e.data)) as {type?:string;players?:RemotePlayer[]};if(msg.type==='players'&&Array.isArray(msg.players))setRemotePlayers(msg.players.filter(p=>p.id!==(guestIdentity?.guestId??'guest')))}catch{/* Ignore malformed realtime messages. */}};
    socket.onerror=()=>setNetworkStatus('Không thể kết nối máy chủ nhiều người chơi');
    socket.onclose=()=>setNetworkStatus('Máy chủ nhiều người chơi đã ngắt kết nối');
-   const heartbeat=window.setInterval(()=>{if(socket.readyState===WebSocket.OPEN)socket.send(JSON.stringify({type:'state',player:{id:guestIdentity?.id??'guest',nickname,avatarId,position:flightRef.current.position.toArray()}}))},180);
+   const heartbeat=window.setInterval(()=>{if(socket.readyState===WebSocket.OPEN)socket.send(JSON.stringify({type:'state',player:{id:guestIdentity?.guestId??'guest',nickname,avatarId,position:flightRef.current.position.toArray()}}))},180);
    return()=>{window.clearInterval(heartbeat);socket.close()};
   }catch{setNetworkStatus('Không thể khởi tạo kết nối nhiều người chơi')}
- },[avatarId,guestIdentity?.id,nickname]);
+ },[avatarId,guestIdentity?.guestId,nickname]);
 
  const resetHome=()=>{flightRef.current.position.set(0,0,2.39);flightRef.current.yaw=Math.PI/2;flightRef.current.pitch=0;flightRef.current.groundedId='earth';setCurrentBodyId('earth');setTargetId(null);input.current={forward:false,back:false,left:false,right:false,up:false,down:false,land:false,takeoff:false,boost:false}};
  const takeoff=()=>{if(flightRef.current.groundedId){const b=bodies.find(x=>x.id===flightRef.current.groundedId);if(b){const n=flightRef.current.position.clone().sub(new Vector3(...b.position)).normalize();flightRef.current.position.addScaledVector(n,1.25)}flightRef.current.groundedId=null;setCurrentBodyId(null)}input.current.takeoff=true};
