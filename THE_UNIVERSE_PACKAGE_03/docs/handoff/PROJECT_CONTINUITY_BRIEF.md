@@ -95,7 +95,7 @@ Important: The owner now wants Gói 04 implemented and the currently delivered w
 - GitHub Pages workflow performs package-scoped tests, ESLint, TypeScript typecheck, static build and deploy.
 
 Latest integrated release evidence:
-- Unified playable game homepage deployment: [GitHub Actions run 44701342791](https://github.com/thaodamvc2-beep/the-universe/actions/runs/44701342791) — success; 23 tests, ESLint, TypeScript, static production build and GitHub Pages deployment passed. Code commit: `276ac4a720e8c00bfaf4dc4520a9456e9c76b260`.
+- Unified playable game homepage deployment: [GitHub Actions run 44701854209](https://github.com/thaodamvc2-beep/the-universe/actions/runs/44701854209) — success; 23 tests, ESLint, TypeScript, static production build and GitHub Pages deployment passed. Latest game code commit: `0e8bcf611ce970ac361e6a991898028605ab63e8`.
 - The homepage game is live at `https://thaodamvc2-beep.github.io/the-universe/`.
 - Previous integrated release commit: `18945ff5845e792c2b69bd901397237ca268d475`.
 - Previous GitHub Actions run: [44661753954](https://github.com/thaodamvc2-beep/the-universe/actions/runs/44661753954) — success, 18 tests, lint, typecheck, static build and GitHub Pages deployment.
