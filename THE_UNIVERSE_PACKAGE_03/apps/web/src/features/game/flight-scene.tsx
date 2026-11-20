@@ -15,7 +15,7 @@ function Stars(){
  return <group ref={ref}><points><bufferGeometry><bufferAttribute attach="attributes-position" args={[positions,3]}/></bufferGeometry><pointsMaterial color="#dce8ff" size={.11} sizeAttenuation transparent opacity={.88}/></points>;
 }
 function Planet({body}:{body:Body}){
- const ref=useRef<Group>(null);useFrame((_s,d)=>{if(ref.current)ref.current.rotation.y+=d*(body.id==='earth'?.018:.006)});
+ const ref=useRef<Group>(null);useFrame((_s,d)=>{if(ref.current)ref.current.rotation.y+=d*(body.id === 'earth' ? 0.018 : 0.006)});
  return <group ref={ref} position={body.position}>
   <mesh><sphereGeometry args={[body.radius,36,32]}/><meshStandardMaterial color={body.color} roughness={.9} emissive={body.id==='sun'?'#d97825':'#000000'} emissiveIntensity={body.id==='sun'?.8:0}/></mesh>
   {body.id==='earth'&&<mesh scale={1.035}><sphereGeometry args={[body.radius,32,24]}/><meshBasicMaterial color="#73c8ff" transparent opacity={.13} side={BackSide}/></mesh>}
