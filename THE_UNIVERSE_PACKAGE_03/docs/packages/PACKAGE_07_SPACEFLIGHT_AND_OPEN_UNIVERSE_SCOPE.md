@@ -1,8 +1,8 @@
 # THE UNIVERSE — Gói 07: Spaceflight & Open Universe
 
-**Version:** 1.0  
+**Version:** 1.1  
 **Date:** 2026-11-20  
-**Status:** IN PROGRESS — CORE FLIGHT SLICE IMPLEMENTED; AI AND ONLINE MULTIPLAYER BACKEND BLOCKED  
+**Status:** CORE FLIGHT SLICE DEPLOYED — MANUAL REVIEW PENDING; AI AND ONLINE MULTIPLAYER BACKEND BLOCKED  
 **Owner authorization:** Explicit request on 2026-11-20 to complete six-axis avatar flight, interplanetary travel/landing, expanded explored-body catalogue, infinite universe generation, ambient audio and multiplayer, then integrate as one web game.
 
 ## 1. Product outcome
@@ -69,3 +69,8 @@ Owner reported the previous build works similarly on desktop and mobile. This ne
 ## 6. Current truthfulness rule
 
 A procedural world is not AI. A configured WebSocket endpoint is not multiplayer until it is live and tested with two devices. Do not mark this package complete while either service is unavailable.
+
+
+## 7. Deployment evidence update (2026-11-20)
+
+GitHub Actions run 44706387131 completed successfully for commit `f694462c4a5f191b1dec8c3c42cbacf2f6e1df20`: 23 automated tests, ESLint, TypeScript, static production build and GitHub Pages deployment all passed. This verifies compilation and deployment, not live visual or two-device multiplayer testing. The AI generation endpoint and realtime WebSocket endpoint are not provisioned; those features remain blocked.

@@ -1,6 +1,6 @@
 # THE UNIVERSE — Gói 07 Decision Log
 
-**Version:** 1.0  
+**Version:** 1.1  
 **Date:** 2026-11-20  
 **Authority:** Owner's explicit request to complete flight, interplanetary exploration, expanded destinations, infinite universe, ambient sound and multiplayer.
 
@@ -38,4 +38,9 @@
 | ID | Date | Change | Status |
 |---|---|---|---|
 | P07-CH-01 | 2026-11-20 | Owner authorized integrated spaceflight, planetary landing, expanded explored-body catalogue, infinite world generation, ambient sound and multiplayer. | Authorized |
-| P07-CH-02 | 2026-11-20 | Added flight scene, movement controls, destination approach/landing, expanded astronomical targets, procedural fictional sectors and optional audio. | Code in progress; CI/device review pending |
+| P07-CH-02 | 2026-11-20 | Added flight scene, movement controls, destination approach/landing, expanded astronomical targets, procedural fictional sectors and optional audio. | Core flight slice deployed; manual review pending; AI/realtime backend blocked |
+
+
+## Deployment update (2026-11-20)
+- GitHub Actions run 44706387131 passed 23 tests, ESLint, TypeScript, static build and GitHub Pages deployment at commit `f694462c4a5f191b1dec8c3c42cbacf2f6e1df20`.
+- This is a deployable flight slice, not final full-production art. Real AI generation and networked multiplayer remain unavailable until secure backend endpoints are provisioned and tested with separate devices.
