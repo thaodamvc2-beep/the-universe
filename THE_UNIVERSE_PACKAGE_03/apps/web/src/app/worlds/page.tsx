@@ -1,17 +1,16 @@
 'use client';
 
 import { useMemo, useState } from 'react';
+import type { CSSProperties } from 'react';
 import Link from 'next/link';
 import { SiteHeader } from '@/components/site-header';
 import { useSite } from '@/components/site-provider';
 import bodies from '@/data/celestial-bodies.json';
 
-type Body = (typeof bodies)[number];
-
 export default function WorldsPage() {
   const { t, language } = useSite();
   const [selectedId, setSelectedId] = useState('earth');
-  const selected = useMemo(() => bodies.find((body) => body.id === selectedId) ?? bodies[3], [selectedId]);
+  const selected = useMemo(() => bodies.find((body) => body.id === selectedId) ?? bodies.find((body) => body.id === 'earth')!, [selectedId]);
   const number = (value: number | null) => value === null ? '—' : value.toLocaleString(language === 'vi' ? 'vi-VN' : 'en-US', { maximumFractionDigits: 3 });
   return (
     <main id="main-content" className="worlds-page">
@@ -24,7 +23,7 @@ export default function WorldsPage() {
       <section className="worlds-layout" aria-label={t('selectWorld')}>
         <div className="worlds-grid">
           {bodies.map((body) => (
-            <button key={body.id} type="button" className="world-card" style={{ '--orb': body.id === 'earth' ? '#2c83ba' : '#b9a0a0' } as React.CSSProperties} aria-pressed={selectedId === body.id} onClick={() => setSelectedId(body.id)}>
+            <button key={body.id} type="button" className="world-card" style={{ '--orb': body.id === 'earth' ? '#2c83ba' : '#b9a0a0' } as CSSProperties} aria-pressed={selectedId === body.id} onClick={() => setSelectedId(body.id)}>
               <span className={`world-orb ${body.id}`} aria-hidden="true" />
               <span className="world-card-name">{body.name.toUpperCase()}</span>
               <span className="world-card-kind">{body.kind.toUpperCase()}</span>
@@ -45,7 +44,7 @@ export default function WorldsPage() {
           </div>
           <p className="world-explore-note"><strong>{t('exploreNote')}:</strong> {selected.explorationNote}</p>
           <a className="world-source" href={selected.sourceUrl} target="_blank" rel="noreferrer">{t('sourceLabel')} ↗</a>
-          {selected.isHomeWorld ? <p className="world-home-note">✦ {t('homeReturn')}</p> : null}
+          {selected.id === 'earth' ? <p className="world-home-note">✦ {t('homeReturn')}</p> : null}
         </aside>
       </section>
       <footer className="worlds-footer"><Link className="back-home-link" href="/">{t('worldsBack')}</Link><span>REAL ASTRONOMY · EARTH REMAINS HOME</span></footer>
