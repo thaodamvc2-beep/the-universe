@@ -20,7 +20,9 @@ This instruction supersedes the earlier temporary decision to defer Gói 04. Do 
 - GitHub repository: https://github.com/thaodamvc2-beep/the-universe
 - Default branch: `main`
 - Public website: https://thaodamvc2-beep.github.io/the-universe/
-- Celestial catalogue: https://thaodamvc2-beep.github.io/the-universe/worlds/\n- Avatar and nickname: https://thaodamvc2-beep.github.io/the-universe/avatar/\n- Optional sign-in information: https://thaodamvc2-beep.github.io/the-universe/account/
+- Celestial catalogue: https://thaodamvc2-beep.github.io/the-universe/worlds/
+- Avatar and nickname: https://thaodamvc2-beep.github.io/the-universe/avatar/
+- Optional sign-in information: https://thaodamvc2-beep.github.io/the-universe/account/
 - Active website source: `THE_UNIVERSE_PACKAGE_03/apps/web/`
 - Active GitHub Pages workflow: `.github/workflows/static.yml`
 - Build working directory: `THE_UNIVERSE_PACKAGE_03/`
@@ -89,7 +91,13 @@ Important: The owner now wants Gói 04 implemented and the currently delivered w
 - Site header and language provider under `apps/web/src/components/`.
 - GitHub Pages workflow performs package-scoped tests, ESLint, TypeScript typecheck, static build and deploy.
 
-Latest integrated release evidence:\n- Commit: `ef66790b2bd2822054f16ba953856d8b5c5812dc`.\n- GitHub Actions run: [44661437139](https://github.com/thaodamvc2-beep/the-universe/actions/runs/44661437139) — success.\n- 18 automated tests passed, 0 failed; ESLint, TypeScript typecheck, static production build and GitHub Pages deployment all passed.\n- The workflow tests the combined current Gói 03/04/05 source. Manual browser/device review remains pending.\n\nKnown verification gaps:
+Latest integrated release evidence:
+- Commit: `ef66790b2bd2822054f16ba953856d8b5c5812dc`.
+- GitHub Actions run: [44661437139](https://github.com/thaodamvc2-beep/the-universe/actions/runs/44661437139) — success.
+- 18 automated tests passed, 0 failed; ESLint, TypeScript typecheck, static production build and GitHub Pages deployment all passed.
+- The workflow tests the combined current Gói 03/04/05 source. Manual browser/device review remains pending.
+
+Known verification gaps:
 - Legacy Gói 02 tests assume dynamic Cache-Control and configurable HTTP security headers; static GitHub Pages cannot provide these response headers. These failures must remain documented, not falsely marked as passing.
 - Manual browser and physical mobile review has not been performed by the owner.
 - Current public site is a static prototype, not the complete backend-enabled 3D product.
@@ -105,7 +113,8 @@ Latest integrated release evidence:\n- Commit: `ef66790b2bd2822054f16ba953856d8b
 7. Run actual tests/build/deployment and report exact evidence. Never claim success before GitHub Actions confirms it.
 8. Preserve accepted functionality and all product invariants. Do not delete uncertain/legacy project folders.
 9. After important changes, update this file with commit SHA, workflow run, package status and remaining gaps.
-10. Explain to the owner in plain Vietnamese what is live, what can be tested, and what remains a prototype.\n11. Keep this continuity brief current after each important commit and deployment.
+10. Explain to the owner in plain Vietnamese what is live, what can be tested, and what remains a prototype.
+11. Keep this continuity brief current after each important commit and deployment.
 
 ## 8. Resume prompt
 
