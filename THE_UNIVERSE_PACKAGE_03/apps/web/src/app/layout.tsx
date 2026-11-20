@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from 'next';
 import type { ReactNode } from 'react';
 import { SiteProvider } from '@/components/site-provider';
 import './globals.css';
+import './universe-game.css';
 
 const appUrl =
   process.env.NEXT_PUBLIC_SITE_URL ??

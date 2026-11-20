@@ -1,5 +1,5 @@
-import { CosmicMap } from '@/components/cosmic-map';
+import { UniverseGame } from '@/features/game/universe-game';
 
 export default function HomePage() {
-  return <CosmicMap />;
+  return <UniverseGame />;
 }
