@@ -9,7 +9,7 @@ import {
   saveGuestIdentity,
   updateGuestIdentity,
   validateNickname,
-} from '../apps/web/src/lib/identity/guest-identity.js';
+} from '../apps/web/src/lib/identity/guest-identity.mjs';
 
 function memoryStorage(initial = {}) {
   const values = new Map(Object.entries(initial));
