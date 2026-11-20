@@ -12,7 +12,7 @@ export type RemotePlayer={id:string;nickname:string;avatarId:AvatarId;position:[
 function Stars(){
  const ref=useRef<Group>(null);useFrame((_s,d)=>{if(ref.current)ref.current.rotation.y+=d*.0007});
  const positions=useMemo(()=>{const a=new Float32Array(3600*3);let seed=197903;const rand=()=>{seed=(seed*16807)%2147483647;return(seed-1)/2147483646};for(let i=0;i<3600;i++){const r=24+rand()*360,t=rand()*Math.PI*2,p=Math.acos(2*rand()-1);a[i*3]=r*Math.sin(p)*Math.cos(t);a[i*3+1]=r*Math.cos(p);a[i*3+2]=r*Math.sin(p)*Math.sin(t)}return a},[]);
- return <group ref={ref}><points><bufferGeometry><bufferAttribute attach="attributes-position" args={[positions,3]}/></bufferGeometry><pointsMaterial color="#dce8ff" size={.11} sizeAttenuation transparent opacity={.88}/></points>;
+ return <group ref={ref}><points><bufferGeometry><bufferAttribute attach="attributes-position" args={[positions,3]}/></bufferGeometry><pointsMaterial color="#dce8ff" size={.11} sizeAttenuation transparent opacity={.88}/></points></group>;
 }
 function Planet({body}:{body:Body}){
  const ref=useRef<Group>(null);useFrame((_s,d)=>{if(ref.current)ref.current.rotation.y+=d*(body.id === 'earth' ? 0.018 : 0.006)});
