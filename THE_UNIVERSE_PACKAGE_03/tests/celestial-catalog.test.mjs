@@ -37,3 +37,12 @@ test('gas and ice giants are explicitly not treated as walkable solid worlds', (
     assert.match(body.explorationNote, /not|no conventional|without/i);
   }
 });
+
+test('every celestial record has complete Vietnamese copy', () => {
+  for (const body of bodies) {
+    assert.ok(body.kindVi);
+    assert.ok(body.descriptionVi);
+    assert.ok(body.atmosphereVi);
+    assert.ok(body.explorationNoteVi);
+  }
+});
