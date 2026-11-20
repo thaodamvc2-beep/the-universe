@@ -25,7 +25,7 @@ export default function WorldsPage() {
             <button key={body.id} type="button" className="world-card" aria-pressed={selectedId === body.id} onClick={() => setSelectedId(body.id)}>
               <span className={`world-orb ${body.id}`} aria-hidden="true" />
               <span className="world-card-name">{body.name.toUpperCase()}</span>
-              <span className="world-card-kind">{body.kind.toUpperCase()}</span>
+              <span className="world-card-kind">{(language === 'vi' ? body.kindVi : body.kind).toUpperCase()}</span>
             </button>
           ))}
         </div>
@@ -33,15 +33,15 @@ export default function WorldsPage() {
           <div className="world-detail-top"><span>{t('realObject')}</span><span>01 / 10</span></div>
           <span className={`world-orb ${selected.id}`} aria-hidden="true" />
           <h2>{selected.name}</h2>
-          <p className="world-detail-type">{selected.kind.toUpperCase()}</p>
-          <p className="world-detail-description">{selected.description}</p>
+          <p className="world-detail-type">{(language === 'vi' ? selected.kindVi : selected.kind).toUpperCase()}</p>
+          <p className="world-detail-description">{language === 'vi' ? selected.descriptionVi : selected.description}</p>
           <div className="world-facts">
             <div className="world-fact"><span>{t('meanDistance')}</span><strong>{selected.meanDistanceAu === null ? '—' : `${number(selected.meanDistanceAu)} AU`}</strong></div>
             <div className="world-fact"><span>{t('radius')}</span><strong>{number(selected.radiusEarth)}×</strong></div>
-            <div className="world-fact"><span>{t('atmosphere')}</span><strong>{selected.atmosphere}</strong></div>
-            <div className="world-fact"><span>{t('bodyType')}</span><strong>{selected.kind}</strong></div>
+            <div className="world-fact"><span>{t('atmosphere')}</span><strong>{language === 'vi' ? selected.atmosphereVi : selected.atmosphere}</strong></div>
+            <div className="world-fact"><span>{t('bodyType')}</span><strong>{language === 'vi' ? selected.kindVi : selected.kind}</strong></div>
           </div>
-          <p className="world-explore-note"><strong>{t('exploreNote')}:</strong> {selected.explorationNote}</p>
+          <p className="world-explore-note"><strong>{t('exploreNote')}:</strong> {language === 'vi' ? selected.explorationNoteVi : selected.explorationNote}</p>
           <a className="world-source" href={selected.sourceUrl} target="_blank" rel="noreferrer">{t('sourceLabel')} ↗</a>
           {selected.id === 'earth' ? <p className="world-home-note">✦ {t('homeReturn')}</p> : null}
         </aside>
