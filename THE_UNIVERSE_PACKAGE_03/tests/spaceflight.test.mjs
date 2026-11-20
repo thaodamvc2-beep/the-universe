@@ -30,8 +30,8 @@ test('procedural worlds are explicitly separated from real astronomical destinat
  const game=await read('apps/web/src/features/game/universe-game.tsx');
  assert.match(data,/Thế giới hư cấu/);
  assert.match(data,/real:false/);
- assert.match(game,/makeImaginedWorlds/);
- assert.match(game,/NEXT_PUBLIC_UNIVERSE_AI_ENDPOINT/);
+ assert.match(game,/makeProceduralRegion/);
+ assert.doesNotMatch(game,/NEXT_PUBLIC_UNIVERSE_AI_ENDPOINT|requestAI|Sáng tạo bằng AI/);
 });
 
 test('ambient audio and optional realtime multiplayer adapters are not misrepresented as connected by default',async()=>{
@@ -39,5 +39,16 @@ test('ambient audio and optional realtime multiplayer adapters are not misrepres
  assert.match(game,/new AudioContext/);
  assert.match(game,/NEXT_PUBLIC_UNIVERSE_REALTIME_URL/);
  assert.match(game,/Chưa kết nối máy chủ nhiều người chơi/);
- assert.match(game,/AI chưa kết nối/);
+ assert.doesNotMatch(game,/AI chưa kết nối|AI phía máy chủ/);
+});
+
+
+test('spaceflight now slows down, avoids planets and lands gently with visible world names',async()=>{
+ const scene=await read('apps/web/src/features/game/flight-scene.tsx');
+ assert.match(scene,/moveAvoidingBodies/);
+ assert.match(scene,/target\\.landable/);
+ assert.match(scene,/PlanetLabel/);
+ assert.match(scene,/camera\\.lookAt/);
+ assert.match(scene,/seated/);
+ assert.match(scene,/4\\.2:1\\.75/);
 });
