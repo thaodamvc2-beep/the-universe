@@ -18,7 +18,7 @@ function Stars(){
 }
 function PlanetLabel({body}:{body:Body}){
  const [texture,setTexture]=useState<CanvasTexture|null>(null);
- useEffect(()=>{const canvas=document.createElement('canvas');canvas.width=512;canvas.height=128;const ctx=canvas.getContext('2d');if(!ctx)return;ctx.fillStyle='rgba(4,10,24,.76)';ctx.beginPath();ctx.roundRect(12,20,488,88,22);ctx.fill();ctx.strokeStyle=body.real?'rgba(158,218,245,.8)':'rgba(205,177,255,.8)';ctx.lineWidth=4;ctx.stroke();ctx.font='600 48px Arial,sans-serif';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillStyle='#f4f5ff';ctx.fillText(body.name,256,66,455);const map=new CanvasTexture(canvas);map.needsUpdate=true;setTexture(map);return()=>map.dispose()},[body.name,body.real]);
+ useEffect(()=>{const canvas=document.createElement('canvas');canvas.width=256;canvas.height=64;const ctx=canvas.getContext('2d');if(!ctx)return;ctx.fillStyle='rgba(4,10,24,.76)';ctx.beginPath();ctx.roundRect(6,10,244,44,11);ctx.fill();ctx.strokeStyle=body.real?'rgba(158,218,245,.8)':'rgba(205,177,255,.8)';ctx.lineWidth=2;ctx.stroke();ctx.font='600 24px Arial,sans-serif';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillStyle='#f4f5ff';ctx.fillText(body.name,128,33,228);const map=new CanvasTexture(canvas);map.needsUpdate=true;setTexture(map);return()=>map.dispose()},[body.name,body.real]);
  if(!texture)return null;
  return <sprite position={[0,body.radius+.48,0]} scale={[Math.max(1.45,Math.min(4.8,body.name.length*.19)),.48,1]}><spriteMaterial map={texture} transparent depthWrite={false} /></sprite>;
 }
