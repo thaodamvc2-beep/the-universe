@@ -22,7 +22,7 @@ export function UniverseGame(){
  const current=bodies.find(b=>b.id===currentBodyId);
  const onArrive=useCallback((id:string)=>{setCurrentBodyId(id);setTargetId(null)},[]);
 
- useEffect(()=>{const timer=window.setInterval(()=>{const p=flightRef.current.position;if(flightRef.current.groundedId==='earth'&&p.length()<18)return;const cx=Math.floor(p.x/84),cy=Math.floor(p.y/84),cz=Math.floor(p.z/84);const additions:Body[]=[];for(let x=cx-1;x<=cx+1;x++)for(let y=cy-1;y<=cy+1;y++)for(let z=cz-1;z<=cz+1;z++){const key=[x,y,z].join(':');if(!generatedKeys.current.has(key)){generatedKeys.current.add(key);additions.push(...makeProceduralRegion(x,y,z))}}if(additions.length)setProceduralBodies(old=>[...old,...additions].slice(-180))},1200);return()=>window.clearInterval(timer)},[]);
+ useEffect(()=>{const timer=window.setInterval(()=>{const p=flightRef.current.position;if(p.length()<18)return;const cx=Math.floor(p.x/84),cy=Math.floor(p.y/84),cz=Math.floor(p.z/84);const additions:Body[]=[];for(let x=cx-1;x<=cx+1;x++)for(let y=cy-1;y<=cy+1;y++)for(let z=cz-1;z<=cz+1;z++){const key=[x,y,z].join(':');if(!generatedKeys.current.has(key)){generatedKeys.current.add(key);additions.push(...makeProceduralRegion(x,y,z))}}if(additions.length)setProceduralBodies(old=>[...old,...additions].slice(-180))},1200);return()=>window.clearInterval(timer)},[]);
 
  useEffect(()=>{
   const keys:Record<string,keyof Pick<InputState,'forward'|'back'|'left'|'right'|'up'|'down'>>={w:'forward',ArrowUp:'forward',s:'back',ArrowDown:'back',a:'left',ArrowLeft:'left',d:'right',ArrowRight:'right',' ':'up',Spacebar:'up',c:'down',Control:'down'};
