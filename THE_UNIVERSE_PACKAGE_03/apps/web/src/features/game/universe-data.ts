@@ -49,10 +49,24 @@ export const REAL_DESTINATIONS:Body[] = [
 ,{id:'itokawa',name:'Itokawa',kind:'Tiểu hành tinh',position:[38,5,4],radius:.13,color:'#8f8278',landable:true,real:true,description:'Tiểu hành tinh được Hayabusa lấy mẫu.',sourceUrl:'https://science.nasa.gov/solar-system/asteroids/25143-itokawa/'}
 ,{id:'halley',name:'Sao chổi Halley',kind:'Sao chổi',position:[65,-6,4],radius:.23,color:'#aaa49b',landable:true,real:true,description:'Sao chổi nổi tiếng được tàu vũ trụ quan sát cận cảnh năm 1986.',sourceUrl:'https://science.nasa.gov/solar-system/comets/1p-halley/'}
 ,{id:'tempel-1',name:'Sao chổi Tempel 1',kind:'Sao chổi',position:[68,6,-4],radius:.2,color:'#8d8781',landable:true,real:true,description:'Sao chổi được sứ mệnh Deep Impact và Stardust khảo sát.',sourceUrl:'https://science.nasa.gov/solar-system/comets/9p-tempel-1/'}
-];
-const COLORS=['#8d7de0','#62b8b2','#d58c73','#8da9db','#b9a1c9','#8fbf91'];
+].map(body=>({...body,position:body.position.map(value=>value*.52) as [number,number,number],radius:body.id==='earth'?1.72:body.radius}));
+const COLORS=['#8d7de0','#62b8b2','#d58c73','#8da9db','#b9a1c9','#8fbf91','#e0a9c8','#75a9d5','#c8a77a','#77b8a4'];
+const NAMES=['Asterion','Lumen Vale','Nacre','Veloria','Serein','Eidolon','Mira Sol','Orphia','Caligo','Auralis','Thalassa','Elaris'];
+export function makeProceduralRegion(cx:number,cy:number,cz:number):Body[] {
+ const key=`${cx}:${cy}:${cz}`;
+ let seed=0x45d9f3b^Math.imul(cx+4099,0x27d4eb2d)^Math.imul(cy+8191,0x165667b1)^Math.imul(cz+12289,0x1b873593);
+ seed|=0;const random=()=>{seed=(Math.imul(seed,1664525)+1013904223)|0;return(seed>>>0)/4294967296};
+ const base:[number,number,number]=[cx*84,cy*84,cz*84];
+ const hue=COLORS[Math.floor(random()*COLORS.length)];
+ const count=3+Math.floor(random()*2);
+ return Array.from({length:count},(_,i)=>{
+  const name=NAMES[Math.floor(random()*NAMES.length)];
+  const radius=.42+random()*.85;
+  const color=COLORS[Math.floor(random()*COLORS.length)];
+  const position:[number,number,number]=[base[0]+16+random()*52,base[1]+(random()-.5)*48,base[2]+(random()-.5)*48];
+  return {id:`proc-${key.replaceAll(':','-')}-${i}`,name:`${name} ${Math.abs(cx+cy+cz)%97+1}`,kind:'Hành tinh hư cấu · Sinh tự động',position,radius,color:color||hue,landable:true,real:false,description:'Thế giới được sinh trực tiếp trong trình duyệt bằng thuật toán xác định theo tọa độ không gian; không sử dụng API AI.'};
+ });
+}
 export function makeImaginedWorlds(sector:number):Body[] {
- let seed=84191+sector*991; const random=()=>{seed=(seed*16807)%2147483647;return(seed-1)/2147483646;};
- const names=['Asterion','Lumen Vale','Nacre','Veloria','Serein','Eidolon','Mira Sol','Orphia'];
- return Array.from({length:4},(_,i)=>({id:`sector-${sector}-world-${i}`,name:names[Math.floor(random()*names.length)]+(sector>1?` ${sector}`:''),kind:'Thế giới hư cấu · Sinh tự động',position:[170+sector*32+i*7,(random()-.5)*18,(random()-.5)*24] as [number,number,number],radius:.8+random()*1.1,color:COLORS[Math.floor(random()*COLORS.length)],landable:true,real:false,description:'Thế giới hư cấu được tạo bằng thuật toán procedural theo mã vùng; không phải dữ liệu thiên văn hay kết quả AI.'}));
+ return makeProceduralRegion(sector+2,0,0);
 }
