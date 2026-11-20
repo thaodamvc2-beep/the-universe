@@ -1,9 +1,9 @@
 # THE UNIVERSE — PACKAGE 04 SCOPE & ACCEPTANCE
 
 **Document ID:** TU-PKG-04-001  
-**Version:** 1.3  
+**Version:** 1.4  
 **Date:** 2026-11-20  
-**Status:** READY FOR OWNER REVIEW — DEPLOYED; MANUAL BROWSER REVIEW PENDING  
+**Status:** PROVISIONALLY ACCEPTED FOR INTEGRATION — MANUAL BROWSER REVIEW PENDING  
 **Package:** 04 — Avatar & Nickname  
 **Authority:** The project owner explicitly instructed on 2026-11-20 to execute Gói 04 now and then integrate the available packages into the public website. This supersedes the prior temporary deferral of Gói 04.
 
@@ -127,3 +127,8 @@ Automated tests cover guest identity creation, six stable human-character IDs, l
 ## 12. Handover
 
 After implementation, run the package-specific tests, existing Gói 03/Gói 05 regression tests, ESLint, TypeScript typecheck and production static build. Deploy through the single GitHub Pages workflow. Record the exact commit and workflow run. Do not claim real sign-in, cloud persistence, multiplayer visibility or full 3D avatar functionality.
+
+
+## 13. Owner provisional acceptance and game integration (2026-11-20)
+
+The owner provisionally accepted all existing packages Gói 01–06 for consolidation into one game. The shared guest identity and nickname now appear in the homepage game HUD. The active guest avatar ID selects the procedural 3D character's suit palette; the six original character portraits remain available in the avatar editor and existing site UI. The in-game 3D character is built from local Three.js primitives and is not a rigged 3D conversion of the portrait artwork. Guest identity remains local to the device; real authentication, cloud synchronization and multiplayer avatar state are not implemented. Desktop/mobile visual review and local-storage edge-case review remain open.

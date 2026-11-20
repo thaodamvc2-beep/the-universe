@@ -1,7 +1,7 @@
 # THE UNIVERSE — AGENT INSTRUCTIONS
 
 **Document:** `AGENTS.md`
-**Version:** 1.1
+**Version:** 1.2
 **Created:** 2026-11-19
 **Status:** Project-wide working instructions
 **Applies to:** All AI agents, developers, contributors, and work packages (Gói 01–15)
@@ -161,4 +161,4 @@ At the end of a task, report:
 
 ## 9. Project baseline and authorization note
 
-Gói 01 Version 1.1 was explicitly approved by the project owner on 2026-11-19. The companion Master Spec is therefore the **APPROVED GÓI 01 BASELINE**. That approval did not automatically approve individually pending decisions (D01–D14) or validate proposed performance targets. The owner authorized Gói 02 on 2026-11-19 and delegated the technical decisions relevant to that package. On 2026-11-19 the owner provisionally approved Gói 02 for transition to Gói 03 and explicitly authorized Gói 03. Gói 02 technical verification (dependency installation, lint, typecheck, production build, browser/device checks) remains open and must not be represented as complete. Gói 03 scope is in `docs/packages/PACKAGE_03_SCOPE_AND_ACCEPTANCE.md`; its implementation is not accepted until owner review. Preserve all decision statuses and distinguish provisional transition approval from final technical acceptance.
+Gói 01 Version 1.1 was explicitly approved by the project owner on 2026-11-19. The companion Master Spec is therefore the **APPROVED GÓI 01 BASELINE**. That approval did not automatically approve individually pending decisions (D01–D14) or validate proposed performance targets. The owner authorized Gói 02 on 2026-11-19 and delegated the technical decisions relevant to that package. On 2026-11-19 the owner provisionally approved Gói 02 for transition to Gói 03 and explicitly authorized Gói 03. On 2026-11-20 the owner provisionally accepted all existing packages (Gói 01–06) for consolidation into one integrated game experience. This is provisional acceptance, not a waiver of recorded verification gaps: Gói 02 legacy HTTP-header checks and real-device/browser review remain open; Gói 03 D01 engine comparison and device qualification remain open; Gói 04 avatar review and local-storage edge checks remain open; Gói 05/06 visual review remains open. The owner authorized cross-package integration of the current game baseline. Do not start Gói 07 or later without a separate authorization.

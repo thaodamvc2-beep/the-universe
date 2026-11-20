@@ -1,10 +1,10 @@
 # THE UNIVERSE — PACKAGE 02 SCOPE & ACCEPTANCE
 
 **Document:** `docs/packages/PACKAGE_02_SCOPE_AND_ACCEPTANCE.md`
-**Version:** 1.1
+**Version:** 1.2
 **Created:** 2026-11-19
 **Package:** 02 — Website Foundation
-**Status:** PROVISIONALLY APPROVED FOR TRANSITION — FINAL TECHNICAL VERIFICATION PENDING
+**Status:** PROVISIONALLY ACCEPTED FOR INTEGRATION — LEGACY TECHNICAL GAPS OPEN
 **Authority:** Owner's explicit authorization in the project conversation dated 2026-11-19, following approval of Master Spec v1.1.
 
 ## 1. Objective
@@ -167,8 +167,8 @@ The package must not be described as fully runtime-verified until the dependency
 
 ## 11. Handover and acceptance status
 
-**Package status:** PROVISIONALLY APPROVED FOR TRANSITION — FINAL TECHNICAL VERIFICATION PENDING.
+**Package status:** PROVISIONALLY ACCEPTED BY OWNER FOR THE UNIFIED GAME BASELINE — LEGACY TECHNICAL GAPS REMAIN OPEN.
 
-**Owner decision (2026-11-19):** “Tạm thời phê duyệt Gói 02 để mở tiếp Gói 03 có giao diện trực quan rồi tôi chạy kiểm tra một thể.” This is explicit provisional approval to proceed to Gói 03. It does not mean the outstanding dependency installation, lint, typecheck, production build, Docker or browser/device checks have passed. Those checks remain open for the owner’s combined review.
+**Owner decision (2026-11-19):** “Tạm thời phê duyệt Gói 02 để mở tiếp Gói 03 có giao diện trực quan rồi tôi chạy kiểm tra một thể.” **Owner update (2026-11-20):** the owner provisionally accepted all existing packages Gói 01–06 for consolidation into one game. Gói 02 is therefore provisionally accepted for integration, but this does not waive its recorded legacy limitations: static GitHub Pages cannot provide the original dynamic Cache-Control/security-header behavior, and the old HTTP response-header checks remain unresolved. Current package-scoped tests, lint, typecheck and static production build pass in the integrated workflow. Docker and physical-device verification are not claimed. Gói 03 and later packages remain subject to their own open technical decisions.
 
 No Gói 02 acceptance tag is created at this provisional stage. Final technical acceptance and checkpoint can be recorded after the outstanding checks are run and reviewed. Gói 03 is separately authorized by the same owner instruction and is scoped in `PACKAGE_03_SCOPE_AND_ACCEPTANCE.md`.

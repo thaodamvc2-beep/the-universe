@@ -1,9 +1,9 @@
 # THE UNIVERSE — PACKAGE 03 SCOPE AND ACCEPTANCE
 
 **Document ID:** TU-PKG-03-001
-**Version:** 1.2
+**Version:** 1.3
 **Date:** 2026-11-19
-**Status:** READY FOR OWNER REVIEW — RUNTIME/DEVICE VERIFICATION PENDING
+**Status:** PROVISIONALLY ACCEPTED FOR INTEGRATED GAME BASELINE — DEVICE REVIEW AND D01 OPEN
 **Package:** 03 — Homepage & Language
 **Prerequisite:** Gói 02 provisionally approved for transition by the project owner on 2026-11-19; technical verification remains open.
 
@@ -11,7 +11,7 @@
 
 The project owner explicitly authorized opening Gói 03 after provisionally approving Gói 02 so the owner can review and run the website and prototype checks together. This authorization covers the scope below only.
 
-Gói 03 replaces the technical placeholder with a clear, visually expressive entry experience and establishes the first language foundation. It also provides a small mobile-oriented 3D prototype to collect evidence for D01. This is not the full universe, flight system, map, avatar system, or production 3D visual system.
+Gói 03 replaces the technical placeholder with a clear, visually expressive entry experience and establishes the first language foundation. It also provides a small mobile-oriented 3D prototype to collect evidence for D01. The owner later authorized cross-package integration. The initial isolated prototype has now been upgraded into the playable homepage slice described in the 2026-11-20 integration record; this is still not the full universe, six-axis flight system, interplanetary travel, or production 3D visual system.
 
 ## 2. Inputs and governing baseline
 
@@ -147,3 +147,10 @@ No runtime, visual, FPS, memory, thermal or device result is claimed from source
 ## 13. Acceptance status
 
 Gói 03 is ready for owner review, but is not accepted. The owner can review the source and run the delivered checks once npm registry access is available. Real-device evidence remains necessary for D01; no engine has been selected. The package remains subject to owner acceptance after runtime and device review.
+
+
+## 12. Owner integration and provisional acceptance (2026-11-20)
+
+The owner provisionally accepted all existing packages Gói 01–06 and instructed that they be consolidated into one game. The homepage now uses the React Three Fiber Earth scene as its interactive game runtime. A 3D procedural humanoid avatar is placed on Earth's surface and can walk around the spherical surface using WASD, arrow keys or on-screen touch controls; the Earth rotates slowly and the Moon orbits nearby. The current guest nickname and avatar ID are read from the shared guest identity provider. The canonical celestial map remains available at `/map/`, the celestial catalogue at `/worlds/`, and avatar editing at `/avatar/`.
+
+This is a playable integrated slice, not the complete product. D01 is still open because Three.js/React Three Fiber has not been compared against Babylon.js and PlayCanvas on representative physical devices. Manual browser/mobile visual review remains pending. Six-axis free flight, interplanetary travel, other planetary surface environments, AI universe generation, audio, multiplayer and backend authentication/synchronization are not claimed as implemented.

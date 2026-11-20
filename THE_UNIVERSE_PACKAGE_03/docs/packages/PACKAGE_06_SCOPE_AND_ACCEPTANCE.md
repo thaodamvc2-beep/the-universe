@@ -1,9 +1,9 @@
 # THE UNIVERSE — PACKAGE 06 SCOPE & ACCEPTANCE
 
 **Document ID:** TU-PKG-06-001  
-**Version:** 1.2  
+**Version:** 1.3  
 **Date:** 2026-11-20  
-**Status:** READY FOR OWNER REVIEW — AUTOMATED VERIFICATION AND DEPLOYMENT PASSED  
+**Status:** PROVISIONALLY ACCEPTED FOR INTEGRATION — MANUAL VISUAL REVIEW PENDING  
 **Package:** 06 — Cosmic Travel Map  
 **Authority:** Owner explicitly provisionally accepted Gói 05 (corrections remain allowed) and authorized immediate Gói 06 implementation on 2026-11-20.
 
@@ -45,4 +45,4 @@ Turn the accepted celestial catalogue into an understandable universe map, begin
 - Tests and production build pass; browser review completed.
 
 ## 6. Implementation and handover
-The integrated map is implemented in `apps/web/src/components/cosmic-map.tsx`; `/` and `/map/` share this component. It uses canonical data, destination selection/details, a clearly simulated route preview, bilingual UI, guest avatar identity and Earth recovery. Actual flight, travel, production 3D rendering, and physical-device review remain outside this package. Do not start Gói 07 or any later package automatically.
+The canonical map is implemented in `apps/web/src/components/cosmic-map.tsx` and remains available at `/map/`. The homepage `/` is now the integrated playable 3D Earth game, which links to the map, catalogue and avatar editor. The map continues to use canonical data, destination selection/details, a clearly simulated route preview, bilingual UI, guest avatar identity and Earth recovery. The owner provisionally accepted all existing packages Gói 01–06 on 2026-11-20. Actual interplanetary flight/travel, production-wide 3D rendering and physical-device visual review remain open. Do not start Gói 07 or any later package automatically.

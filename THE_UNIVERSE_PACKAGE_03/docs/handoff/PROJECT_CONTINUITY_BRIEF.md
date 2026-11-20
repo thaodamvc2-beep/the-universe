@@ -7,13 +7,13 @@
 
 The owner explicitly instructed on 2026-11-20:
 
-- Implement Gói 04 (Avatar & Nickname) now.
-- Then integrate the existing project into one coherent, complete-as-currently-authorized website.
-- Update the public GitHub Pages site and verify that it builds and runs so the owner can try it.
-- Continue doing technical work directly in the GitHub repository. The owner gives direction and does not want to be asked to perform coding, terminal, ZIP, or deployment work.
-- Preserve this brief and keep it current whenever important project decisions, package states, commits, or deployments change.
+- Provisionally accept all existing packages Gói 01–06.
+- Consolidate every existing package into one coherent game; opening the website should enter the game directly.
+- The default scene must show the player's avatar and nickname on Earth, with a quietly moving universe and controllable avatar movement.
+- Integrate and deploy the playable experience on GitHub Pages; the owner gives product direction and does not want technical setup tasks.
+- Continue technical work directly in GitHub and keep this brief current.
 
-This instruction supersedes the earlier temporary decision to defer Gói 04. Do not treat Gói 04 as cancelled or deferred.
+This instruction supersedes the earlier package-by-package pending owner review for the existing Gói 01–06 baseline. Provisional acceptance does not erase known technical/device verification gaps. Gói 07+ is not authorized.
 
 ## 2. Repository and public site
 
@@ -70,22 +70,24 @@ Decision record:
 ## 5. Package history and current status
 
 - Gói 01 v1.1: owner-approved product/architecture baseline.
-- Gói 02: provisionally approved for transition to Gói 03; technical verification gaps remain open. Do not call it fully accepted.
-- Gói 03: homepage, EN/VI language foundation and isolated R3F Earth prototype exist. Manual browser/device review and formal owner acceptance remain open. R3F is a prototype candidate only; D01 engine choice remains open pending mobile comparison with Babylon.js and PlayCanvas.
+- Gói 02: provisionally accepted by the owner for the unified baseline; legacy HTTP-header behavior and physical-device verification gaps remain open.
+- Gói 03: provisionally accepted for the integrated game baseline. The R3F Earth scene is now the homepage game runtime; D01 engine selection remains open pending comparative real-device testing against Babylon.js and PlayCanvas.
 - Gói 04: previously deferred, then explicitly reopened and authorized by the owner on 2026-11-20. The owner clarified that avatars must be cute human characters, not abstract orbs, and that the selected avatar must be integrated into the main website. The six abstract orb placeholders have now been replaced by six original locally bundled 3D animated-film-style human character portraits (Luna, Noah, Rosie, Milo, Ivy, Stella). The selected avatar and nickname appear in the homepage hero and shared site header, while the avatar editor retains selection and nickname editing. Existing stable avatar IDs and local guest data remain compatible. This visual revision is implemented in source; its CI/deployment result is pending.
-- Gói 05: implemented and deployed; Solar System catalogue includes Sun, eight planets and Earth's Moon, bilingual details, NASA references and Earth as sole Home World. On 2026-11-20 the owner granted provisional acceptance with corrections allowed and authorized immediate Gói 06 implementation. Manual browser/device review remains outstanding and is not claimed.
+- Gói 05: implemented and deployed; Solar System catalogue includes Sun, eight planets and Earth's Moon, bilingual details, NASA references and Earth as sole Home World. Provisionally accepted by the owner with corrections allowed; manual browser/device review remains open.
 - Gói 06: implemented and deployed as an integrated schematic Solar System navigation map. The map is the guest-first homepage (`/`) and also available at `/map/`; it uses canonical Gói 05 IDs, shows avatar/nickname, supports destination selection/details, simulated route preview and Earth recovery. It does NOT implement actual travel, six-axis flight, planetary surface exploration or production 3D universe rendering. GitHub Actions run 44700029296 passed 23/23 tests, ESLint, TypeScript, production build and GitHub Pages deployment. Manual desktop/mobile visual review remains outstanding. Code verification commit: 0bfbade4a3d3e095c80b78743f1760414fd741ca.
-- Gói 07–15: not implemented as a complete product; follow the Master Spec roadmap and package approvals.
+- Unified game homepage: [GitHub Pages](https://thaodamvc2-beep.github.io/the-universe/) — opens directly into the 3D Earth scene. Avatar movement: WASD/arrow keys or on-screen directional buttons; drag to rotate the camera. The player's saved nickname appears in the HUD. The Earth rotates slowly and the Moon orbits nearby.
+- Canonical map: `/map/`; celestial catalogue: `/worlds/`; avatar editor: `/avatar/`.
+- Gói 07–15: not implemented as a complete product; Gói 07+ has not been authorized.
 
 Important: The owner now wants Gói 04 implemented and the currently delivered website integrated for testing. This does not make unimplemented systems (real auth, cloud sync, multiplayer, six-axis flight, full AI world generation) magically available. Clearly label prototypes and limitations.
 
 ## 6. Existing implementation
 
 - Next.js App Router + React + TypeScript.
-- React Three Fiber is used only for the isolated Earth rendering prototype; engine is not locked.
+- React Three Fiber powers the current playable 3D Earth homepage slice; D01 engine choice remains open and is not locked.
 - Static export configured for GitHub Pages.
-- Homepage route `/`.
-- 3D prototype route `/prototype/`.
+- Homepage route `/` — playable 3D Earth game.
+- `/prototype/` remains the earlier isolated camera-orbit prototype.
 - Real celestial catalogue route `/worlds/`.
 - EN/VI translations.
 - Canonical data: `apps/web/src/data/celestial-bodies.json`.
@@ -93,7 +95,8 @@ Important: The owner now wants Gói 04 implemented and the currently delivered w
 - GitHub Pages workflow performs package-scoped tests, ESLint, TypeScript typecheck, static build and deploy.
 
 Latest integrated release evidence:
-- Gói 06 integrated map deployment: [GitHub Actions run 44700029296](https://github.com/thaodamvc2-beep/the-universe/actions/runs/44700029296) — success; 23 tests, lint, typecheck, static build and deploy passed. Code commit: `0bfbade4a3d3e095c80b78743f1760414fd741ca`.
+- Unified playable game homepage deployment: [GitHub Actions run 44701342791](https://github.com/thaodamvc2-beep/the-universe/actions/runs/44701342791) — success; 23 tests, ESLint, TypeScript, static production build and GitHub Pages deployment passed. Code commit: `276ac4a720e8c00bfaf4dc4520a9456e9c76b260`.
+- The homepage game is live at `https://thaodamvc2-beep.github.io/the-universe/`.
 - Previous integrated release commit: `18945ff5845e792c2b69bd901397237ca268d475`.
 - Previous GitHub Actions run: [44661753954](https://github.com/thaodamvc2-beep/the-universe/actions/runs/44661753954) — success, 18 tests, lint, typecheck, static build and GitHub Pages deployment.
 - - Latest visual revision commit: `90cee727c5afee42362bb873501b62714a1744a3`.
