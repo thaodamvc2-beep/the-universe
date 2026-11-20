@@ -10,11 +10,13 @@ export type InputState=Record<'forward'|'back'|'left'|'right'|'up'|'down',boolea
 export type RemotePlayer={id:string;nickname:string;avatarId:AvatarId;position:[number,number,number]};
 
 function Stars(){
+ const ref=useRef<Group>(null);useFrame((_s,d)=>{if(ref.current)ref.current.rotation.y+=d*.0007});
  const positions=useMemo(()=>{const a=new Float32Array(3600*3);let seed=197903;const rand=()=>{seed=(seed*16807)%2147483647;return(seed-1)/2147483646};for(let i=0;i<3600;i++){const r=24+rand()*360,t=rand()*Math.PI*2,p=Math.acos(2*rand()-1);a[i*3]=r*Math.sin(p)*Math.cos(t);a[i*3+1]=r*Math.cos(p);a[i*3+2]=r*Math.sin(p)*Math.sin(t)}return a},[]);
- return <points><bufferGeometry><bufferAttribute attach="attributes-position" args={[positions,3]}/></bufferGeometry><pointsMaterial color="#dce8ff" size={.11} sizeAttenuation transparent opacity={.88}/></points>;
+ return <group ref={ref}><points><bufferGeometry><bufferAttribute attach="attributes-position" args={[positions,3]}/></bufferGeometry><pointsMaterial color="#dce8ff" size={.11} sizeAttenuation transparent opacity={.88}/></points>;
 }
 function Planet({body}:{body:Body}){
- return <group position={body.position}>
+ const ref=useRef<Group>(null);useFrame((_s,d)=>{if(ref.current)ref.current.rotation.y+=d*(body.id==='earth'?.018:.006)});
+ return <group ref={ref} position={body.position}>
   <mesh><sphereGeometry args={[body.radius,36,32]}/><meshStandardMaterial color={body.color} roughness={.9} emissive={body.id==='sun'?'#d97825':'#000000'} emissiveIntensity={body.id==='sun'?.8:0}/></mesh>
   {body.id==='earth'&&<mesh scale={1.035}><sphereGeometry args={[body.radius,32,24]}/><meshBasicMaterial color="#73c8ff" transparent opacity={.13} side={BackSide}/></mesh>}
   {body.id==='saturn'&&<mesh rotation={[Math.PI/2.25,0,0]}><torusGeometry args={[body.radius*1.55,body.radius*.22,5,72]}/><meshStandardMaterial color="#cdbb9c" transparent opacity={.78}/></mesh>}
@@ -50,7 +52,7 @@ export function FlightScene({bodies,avatarId,flightRef,inputRef,targetId,onArriv
    forward.set(Math.sin(f.yaw),0,-Math.cos(f.yaw)).projectOnPlane(normal).normalize();if(forward.lengthSq()<.001)forward.set(1,0,0).projectOnPlane(normal).normalize();
    right.crossVectors(forward,normal).normalize();const move=new Vector3();if(i.forward)move.add(forward);if(i.back)move.sub(forward);if(i.right)move.add(right);if(i.left)move.sub(right);
    if(move.lengthSq()>0){normal.addScaledVector(move.normalize(),speed/Math.max(.5,body.radius)).normalize();f.position.copy(center).addScaledVector(normal,body.radius+.19)}
-   if(i.takeoff){f.groundedId=null;f.position.addScaledVector(normal,1.15);i.takeoff=false}i.land=false;
+   if(i.takeoff||i.up){f.groundedId=null;f.position.addScaledVector(normal,1.15);i.takeoff=false}i.land=false;
   }else{
    forward.set(Math.sin(f.yaw)*Math.cos(f.pitch),Math.sin(f.pitch),-Math.cos(f.yaw)*Math.cos(f.pitch)).normalize();right.set(Math.cos(f.yaw),0,Math.sin(f.yaw)).normalize();
    const move=new Vector3();if(i.forward)move.add(forward);if(i.back)move.sub(forward);if(i.right)move.add(right);if(i.left)move.sub(right);if(i.up)move.y+=1;if(i.down)move.y-=1;
