@@ -14,7 +14,7 @@ Give every visitor a personal, lightweight identity from the first guest visit: 
 ## 2. Governing inputs and current limitations
 
 - `AGENTS.md` v1.1 and `AI_SESSION_START.md` v1.0.
-- Master Spec v1.8 records the owner's latest delivery instruction.
+- Master Spec v1.9 records the owner's latest delivery instruction.
 - Earth remains the sole Home World and default return destination.
 - Gói 03 provides the homepage, language foundation and isolated 3D prototype; its physical-device review and formal owner acceptance remain open.
 - Gói 05 provides the real Solar System catalogue; its manual browser review and formal owner acceptance remain open.
