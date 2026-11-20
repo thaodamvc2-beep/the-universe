@@ -11,3 +11,42 @@
 @media(max-width:640px){.site-header{width:calc(100% - 2.5rem);height:72px}.header-link:first-child{display:none}.brand-name{font-size:.62rem;letter-spacing:.16em}.header-actions{gap:.8rem}.header-link{font-size:.68rem}.hero-section{display:flex;min-height:auto;flex-direction:column;align-items:stretch;gap:0;width:calc(100% - 3rem);padding:4.2rem 0 3.5rem}.hero-copy{padding:0}.eyebrow{margin-bottom:1.2rem;font-size:.55rem;letter-spacing:.16em}.hero-copy h1{font-size:clamp(3.2rem,15vw,5rem)}.hero-description{max-width:24rem;margin:1.4rem 0 1.7rem;font-size:.9rem}.hero-actions{gap:1rem}.primary-action{min-height:3.2rem;font-size:.62rem}.secondary-action{font-size:.58rem}.guest-note{font-size:.65rem}.hero-art{min-height:330px;margin-top:1rem}.hero-earth{width:min(66%,17rem)}.orbit-wide{width:100%}.orbit-inner{width:84%}.art-label{font-size:.48rem}.art-label-top{top:9%;left:1%}.art-label-bottom{right:0;bottom:9%}.hero-moon{top:10%;right:9%;width:1.8rem}.home-world-section{display:block;width:calc(100% - 3rem);padding:3.3rem 0 4rem}.home-world-copy h2{font-size:2.7rem}.home-world-copy>p:not(.eyebrow){font-size:.88rem}.quiet-note{margin-top:3rem;padding-left:1.2rem}.quiet-note h3{font-size:1.9rem}.site-footer{width:calc(100% - 3rem);min-height:74px;flex-wrap:wrap;justify-content:space-between;padding:1.1rem 0}.site-footer>span{font-size:.46rem}.footer-coordinate{display:none}.prototype-intro{width:calc(100% - 3rem);margin:3.2rem auto 1.7rem}.prototype-intro h1{font-size:2.6rem}.prototype-intro>p:last-child{font-size:.82rem}.prototype-stage,.prototype-bottom{width:calc(100% - 2rem)}.prototype-canvas{height:min(68vh,470px);min-height:320px}.prototype-bottom{align-items:flex-start;flex-direction:column;gap:.4rem;margin-top:1.5rem}}
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}
 .state-page{display:grid;min-height:100svh;align-content:center;justify-items:center;gap:1rem;padding:2rem;text-align:center;background:var(--night)}.state-page h1{max-width:42rem;margin:0;font-family:Georgia,"Times New Roman",serif;font-size:clamp(1.8rem,6vw,3rem);font-weight:400;letter-spacing:-.03em}.state-page p:not(.eyebrow){color:var(--muted);line-height:1.7}.loader{width:2rem;aspect-ratio:1;border:2px solid var(--line);border-top-color:var(--violet);border-radius:50%;animation:spin .9s linear infinite}.retry-button{display:inline-flex;min-height:2.8rem;align-items:center;justify-content:center;margin-top:.5rem;padding:.7rem 1.1rem;border:1px solid rgba(190,180,255,.45);border-radius:999px;background:rgba(120,105,205,.14);color:var(--ink);text-decoration:none;cursor:pointer}.retry-button:hover{background:rgba(120,105,205,.25)}@keyframes spin{to{transform:rotate(360deg)}}
+
+/* Gói 05 — celestial catalogue */
+.worlds-page{position:relative;min-height:100svh;overflow:hidden;background:radial-gradient(ellipse at 76% 18%,rgba(69,77,153,.2),transparent 38%),#070a17}
+.worlds-intro{width:min(100% - 10vw,1180px);margin:4.3rem auto 2.2rem}
+.worlds-intro h1{max-width:760px;margin:0;font-family:Georgia,"Times New Roman",serif;font-size:clamp(2.8rem,6vw,5.2rem);font-weight:400;letter-spacing:-.05em;line-height:1.04}
+.worlds-intro>p:last-child{max-width:620px;color:#a4a9c2;font-size:.95rem;line-height:1.85}
+.worlds-layout{display:grid;width:min(100% - 10vw,1180px);grid-template-columns:minmax(0,1.2fr) minmax(280px,.8fr);gap:2rem;margin:0 auto 5rem}
+.worlds-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:.8rem;align-content:start}
+.world-card{display:flex;min-height:150px;flex-direction:column;align-items:center;justify-content:center;gap:.65rem;padding:1rem .6rem;border:1px solid rgba(190,196,236,.14);border-radius:3px;background:rgba(14,19,40,.65);color:#dfe2f5;cursor:pointer;transition:border-color .2s,background .2s,transform .2s}
+.world-card:hover,.world-card[aria-pressed=true]{transform:translateY(-2px);border-color:rgba(190,177,255,.6);background:rgba(39,39,78,.55)}
+.world-card-name{font-size:.75rem;letter-spacing:.12em;text-align:center}
+.world-card-kind{color:#8189a9;font-size:.52rem;letter-spacing:.1em;text-align:center}
+.world-orb{display:block;width:clamp(2.5rem,5vw,4.2rem);aspect-ratio:1;border-radius:50%;background:var(--orb);box-shadow:inset -.65rem -.55rem 1rem rgba(0,0,0,.48),0 0 24px color-mix(in srgb,var(--orb) 32%,transparent)}
+.world-orb.sun{background:radial-gradient(circle at 34% 32%,#fff5c1,#ffbd59 45%,#d66c32 76%,#6f2d38)}
+.world-orb.mercury{background:radial-gradient(circle at 32% 30%,#c7c0b8,#777783 62%,#343747)}
+.world-orb.venus{background:radial-gradient(circle at 32% 28%,#fff0bd,#d4a46d 55%,#80513e)}
+.world-orb.earth{background:radial-gradient(circle at 35% 30%,#8de1ef,#277bb0 48%,#12345e 78%)}
+.world-orb.moon{background:radial-gradient(circle at 34% 28%,#e5e1d8,#9999a3 58%,#4d5368)}
+.world-orb.mars{background:radial-gradient(circle at 34% 28%,#f2b18b,#bd6048 55%,#572f3e)}
+.world-orb.jupiter{background:repeating-linear-gradient(0deg,#bd9875 0 8px,#e5cba8 9px 15px,#8c655a 16px 20px);background-color:#b88a70}
+.world-orb.saturn{background:radial-gradient(circle at 34% 30%,#ead5a5,#b99b71 58%,#6b5b58)}
+.world-orb.uranus{background:radial-gradient(circle at 34% 30%,#d5f5ef,#75c4c8 62%,#347d94)}
+.world-orb.neptune{background:radial-gradient(circle at 34% 30%,#8db9ff,#315fbc 60%,#172d70)}
+.world-detail{position:sticky;top:1.5rem;align-self:start;padding:1.7rem;border:1px solid rgba(190,196,236,.16);background:linear-gradient(155deg,rgba(26,30,60,.84),rgba(9,13,29,.9))}
+.world-detail-top{display:flex;align-items:center;justify-content:space-between;gap:.6rem;color:#a99fff;font-size:.52rem;letter-spacing:.13em}
+.world-detail .world-orb{width:clamp(4rem,8vw,6rem);margin:1.8rem auto}
+.world-detail h2{margin:0;font-family:Georgia,"Times New Roman",serif;font-size:2.25rem;font-weight:400}
+.world-detail-type{margin:.35rem 0 1rem;color:#a7abc3;font-size:.65rem;letter-spacing:.1em}
+.world-detail-description,.world-explore-note{color:#b0b5cc;font-size:.82rem;line-height:1.8}
+.world-facts{display:grid;grid-template-columns:1fr 1fr;gap:.8rem;margin:1.3rem 0;padding:1rem 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.world-fact span{display:block;color:#838ba9;font-size:.52rem;letter-spacing:.1em}
+.world-fact strong{display:block;margin-top:.35rem;color:#e6e5f4;font-size:.8rem;font-weight:500}
+.world-explore-note{padding-left:.9rem;border-left:1px solid rgba(183,169,255,.45)}
+.world-source{display:inline-block;margin-top:.9rem;color:#c6bcff;font-size:.62rem;letter-spacing:.08em;text-decoration:none}
+.world-source:hover{color:#fff}
+.world-home-note{margin-top:1.3rem;color:#86d1d4;font-size:.55rem;letter-spacing:.12em}
+.worlds-footer{display:flex;width:min(100% - 10vw,1180px);justify-content:space-between;gap:1rem;margin:0 auto;padding:1.3rem 0 2rem;border-top:1px solid var(--line);color:#858ca8;font-size:.58rem;letter-spacing:.1em}
+@media(max-width:760px){.worlds-intro,.worlds-layout,.worlds-footer{width:calc(100% - 2.5rem)}.worlds-intro{margin-top:3rem}.worlds-layout{grid-template-columns:1fr;gap:1.2rem}.worlds-grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:.55rem}.world-card{min-height:120px}.world-detail{position:relative;top:auto}.world-detail .world-orb{margin:1rem auto}.worlds-footer{flex-direction:column}}
+@media(max-width:420px){.worlds-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
