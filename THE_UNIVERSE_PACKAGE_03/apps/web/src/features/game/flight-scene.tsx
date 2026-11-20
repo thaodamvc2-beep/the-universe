@@ -24,7 +24,7 @@ function PlanetLabel({body}:{body:Body}){
 }
 function Planet({body}:{body:Body}){
  const ref=useRef<Group>(null);
- useFrame((state,d)=>{if(ref.current){ref.current.rotation.y+=d*(body.id === 'earth' ? 0.012 : 0.004);if(body.id==='moon'){const t=state.clock.elapsedTime*.035;ref.current.position.set(3.12*Math.cos(t),.57,-.52+3.12*Math.sin(t))}}});
+ useFrame((_state,d)=>{if(ref.current)ref.current.rotation.y+=d*(body.id === 'earth' ? 0.012 : 0.004)});
  return <group ref={ref} position={body.position}>
   <mesh><sphereGeometry args={[body.radius,body.real?28:20,body.real?22:16]}/><meshStandardMaterial color={body.color} roughness={.92} emissive={body.id==='sun'?'#ffb34f':'#000000'} emissiveIntensity={body.id==='sun'?2.1:0}/></mesh>
   {body.id==='earth'&&<mesh scale={1.035}><sphereGeometry args={[body.radius,28,20]}/><meshBasicMaterial color="#73c8ff" transparent opacity={.12} side={BackSide}/></mesh>}
