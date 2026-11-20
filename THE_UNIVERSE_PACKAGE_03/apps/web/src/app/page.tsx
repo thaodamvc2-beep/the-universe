@@ -5,7 +5,7 @@ import { SiteHeader } from '@/components/site-header';
 import { useSite } from '@/components/site-provider';
 
 export default function HomePage() {
-  const { t } = useSite();
+  const { t, guestIdentity } = useSite();
 
   return (
     <main id="main-content" className="home-page">
@@ -47,6 +47,16 @@ export default function HomePage() {
           <span className="art-label art-label-bottom">A SMALL BLUE WORLD</span>
           <span className="art-cross art-cross-one">✧</span>
           <span className="art-cross art-cross-two">✦</span>
+          {guestIdentity ? (
+            <Link className="hero-identity-card" href="/avatar" aria-label={t('editCompanion')}>
+              <span className={`avatar-portrait avatar-${guestIdentity.avatarId} hero-identity-portrait`} aria-hidden="true" />
+              <span className="hero-identity-copy">
+                <span>{t('yourCompanion')}</span>
+                <strong>{guestIdentity.nickname}</strong>
+                <em>{t('editCompanion')} ↗</em>
+              </span>
+            </Link>
+          ) : null}
         </div>
       </section>
 
