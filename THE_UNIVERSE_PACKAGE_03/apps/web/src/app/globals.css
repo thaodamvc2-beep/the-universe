@@ -106,3 +106,25 @@
 .account-explanation{margin-bottom:2rem!important}
 @media(max-width:760px){.avatar-intro,.avatar-editor,.avatar-footer{width:calc(100% - 2.5rem)}.avatar-intro{margin-top:3rem}.avatar-editor{grid-template-columns:1fr;gap:1rem}.avatar-preview-panel{min-height:290px}.avatar-preview-panel>.avatar-portrait{width:7rem;height:7rem}.account-notice{width:calc(100% - 2.5rem);margin:4rem auto}.avatar-footer{flex-direction:column}}
 @media(max-width:640px){.header-actions{gap:.55rem}.header-link{font-size:.57rem;letter-spacing:.02em}.language-control select{min-width:2.8rem;padding:.4rem .45rem;font-size:.62rem}.avatar-options{grid-template-columns:repeat(3,minmax(0,1fr))}.avatar-option{min-height:105px;font-size:.58rem}.avatar-controls{padding:1.1rem}.avatar-intro h1{font-size:2.9rem}}
+
+/* Character portraits: generated six-person sprite sheet shared across every route */
+.avatar-portrait{background-image:url('/the-universe/avatars/celestial-avatars.webp');background-size:300% 200%;background-repeat:no-repeat;border:1px solid rgba(230,225,255,.48);box-shadow:0 0 24px rgba(164,145,255,.2)}
+.avatar-portrait:before,.avatar-portrait:after,.avatar-portrait i,.avatar-portrait b{display:none}
+.avatar-stardust{background-position:0 0}
+.avatar-lunar{background-position:50% 0}
+.avatar-nebula{background-position:100% 0}
+.avatar-crystal{background-position:0 100%}
+.avatar-aurora{background-position:50% 100%}
+.avatar-solar{background-position:100% 100%}
+.header-identity{display:inline-flex;align-items:center;gap:.5rem;min-width:0;padding:.3rem .65rem .3rem .3rem;border:1px solid rgba(190,196,236,.18);border-radius:999px;background:rgba(18,22,45,.62);text-decoration:none}
+.header-identity-portrait{width:2rem;height:2rem}
+.header-identity-name{max-width:8rem;overflow:hidden;color:#e4e1f6;font-size:.64rem;text-overflow:ellipsis;white-space:nowrap}
+.hero-identity-card{position:absolute;z-index:3;bottom:4%;left:2%;display:flex;align-items:center;gap:.85rem;min-width:220px;padding:.7rem .9rem .7rem .7rem;border:1px solid rgba(199,190,255,.25);background:rgba(9,13,31,.82);box-shadow:0 14px 42px rgba(0,0,0,.25);backdrop-filter:blur(16px);text-decoration:none;transition:transform .2s,border-color .2s}
+.hero-identity-card:hover{transform:translateY(-3px);border-color:rgba(204,192,255,.65)}
+.hero-identity-portrait{width:3.5rem;height:3.5rem}
+.hero-identity-copy{display:grid;gap:.2rem}
+.hero-identity-copy>span{color:#a9a2d7;font-size:.48rem;letter-spacing:.16em}
+.hero-identity-copy strong{color:#f4f1ff;font-family:Georgia,"Times New Roman",serif;font-size:1.1rem;font-weight:400}
+.hero-identity-copy em{color:#a8afca;font-size:.48rem;font-style:normal;letter-spacing:.08em}
+@media(max-width:760px){.hero-identity-card{bottom:1%;left:0;min-width:190px;padding:.55rem}.hero-identity-portrait{width:3rem;height:3rem}.header-identity-name{max-width:4.5rem}}
+@media(max-width:520px){.hero-identity-card{bottom:-1%;left:0;min-width:175px}.hero-art{min-height:390px}.hero-earth{width:58%}.hero-identity-copy>span{font-size:.42rem}.hero-identity-copy strong{font-size:.95rem}.hero-identity-copy em{font-size:.42rem}}
