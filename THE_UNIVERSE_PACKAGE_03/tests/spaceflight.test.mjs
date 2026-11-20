@@ -56,3 +56,32 @@ test('spaceflight now slows down, avoids planets and lands gently with visible w
 });
 
 test('Sun and giant planets support the playful landing mechanic',async()=>{const data=await read('apps/web/src/features/game/universe-data.ts');for(const id of ['sun','jupiter','saturn','uranus','neptune']){const start=data.indexOf(`id:'${id}'`);const end=data.indexOf('},',start);assert.match(data.slice(start,end),/landable:true/)}});
+
+test('long-distance destination travel accelerates while keeping a safe approach stop',async()=>{
+ const scene=await read('apps/web/src/features/game/flight-scene.tsx');
+ assert.match(scene,/distanceSpeed=Math\.min\(34,2\.8\+distance\*\.24\)/);
+ assert.match(scene,/distanceSpeed\*\(i\.boost\?1\.35:1\)/);
+ assert.match(scene,/distance-stop/);
+});
+test('far-world scene uses a floating origin so the angel and destinations remain visible',async()=>{
+ const scene=await read('apps/web/src/features/game/flight-scene.tsx');
+ assert.match(scene,/body\.position\[0\]-flightRef\.current\.position\.x/);
+ assert.match(scene,/ref\.current\.position\.set\(0,0,0\)/);
+ assert.match(scene,/player\.position\[0\]-flightRef\.current\.position\.x/);
+ assert.match(scene,/camera\.lookAt\(look\)/);
+});
+test('distant worlds show a directional miniature of the Solar System and Earth',async()=>{
+ const scene=await read('apps/web/src/features/game/flight-scene.tsx');
+ assert.match(scene,/function HomeSystemBeacon/);
+ assert.match(scene,/distance>75/);
+ assert.match(scene,/<torusGeometry args=\{\[\.82/);
+ assert.match(scene,/color="#3e9fe0"/);
+});
+test('player character is rendered as a lightweight flying angel rather than a spacesuit',async()=>{
+ const scene=await read('apps/web/src/features/game/flight-scene.tsx');
+ assert.match(scene,/function Avatar/);
+ assert.match(scene,/leftWing/);
+ assert.match(scene,/rightWing/);
+ assert.match(scene,/torusGeometry args=\{\[\.145/);
+ assert.doesNotMatch(scene,/thruster|capsuleGeometry args=\{\[\.105/);
+});

@@ -88,3 +88,8 @@ test('flight uses slow collision-aware travel, gentle landing, planetary labels 
 });
 
 test('procedural regions are spaced beyond the known Solar System',async()=>{const game=await read('apps/web/src/features/game/universe-game.tsx');const data=await read('apps/web/src/features/game/universe-data.ts');assert.match(game,/p\.x\/150/);assert.match(game,/x===0&&y===0&&z===0/);assert.match(data,/cx\*150,cy\*150,cz\*150/)});
+
+test('manual region expansion uses the same 150-unit spatial cells as automatic streaming',async()=>{
+ const game=await read('apps/web/src/features/game/universe-game.tsx');
+ assert.match(game,/new Vector3\(cx\*150,cy\*150,cz\*150\)/);
+});

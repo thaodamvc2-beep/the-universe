@@ -2,7 +2,7 @@
 import { useEffect, useRef, useState } from 'react';
 import type { MutableRefObject } from 'react';
 import { useFrame, useThree } from '@react-three/fiber';
-import { BackSide, CanvasTexture, Group, PointLight, Vector3 } from 'three';
+import { BackSide, CanvasTexture, Group, Vector3 } from 'three';
 import { AVATAR_PALETTE, type AvatarId, type Body } from './universe-data';
 
 export type FlightState={position:Vector3;yaw:number;pitch:number;groundedId:string|null};
@@ -22,10 +22,10 @@ function PlanetLabel({body}:{body:Body}){
  if(!texture)return null;
  return <sprite position={[0,body.radius+.48,0]} scale={[Math.max(1.45,Math.min(4.8,body.name.length*.19)),.48,1]}><spriteMaterial map={texture} transparent depthWrite={false} /></sprite>;
 }
-function Planet({body}:{body:Body}){
+function Planet({body,flightRef}:{body:Body;flightRef:MutableRefObject<FlightState>}){
  const ref=useRef<Group>(null);
- useFrame((_state,d)=>{if(ref.current)ref.current.rotation.y+=d*(body.id === 'earth' ? 0.012 : 0.004)});
- return <group ref={ref} position={body.position}>
+ useFrame((_state,d)=>{if(ref.current){ref.current.position.set(body.position[0]-flightRef.current.position.x,body.position[1]-flightRef.current.position.y,body.position[2]-flightRef.current.position.z);ref.current.rotation.y+=d*(body.id === 'earth' ? 0.012 : 0.004)}});
+ return <group ref={ref}>
   <mesh><sphereGeometry args={[body.radius,body.real?28:20,body.real?22:16]}/><meshStandardMaterial color={body.color} roughness={.92} emissive={body.id==='sun'?'#ffb34f':'#000000'} emissiveIntensity={body.id==='sun'?2.1:0}/></mesh>
   {body.id==='earth'&&<mesh scale={1.035}><sphereGeometry args={[body.radius,28,20]}/><meshBasicMaterial color="#73c8ff" transparent opacity={.12} side={BackSide}/></mesh>}
   {body.id==='saturn'&&<mesh rotation={[Math.PI/2.25,0,0]}><torusGeometry args={[body.radius*1.55,body.radius*.22,5,64]}/><meshStandardMaterial color="#cdbb9c" transparent opacity={.78}/></mesh>}
@@ -34,27 +34,49 @@ function Planet({body}:{body:Body}){
  </group>;
 }
 function Avatar({avatarId,flightRef,inputRef,bodies}:{avatarId:AvatarId;flightRef:MutableRefObject<FlightState>;inputRef:MutableRefObject<InputState>;bodies:Body[]}){
- const ref=useRef<Group>(null);const pose=useRef<Group>(null);const leftLeg=useRef<Group>(null);const rightLeg=useRef<Group>(null);const thruster=useRef<PointLight>(null);
+ const ref=useRef<Group>(null);const pose=useRef<Group>(null);const leftWing=useRef<Group>(null);const rightWing=useRef<Group>(null);
  const colors=AVATAR_PALETTE[avatarId]??AVATAR_PALETTE.stardust;const up=new Vector3(0,1,0);
- useFrame(()=>{if(!ref.current)return;const f=flightRef.current;const i=inputRef.current;const seated=!!f.groundedId&&!i.forward&&!i.back&&!i.left&&!i.right;ref.current.position.copy(f.position);ref.current.quaternion.setFromUnitVectors(up,up);if(seated){const body=bodies.find(b=>b.id===f.groundedId);if(body){const n=f.position.clone().sub(new Vector3(...body.position)).normalize();ref.current.quaternion.setFromUnitVectors(up,n)}}ref.current.rotateY(f.yaw);if(pose.current)pose.current.rotation.x+=( (seated?-.42:0)-pose.current.rotation.x)*.18;if(leftLeg.current)leftLeg.current.rotation.x+=((seated?-1.0:0)-leftLeg.current.rotation.x)*.18;if(rightLeg.current)rightLeg.current.rotation.x+=((seated?-1.0:0)-rightLeg.current.rotation.x)*.18;if(thruster.current)thruster.current.intensity=seated ? 0.08 : 1.0});
+ useFrame((state,delta)=>{if(!ref.current)return;const f=flightRef.current,i=inputRef.current;const seated=!!f.groundedId&&!i.forward&&!i.back&&!i.left&&!i.right;
+  ref.current.position.set(0,0,0);const body=f.groundedId?bodies.find(b=>b.id===f.groundedId):undefined;
+  if(body){const normal=f.position.clone().sub(new Vector3(...body.position)).normalize();ref.current.quaternion.setFromUnitVectors(up,normal)}else ref.current.quaternion.identity();
+  ref.current.rotateY(f.yaw);
+  const flap=Math.sin(state.clock.elapsedTime*2.2)*.055;
+  if(pose.current){pose.current.rotation.x+=( (seated?-.18:.12)-pose.current.rotation.x)*Math.min(1,delta*5);pose.current.position.y=.025+Math.sin(state.clock.elapsedTime*1.7)*.025}
+  if(leftWing.current)leftWing.current.rotation.z=-.14-flap;
+  if(rightWing.current)rightWing.current.rotation.z=.14+flap;
+ });
+ const feather=(side:number,index:number)=><mesh key={index} position={[side*(.12+index*.075),.02-index*.045,-.015-index*.018]} rotation={[0,0,side*(.28+index*.12)]} scale={[.105,.29-index*.018,.045]}><sphereGeometry args={[1,10,8]}/><meshStandardMaterial color={index%2?'#f1eaff':'#fff7e8'} emissive={colors.glow} emissiveIntensity={.16} roughness={.82}/></mesh>;
  return <group ref={ref}>
   <group ref={pose}>
-   <mesh position={[0,.19,0]} castShadow><capsuleGeometry args={[.105,.2,5,10]}/><meshStandardMaterial color={colors.suit}/></mesh>
-   <mesh position={[0,.39,.015]} castShadow><sphereGeometry args={[.115,18,14]}/><meshStandardMaterial color="#f0d9c9"/></mesh>
-   <mesh position={[0,.405,.108]}><sphereGeometry args={[.073,18,12]}/><meshStandardMaterial color={colors.trim}/></mesh>
-   <mesh position={[0,.19,-.105]}><boxGeometry args={[.17,.19,.09]}/><meshStandardMaterial color={colors.trim}/></mesh>
-   <mesh position={[0,.2,-.2]}><boxGeometry args={[.24,.29,.16]}/><meshStandardMaterial color={colors.suit} metalness={.35} roughness={.45}/></mesh>
-   {[-1,1].map(s=><group key={s} position={[s*.075,.04,-.23]}><mesh rotation={[Math.PI,0,0]}><cylinderGeometry args={[.035,.055,.13,10]}/><meshStandardMaterial color={colors.trim} emissive={colors.glow} emissiveIntensity={.3}/></mesh><mesh position={[0,-.12,0]}><coneGeometry args={[.025,.13,8]}/><meshStandardMaterial color={colors.glow} emissive={colors.glow} emissiveIntensity={1.1} transparent opacity={.7}/></mesh></group>)}
-   {[-1,1].map(s=><group key={s} position={[s*.14,.2,0]}><mesh rotation={[0,0,s*-.22]}><capsuleGeometry args={[.035,.14,4,8]}/><meshStandardMaterial color={colors.suit}/></mesh><mesh position={[0,-.17,.025]}><sphereGeometry args={[.045,12,10]}/><meshStandardMaterial color={colors.trim}/></mesh></group>)}
+   <mesh position={[0,.04,0]} scale={[1,1.25,.72]}><coneGeometry args={[.19,.5,12]}/><meshStandardMaterial color="#e8ddf5" roughness={.8}/></mesh>
+   <mesh position={[0,.25,.015]}><capsuleGeometry args={[.085,.18,5,10]}/><meshStandardMaterial color="#fff2df" roughness={.72}/></mesh>
+   <mesh position={[0,.43,.035]}><sphereGeometry args={[.105,16,12]}/><meshStandardMaterial color="#f5d9c9" roughness={.85}/></mesh>
+   <mesh position={[0,.47,.105]} scale={[.11,.09,.045]}><sphereGeometry args={[1,12,10]}/><meshStandardMaterial color="#b98b65" roughness={1}/></mesh>
+   <mesh position={[0,.59,.025]} rotation={[Math.PI/2.15,0,0]}><torusGeometry args={[.145,.012,6,28]}/><meshBasicMaterial color="#fff0bd" transparent opacity={.9}/></mesh>
+   <group ref={leftWing} position={[-.105,.23,-.045]}>{Array.from({length:5},(_,i)=>feather(-1,i))}</group>
+   <group ref={rightWing} position={[.105,.23,-.045]}>{Array.from({length:5},(_,i)=>feather(1,i))}</group>
+   {[-1,1].map(side=><mesh key={side} position={[side*.13,.13,.015]} rotation={[0,0,side*.5]}><capsuleGeometry args={[.025,.14,4,7]}/><meshStandardMaterial color="#f5e6d8" roughness={.85}/></mesh>)}
+   <mesh position={[0,-.18,-.2]} rotation={[Math.PI/2,0,0]}><coneGeometry args={[.065,.42,8]}/><meshBasicMaterial color={colors.glow} transparent opacity={.18}/></mesh>
   </group>
-  <group ref={leftLeg} position={[-.055,.09,0]}><mesh position={[0,-.055,.035]}><capsuleGeometry args={[.04,.11,4,8]}/><meshStandardMaterial color={colors.suit}/></mesh></group>
-  <group ref={rightLeg} position={[.055,.09,0]}><mesh position={[0,-.055,.035]}><capsuleGeometry args={[.04,.11,4,8]}/><meshStandardMaterial color={colors.suit}/></mesh></group>
-  <pointLight position={[0,.46,.12]} color={colors.glow} intensity={.32} distance={.8}/><pointLight ref={thruster} position={[0,.05,-.32]} color={colors.glow} intensity={.08} distance={1.5}/>
+  <pointLight position={[0,.4,.12]} color={colors.glow} intensity={.42} distance={2.2}/>
  </group>;
 }
-function OtherAvatar({player}:{player:RemotePlayer}){
- const c=AVATAR_PALETTE[player.avatarId]??AVATAR_PALETTE.stardust;
- return <group position={player.position}><mesh position={[0,.2,0]}><capsuleGeometry args={[.11,.2,4,8]}/><meshStandardMaterial color={c.suit}/></mesh><mesh position={[0,.4,0]}><sphereGeometry args={[.11,14,12]}/><meshStandardMaterial color="#efd8c9"/></mesh><pointLight color={c.glow} intensity={.2} distance={1}/></group>;
+function OtherAvatar({player,flightRef}:{player:RemotePlayer;flightRef:MutableRefObject<FlightState>}){
+ const ref=useRef<Group>(null);const c=AVATAR_PALETTE[player.avatarId]??AVATAR_PALETTE.stardust;
+ useFrame(()=>{if(ref.current)ref.current.position.set(player.position[0]-flightRef.current.position.x,player.position[1]-flightRef.current.position.y,player.position[2]-flightRef.current.position.z)});
+ return <group ref={ref}><mesh position={[0,.2,0]}><capsuleGeometry args={[.11,.2,4,8]}/><meshStandardMaterial color={c.suit}/></mesh><mesh position={[0,.4,0]}><sphereGeometry args={[.11,14,12]}/><meshStandardMaterial color="#efd8c9"/></mesh><pointLight color={c.glow} intensity={.2} distance={1}/></group>;
+}
+function HomeSystemBeacon({flightRef}:{flightRef:MutableRefObject<FlightState>}){
+ const ref=useRef<Group>(null);
+ useFrame((state)=>{if(!ref.current)return;const p=flightRef.current.position;const distance=p.length();ref.current.visible=distance>75;if(distance>0.001){ref.current.position.set(-p.x/distance*46,-p.y/distance*46,-p.z/distance*46);ref.current.rotation.y=state.clock.elapsedTime*.08}});
+ return <group ref={ref} visible={false}>
+  <pointLight position={[0,0,0]} color="#ffd98b" intensity={1.5} distance={7}/>
+  <mesh><sphereGeometry args={[.43,16,12]}/><meshBasicMaterial color="#ffd477"/></mesh>
+  <mesh rotation={[Math.PI/2,0,0]}><torusGeometry args={[.82,.012,4,48]}/><meshBasicMaterial color="#9bb8e9" transparent opacity={.72}/></mesh>
+  <mesh position={[.78,0,0]}><sphereGeometry args={[.14,14,10]}/><meshBasicMaterial color="#3e9fe0"/></mesh>
+  <mesh position={[.78,.025,0]} scale={[1.03,1.03,1.03]}><sphereGeometry args={[.14,14,10]}/><meshBasicMaterial color="#71c99c" wireframe transparent opacity={.55}/></mesh>
+  <mesh position={[0,0,0]}><sphereGeometry args={[.56,12,8]}/><meshBasicMaterial color="#ffd477" transparent opacity={.08}/></mesh>
+ </group>;
 }
 function moveAvoidingBodies(start:Vector3,displacement:Vector3,bodies:Body[],ignoreId:string|null){
  const length=displacement.length();if(length<1e-8)return start.clone();
@@ -70,7 +92,7 @@ export function FlightScene({bodies,avatarId,flightRef,inputRef,targetId,onArriv
   const dt=Math.min(delta,.04),f=flightRef.current,i=inputRef.current,body=f.groundedId?bodies.find(b=>b.id===f.groundedId):undefined;
   const cruise=(i.boost?5.2:2.25),step=cruise*dt;
   if(!targetId)previousTarget.current=null;
-  if(targetId){const target=bodies.find(b=>b.id===targetId);if(target){const center=new Vector3(...target.position),dir=center.clone().sub(f.position),distance=dir.length(),stop=target.radius+(target.landable ? 0.24 : 1.8);if(distance>stop){dir.normalize();const amount=Math.min((i.boost?6.2:2.8)*dt,distance-stop);f.position.copy(moveAvoidingBodies(f.position,dir.multiplyScalar(amount),bodies,target.id));f.yaw=Math.atan2(dir.x,-dir.z);f.pitch=Math.asin(Math.max(-.95,Math.min(.95,dir.y)))}else if(previousTarget.current!==targetId){previousTarget.current=targetId;f.position.copy(center).addScaledVector(f.position.clone().sub(center).normalize(),stop);if(target.landable){f.groundedId=target.id;f.pitch=0}onArrive(targetId)}}}
+  if(targetId){const target=bodies.find(b=>b.id===targetId);if(target){const center=new Vector3(...target.position),dir=center.clone().sub(f.position),distance=dir.length(),stop=target.radius+(target.landable ? 0.24 : 1.8);if(distance>stop){dir.normalize();const distanceSpeed=Math.min(34,2.8+distance*.24);const amount=Math.min(distanceSpeed*(i.boost?1.35:1)*dt,distance-stop);f.position.copy(moveAvoidingBodies(f.position,dir.multiplyScalar(amount),bodies,target.id));f.yaw=Math.atan2(dir.x,-dir.z);f.pitch=Math.asin(Math.max(-.95,Math.min(.95,dir.y)))}else if(previousTarget.current!==targetId){previousTarget.current=targetId;f.position.copy(center).addScaledVector(f.position.clone().sub(center).normalize(),stop);if(target.landable){f.groundedId=target.id;f.pitch=0}onArrive(targetId)}}}
   else if(body){
    const center=new Vector3(...body.position),normal=f.position.clone().sub(center).normalize();playerUp.copy(normal);
    forward.set(Math.sin(f.yaw),0,-Math.cos(f.yaw)).projectOnPlane(normal).normalize();if(forward.lengthSq()<.001)forward.set(1,0,0).projectOnPlane(normal).normalize();
@@ -86,11 +108,11 @@ export function FlightScene({bodies,avatarId,flightRef,inputRef,targetId,onArriv
   }
   const landedBody=f.groundedId?bodies.find(b=>b.id===f.groundedId):undefined;if(landedBody)playerUp.copy(f.position).sub(new Vector3(...landedBody.position)).normalize();else playerUp.set(0,1,0);
   forward.set(Math.sin(f.yaw)*Math.cos(f.pitch),Math.sin(f.pitch),-Math.cos(f.yaw)*Math.cos(f.pitch)).normalize();
-  smoothedCameraUp.current.lerp(playerUp,1-Math.exp(-4.8*dt)).normalize();desired.copy(f.position).addScaledVector(forward,-5.3).addScaledVector(smoothedCameraUp.current,2.25);
-  camera.position.lerp(desired,1-Math.exp(-4.8*dt));camera.up.copy(smoothedCameraUp.current);look.copy(f.position).addScaledVector(forward,2.3);camera.lookAt(look);
+  smoothedCameraUp.current.lerp(playerUp,1-Math.exp(-4.8*dt)).normalize();desired.copy(forward).multiplyScalar(-5.3).addScaledVector(smoothedCameraUp.current,2.25);
+  camera.position.lerp(desired,1-Math.exp(-4.8*dt));camera.up.copy(smoothedCameraUp.current);look.copy(forward).multiplyScalar(2.3);camera.lookAt(look);
  });
  return <>
   <color attach="background" args={['#0a1a36']}/><ambientLight intensity={.38}/><hemisphereLight args={['#b8dcff','#55436f',.28]}/><pointLight position={sun?.position??[-15.6,0,0]} intensity={470} distance={260} decay={2} color="#fff1d2"/>
-  <Stars/>{bodies.map(body=><Planet key={body.id} body={body}/>)}{remotePlayers.map(player=><OtherAvatar key={player.id} player={player}/>)}<Avatar avatarId={avatarId} flightRef={flightRef} inputRef={inputRef} bodies={bodies}/>
+  <Stars/>{bodies.map(body=><Planet key={body.id} body={body} flightRef={flightRef}/>)}<HomeSystemBeacon flightRef={flightRef}/>{remotePlayers.map(player=><OtherAvatar key={player.id} player={player} flightRef={flightRef}/>)}<Avatar avatarId={avatarId} flightRef={flightRef} inputRef={inputRef} bodies={bodies}/>
  </>;
 }
