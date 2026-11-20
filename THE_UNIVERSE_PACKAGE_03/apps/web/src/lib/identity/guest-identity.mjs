@@ -1,12 +1,12 @@
 export const GUEST_IDENTITY_STORAGE_KEY = 'the-universe:guest-identity:v1';
 
 export const AVATAR_OPTIONS = Object.freeze([
-  { id: 'stardust', name: 'Stardust' },
-  { id: 'lunar', name: 'Lunar' },
-  { id: 'nebula', name: 'Nebula' },
-  { id: 'crystal', name: 'Crystal' },
-  { id: 'aurora', name: 'Aurora' },
-  { id: 'solar', name: 'Solar' },
+  { id: 'stardust', name: 'Luna' },
+  { id: 'lunar', name: 'Noah' },
+  { id: 'nebula', name: 'Rosie' },
+  { id: 'crystal', name: 'Milo' },
+  { id: 'aurora', name: 'Ivy' },
+  { id: 'solar', name: 'Stella' },
 ]);
 
 const avatarIds = new Set(AVATAR_OPTIONS.map((avatar) => avatar.id));
