@@ -49,7 +49,8 @@ export const REAL_DESTINATIONS:Body[] = [
 ,{id:'itokawa',name:'Itokawa',kind:'Tiểu hành tinh',position:[38,5,4],radius:.13,color:'#8f8278',landable:true,real:true,description:'Tiểu hành tinh được Hayabusa lấy mẫu.',sourceUrl:'https://science.nasa.gov/solar-system/asteroids/25143-itokawa/'}
 ,{id:'halley',name:'Sao chổi Halley',kind:'Sao chổi',position:[65,-6,4],radius:.23,color:'#aaa49b',landable:true,real:true,description:'Sao chổi nổi tiếng được tàu vũ trụ quan sát cận cảnh năm 1986.',sourceUrl:'https://science.nasa.gov/solar-system/comets/1p-halley/'}
 ,{id:'tempel-1',name:'Sao chổi Tempel 1',kind:'Sao chổi',position:[68,6,-4],radius:.2,color:'#8d8781',landable:true,real:true,description:'Sao chổi được sứ mệnh Deep Impact và Stardust khảo sát.',sourceUrl:'https://science.nasa.gov/solar-system/comets/9p-tempel-1/'}
-];\nconst COLORS=['#8d7de0','#62b8b2','#d58c73','#8da9db','#b9a1c9','#8fbf91'];
+];
+const COLORS=['#8d7de0','#62b8b2','#d58c73','#8da9db','#b9a1c9','#8fbf91'];
 export function makeImaginedWorlds(sector:number):Body[] {
  let seed=84191+sector*991; const random=()=>{seed=(seed*16807)%2147483647;return(seed-1)/2147483646;};
  const names=['Asterion','Lumen Vale','Nacre','Veloria','Serein','Eidolon','Mira Sol','Orphia'];
