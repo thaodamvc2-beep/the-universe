@@ -4,7 +4,7 @@ import { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
 import { SiteHeader } from '@/components/site-header';
 import { useSite } from '@/components/site-provider';
-import { AVATAR_OPTIONS, validateNickname, type AvatarId } from '@/lib/identity/guest-identity';
+import { AVATAR_OPTIONS, validateNickname, type AvatarId } from '@/lib/identity/guest-identity.mjs';
 
 export default function AvatarPage() {
   const { t, guestIdentity, identityReady, updateGuestIdentity } = useSite();
