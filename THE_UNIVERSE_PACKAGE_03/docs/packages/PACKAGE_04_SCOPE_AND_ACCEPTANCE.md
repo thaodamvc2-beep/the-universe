@@ -1,7 +1,7 @@
 # THE UNIVERSE — PACKAGE 04 SCOPE & ACCEPTANCE
 
 **Document ID:** TU-PKG-04-001  
-**Version:** 1.2  
+**Version:** 1.3  
 **Date:** 2026-11-20  
 **Status:** READY FOR OWNER REVIEW — DEPLOYED; MANUAL BROWSER REVIEW PENDING  
 **Package:** 04 — Avatar & Nickname  
@@ -107,22 +107,22 @@ The browser record is untrusted input. Validate every field when reading it. If 
 
 ## 10. Actual verification record
 
-Environment: GitHub Actions, Node.js 22.23.5, npm 10.9.9. Workflow run: [44661437139](https://github.com/thaodamvc2-beep/the-universe/actions/runs/44661437139), commit `ef66790b2bd2822054f16ba953856d8b5c5812dc`.
+Environment: GitHub Actions, Node.js 22, npm 10.9.9. Latest visual revision workflow: [44671828808](https://github.com/thaodamvc2-beep/the-universe/actions/runs/44671828808), commit `90cee727c5afee42362bb873501b62714a1744a3`.
 
 | Check | Result | Evidence |
 |---|---|---|
-| Package 03 + Package 05 + Package 04 automated tests | PASS | 18 tests passed, 0 failed |
+| Package 03 + Package 05 + Package 04 automated tests | PASS | 19 tests passed, 0 failed |
 | ESLint | PASS | GitHub Actions run 44661437139 |
 | TypeScript typecheck | PASS | GitHub Actions run 44661437139 |
 | Next.js static production build | PASS | GitHub Actions run 44661437139 |
-| GitHub Pages deployment | PASS | GitHub Actions run 44661437139 |
+| GitHub Pages deployment | PASS | GitHub Actions run 44671828808; deployed to `https://thaodamvc2-beep.github.io/the-universe/` |
 | Manual browser interaction (desktop/mobile) | NOT RUN | Owner visual and interaction review remains pending |
 
 Automated tests cover guest identity creation, six stable human-character IDs, locally bundled generated portrait artwork, homepage/header integration, nickname validation, local persistence, malformed/blocked storage fallback, identity updates and truthful optional sign-in disclosure. Automated checks do not replace real browser/device review.
 
 ## 11. Acceptance status
 
-**READY FOR OWNER REVIEW — UPDATED ARTWORK AND HOMEPAGE INTEGRATION IMPLEMENTED; DEPLOYMENT VERIFICATION PENDING.** The implementation is live on GitHub Pages. The owner must still review the avatar picker, nickname editor, local persistence across reloads and responsive layout on desktop/mobile. No real authentication, cloud sync or multiplayer avatar synchronization is claimed. The avatar portraits are 2D character artwork; they are not rigged 3D characters.
+**READY FOR OWNER REVIEW — CUTE HUMAN AVATARS AND HOMEPAGE INTEGRATION DEPLOYED; OWNER VISUAL REVIEW PENDING.** The implementation is live on GitHub Pages. The owner must still review the avatar picker, nickname editor, local persistence across reloads and responsive layout on desktop/mobile. No real authentication, cloud sync or multiplayer avatar synchronization is claimed. The avatar portraits are 2D character artwork; they are not rigged 3D characters. The live release includes the six generated human portraits in the avatar editor, the homepage hero and shared header.
 
 ## 12. Handover
 
