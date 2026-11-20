@@ -2,7 +2,7 @@
 import { useMemo, useRef } from 'react';
 import type { MutableRefObject } from 'react';
 import { useFrame, useThree } from '@react-three/fiber';
-import { BackSide, Group, Vector3 } from 'three';
+import { BackSide, Group, PointLight, Vector3 } from 'three';
 import { AVATAR_PALETTE, type AvatarId, type Body } from './universe-data';
 
 export type FlightState={position:Vector3;yaw:number;pitch:number;groundedId:string|null};
@@ -24,17 +24,17 @@ function Planet({body}:{body:Body}){
  </group>;
 }
 function Avatar({avatarId,flightRef,bodies}:{avatarId:AvatarId;flightRef:MutableRefObject<FlightState>;bodies:Body[]}){
- const ref=useRef<Group>(null);const colors=AVATAR_PALETTE[avatarId]??AVATAR_PALETTE.stardust;
+ const ref=useRef<Group>(null);const thruster=useRef<PointLight>(null);const colors=AVATAR_PALETTE[avatarId]??AVATAR_PALETTE.stardust;
  const up=new Vector3(0,1,0);
- useFrame(()=>{if(!ref.current)return;const f=flightRef.current;ref.current.position.copy(f.position);ref.current.quaternion.setFromUnitVectors(up,new Vector3(0,1,0));if(f.groundedId){const body=bodies.find(b=>b.id===f.groundedId);if(body){const n=f.position.clone().sub(new Vector3(...body.position)).normalize();ref.current.quaternion.setFromUnitVectors(up,n)}}ref.current.rotateY(f.yaw)});
+ useFrame(()=>{if(!ref.current)return;const f=flightRef.current;ref.current.position.copy(f.position);ref.current.quaternion.setFromUnitVectors(up,new Vector3(0,1,0));if(f.groundedId){const body=bodies.find(b=>b.id===f.groundedId);if(body){const n=f.position.clone().sub(new Vector3(...body.position)).normalize();ref.current.quaternion.setFromUnitVectors(up,n)}}ref.current.rotateY(f.yaw);if(thruster.current)thruster.current.intensity=f.groundedId?0.12:1.05});
  return <group ref={ref}>
   <mesh position={[0,.19,0]} castShadow><capsuleGeometry args={[.105,.2,5,10]}/><meshStandardMaterial color={colors.suit}/></mesh>
   <mesh position={[0,.39,.015]} castShadow><sphereGeometry args={[.115,20,16]}/><meshStandardMaterial color="#f0d9c9"/></mesh>
   <mesh position={[0,.405,.108]}><sphereGeometry args={[.073,20,12]}/><meshStandardMaterial color={colors.trim}/></mesh>
-  <mesh position={[0,.19,-.105]}><boxGeometry args={[.17,.19,.09]}/><meshStandardMaterial color={colors.trim}/></mesh>
+  <mesh position={[0,.19,-.105]}><boxGeometry args={[.17,.19,.09]}/><meshStandardMaterial color={colors.trim}/></mesh>\n  <mesh position={[0,.2,-.2]}><boxGeometry args={[.24,.29,.16]}/><meshStandardMaterial color={colors.suit} metalness={.35} roughness={.45}/></mesh>\n  {[-1,1].map(s=><group key={s} position={[s*.075,.04,-.23]}><mesh rotation={[Math.PI,0,0]}><cylinderGeometry args={[.035,.055,.13,10]}/><meshStandardMaterial color={colors.trim} emissive={colors.glow} emissiveIntensity={.3}/></mesh><mesh position={[0,-.12,0]}><coneGeometry args={[.025,.13,8]}/><meshStandardMaterial color={colors.glow} emissive={colors.glow} emissiveIntensity={1.4} transparent opacity={.75}/></mesh></group>)}
   {[-1,1].map(s=><group key={s} position={[s*.14,.2,0]}><mesh rotation={[0,0,s*-.22]}><capsuleGeometry args={[.035,.14,4,8]}/><meshStandardMaterial color={colors.suit}/></mesh><mesh position={[0,-.17,.025]}><sphereGeometry args={[.045,12,10]}/><meshStandardMaterial color={colors.trim}/></mesh></group>)}
   {[-1,1].map(s=><mesh key={s} position={[s*.055,.035,0]}><capsuleGeometry args={[.04,.11,4,8]}/><meshStandardMaterial color={colors.suit}/></mesh>)}
-  <pointLight position={[0,.46,.12]} color={colors.glow} intensity={.32} distance={.8}/>
+  <pointLight position={[0,.46,.12]} color={colors.glow} intensity={.32} distance={.8}/><pointLight ref={thruster} position={[0,.05,-.32]} color={colors.glow} intensity={.12} distance={1.8}/>
  </group>;
 }
 function OtherAvatar({player}:{player:RemotePlayer}){
