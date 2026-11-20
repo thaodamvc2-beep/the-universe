@@ -35,7 +35,7 @@ jobs:
 
       - name: Run automated tests
         working-directory: THE_UNIVERSE_PACKAGE_03
-        run: node --test tests/package-03.test.mjs tests/celestial-catalog.test.mjs tests/guest-identity.test.mjs tests/cosmic-map.test.mjs
+        run: node --test tests/package-03.test.mjs tests/celestial-catalog.test.mjs tests/guest-identity.test.mjs tests/cosmic-map.test.mjs tests/spaceflight.test.mjs
 
       - name: Run lint
         working-directory: THE_UNIVERSE_PACKAGE_03
