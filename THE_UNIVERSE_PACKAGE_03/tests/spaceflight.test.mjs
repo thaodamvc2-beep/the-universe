@@ -85,3 +85,11 @@ test('player character is rendered as a lightweight flying angel rather than a s
  assert.match(scene,/torusGeometry args=\{\[\.145/);
  assert.doesNotMatch(scene,/thruster|capsuleGeometry args=\{\[\.105/);
 });
+
+test('keyboard camera look controls rotate the view independently of flight movement',async()=>{
+ const game=await read('apps/web/src/features/game/universe-game.tsx');
+ assert.match(game,/lookKey==='j'/);
+ assert.match(game,/lookKey==='l'/);
+ assert.match(game,/lookKey==='i'/);
+ assert.match(game,/lookKey==='k'/);
+});
