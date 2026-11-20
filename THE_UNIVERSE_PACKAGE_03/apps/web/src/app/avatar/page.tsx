@@ -22,8 +22,8 @@ export default function AvatarPage() {
 
   function saveIdentity() {
     if (!validation.valid) return;
-    updateGuestIdentity({ avatarId, nickname: validation.value });
-    setSaved(true);
+    const persisted = updateGuestIdentity({ avatarId, nickname: validation.value });
+    setSaved(persisted);
   }
 
   return (
