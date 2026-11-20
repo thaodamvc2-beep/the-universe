@@ -10,14 +10,14 @@ import { makeImaginedWorlds, REAL_DESTINATIONS, type AvatarId } from './universe
 
 export function UniverseGame(){
  const {language,setLanguage,guestIdentity}=useSite();
- const [contextLost,setContextLost]=useState(false),[sector,setSector]=useState(0),[selectedId,setSelectedId]=useState('mars'),[targetId,setTargetId]=useState<string|null>(null),[currentBodyId,setCurrentBodyId]=useState<string|null>('earth'),[audioEnabled,setAudioEnabled]=useState(false),[aiStatus,setAiStatus]=useState(''),[networkStatus,setNetworkStatus]=useState('Chưa kết nối máy chủ nhiều người chơi'),[remotePlayers,setRemotePlayers]=useState<RemotePlayer[]>([]),[showDestinations,setShowDestinations]=useState(false);
+ const [contextLost,setContextLost]=useState(false),[sector,setSector]=useState(0),[aiWorlds,setAiWorlds]=useState<import('./universe-data').Body[]>([]),[selectedId,setSelectedId]=useState('mars'),[targetId,setTargetId]=useState<string|null>(null),[currentBodyId,setCurrentBodyId]=useState<string|null>('earth'),[audioEnabled,setAudioEnabled]=useState(false),[aiStatus,setAiStatus]=useState(''),[networkStatus,setNetworkStatus]=useState('Chưa kết nối máy chủ nhiều người chơi'),[remotePlayers,setRemotePlayers]=useState<RemotePlayer[]>([]),[showDestinations,setShowDestinations]=useState(false);
  const input=useRef<InputState>({forward:false,back:false,left:false,right:false,up:false,down:false,land:false,takeoff:false,boost:false});
  const flightRef=useRef<FlightState>({position:new Vector3(0,0,2.39),yaw:Math.PI/2,pitch:0,groundedId:'earth'});
  const drag=useRef({active:false,x:0,y:0});
  const avatarId=(guestIdentity?.avatarId??'stardust') as AvatarId;
  const nickname=guestIdentity?.nickname??(language==='vi'?'Người du hành':'Traveler');
  const imagined=useMemo(()=>Array.from({length:sector},(_,i)=>makeImaginedWorlds(i+1)).flat(),[sector]);
- const bodies=useMemo(()=>[...REAL_DESTINATIONS,...imagined],[imagined]);
+ const bodies=useMemo(()=>[...REAL_DESTINATIONS,...imagined,...aiWorlds],[imagined,aiWorlds]);
  const selected=bodies.find(b=>b.id===selectedId)??REAL_DESTINATIONS[3];
  const current=bodies.find(b=>b.id===currentBodyId);
  const onArrive=useCallback((id:string)=>{setCurrentBodyId(id);setTargetId(null)},[]);
@@ -49,7 +49,7 @@ export function UniverseGame(){
    socket.onerror=()=>setNetworkStatus('Không thể kết nối máy chủ nhiều người chơi');
    socket.onclose=()=>setNetworkStatus('Máy chủ nhiều người chơi đã ngắt kết nối');
    const heartbeat=window.setInterval(()=>{if(socket.readyState===WebSocket.OPEN)socket.send(JSON.stringify({type:'state',player:{id:guestIdentity?.guestId??'guest',nickname,avatarId,position:flightRef.current.position.toArray()}}))},180);
-   return()=>{window.clearInterval(heartbeat);socket.close()};
+   return()=>{window.clearInterval(heartbeat);if(socket.readyState===WebSocket.OPEN)socket.send(JSON.stringify({type:'leave',id:guestIdentity?.guestId??'guest'}));socket.close()};
   }catch{setNetworkStatus('Không thể khởi tạo kết nối nhiều người chơi')}
  },[avatarId,guestIdentity?.guestId,nickname]);
 
@@ -61,7 +61,7 @@ export function UniverseGame(){
  const onPointerUp=()=>{drag.current.active=false};
  const flyTo=()=>{if(selected.id!==flightRef.current.groundedId){if(flightRef.current.groundedId){const landed=bodies.find(b=>b.id===flightRef.current.groundedId);if(landed){const normal=flightRef.current.position.clone().sub(new Vector3(...landed.position)).normalize();flightRef.current.position.addScaledVector(normal,1.3)}flightRef.current.groundedId=null;setCurrentBodyId(null)}setTargetId(selected.id);setShowDestinations(false)}};
  const newSector=()=>{setSector(s=>s+1);setAiStatus('Đã mở thêm vùng không gian procedural. Đây là thế giới hư cấu do thuật toán tạo, chưa phải nội dung AI.')};
- const requestAI=async()=>{const endpoint=process.env.NEXT_PUBLIC_UNIVERSE_AI_ENDPOINT;if(!endpoint){setAiStatus('AI chưa kết nối: cần dịch vụ AI phía máy chủ. Vùng procedural vẫn có thể mở rộng để khám phá.');return}setAiStatus('Đang yêu cầu máy chủ AI sáng tạo…');try{const r=await fetch(endpoint,{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({language,theme:'peaceful cosmic exploration',seed:Date.now()})});if(!r.ok)throw new Error('AI service unavailable');const data=await r.json() as {message?:string};setAiStatus(data.message??'AI đã phản hồi; cần bộ chuyển đổi dữ liệu thế giới để đưa kết quả vào game.')}catch{setAiStatus('Không kết nối được dịch vụ AI. Các vùng procedural vẫn hoạt động.')}};
+ const requestAI=async()=>{const endpoint=process.env.NEXT_PUBLIC_UNIVERSE_AI_ENDPOINT;if(!endpoint){setAiStatus('AI chưa kết nối: cần dịch vụ AI phía máy chủ. Vùng procedural vẫn có thể mở rộng để khám phá.');return}setAiStatus('Đang yêu cầu máy chủ AI sáng tạo…');try{const r=await fetch(endpoint,{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({language,theme:'peaceful cosmic exploration',seed:Date.now()})});if(!r.ok)throw new Error('AI service unavailable');const data=await r.json() as {message?:string;worlds?:Array<{id?:string;name?:string;kind?:string;description?:string;radius?:number;color?:string;landable?:boolean;position?:number[];classification?:string;moderation?:string}>};const worlds=(data.worlds??[]).filter(w=>w.classification==='FICTIONAL_AI_GENERATED'&&w.moderation==='approved'&&typeof w.id==='string'&&typeof w.name==='string'&&typeof w.description==='string'&&Array.isArray(w.position)&&w.position.length===3&&w.position.every(Number.isFinite)&&typeof w.radius==='number'&&w.radius>=.35&&w.radius<=4).slice(0,12).map(w=>({id:w.id!,name:w.name!,kind:w.kind??'Thế giới hư cấu · AI',description:w.description!,position:w.position as [number,number,number],radius:w.radius!,color:typeof w.color==='string'&&/^#[0-9a-fA-F]{6}$/.test(w.color)?w.color:'#8d7de0',landable:w.landable!==false,real:false}));if(worlds.length)setAiWorlds(old=>[...old,...worlds]);setAiStatus(data.message??(worlds.length?'AI đã tạo '+worlds.length+' thế giới hư cấu.':'Máy chủ AI chưa trả về thế giới hợp lệ.'))}catch{setAiStatus('Không kết nối được dịch vụ AI. Các vùng procedural vẫn hoạt động.')}};
 
  return <main id="main-content" className="universe-game universe-explorer">
   <div className="game-canvas" aria-label="Vũ trụ 3D có thể bay và khám phá" onPointerDown={onPointerDown} onPointerMove={onPointerMove} onPointerUp={onPointerUp} onPointerCancel={onPointerUp}>
