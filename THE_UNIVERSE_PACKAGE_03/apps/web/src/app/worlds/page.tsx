@@ -10,6 +10,7 @@ export default function WorldsPage() {
   const { t, language } = useSite();
   const [selectedId, setSelectedId] = useState('earth');
   const selected = useMemo(() => bodies.find((body) => body.id === selectedId) ?? bodies.find((body) => body.id === 'earth')!, [selectedId]);
+  const selectedIndex = bodies.findIndex((body) => body.id === selected.id);
   const number = (value: number | null) => value === null ? '—' : value.toLocaleString(language === 'vi' ? 'vi-VN' : 'en-US', { maximumFractionDigits: 3 });
   return (
     <main id="main-content" className="worlds-page">
@@ -30,7 +31,7 @@ export default function WorldsPage() {
           ))}
         </div>
         <aside className="world-detail" aria-live="polite">
-          <div className="world-detail-top"><span>{t('realObject')}</span><span>01 / 10</span></div>
+          <div className="world-detail-top"><span>{t('realObject')}</span><span>{String(selectedIndex + 1).padStart(2, '0')} / {String(bodies.length).padStart(2, '0')}</span></div>
           <span className={`world-orb ${selected.id}`} aria-hidden="true" />
           <h2>{selected.name}</h2>
           <p className="world-detail-type">{(language === 'vi' ? selected.kindVi : selected.kind).toUpperCase()}</p>
@@ -46,7 +47,7 @@ export default function WorldsPage() {
           {selected.id === 'earth' ? <p className="world-home-note">✦ {t('homeReturn')}</p> : null}
         </aside>
       </section>
-      <footer className="worlds-footer"><Link className="back-home-link" href="/">{t('worldsBack')}</Link><span>REAL ASTRONOMY · EARTH REMAINS HOME</span></footer>
+      <footer className="worlds-footer"><Link className="back-home-link" href="/">{t('worldsBack')}</Link><span>{t('worldsFooter')}</span></footer>
     </main>
   );
 }
