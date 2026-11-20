@@ -1,6 +1,6 @@
 # THE UNIVERSE — Gói 07: Spaceflight & Open Universe
 
-**Version:** 1.2  
+**Version:** 1.3  
 **Date:** 2026-11-20  
 **Status:** CORE FLIGHT SLICE DEPLOYED — LOCAL PROCEDURAL GENERATION; AI API OUT OF SCOPE; MULTIPLAYER BACKEND BLOCKED  
 **Owner authorization:** Explicit request on 2026-11-20 to complete six-axis avatar flight, interplanetary travel/landing, expanded explored-body catalogue, infinite universe generation, ambient audio and multiplayer, then integrate as one web game.
@@ -75,4 +75,4 @@ Procedural generation is the intentional production choice for infinite explorat
 
 ## 7. Deployment evidence update (2026-11-20)
 
-GitHub Actions run 44712919413 completed successfully for commit `e163ad5537ba8223c9173562b72b9ca2009fbf3e`: 30 automated tests, ESLint, TypeScript, static production build and GitHub Pages deployment all passed. This verifies compilation and deployment, not live visual or two-device multiplayer testing. Manual review of the new flight/landing behavior remains pending. Paid AI generation is intentionally excluded; real networked multiplayer still requires a realtime WebSocket service.
+GitHub Actions run 44713629362 completed successfully for commit `c74269965b6d22c7ddb55ff577694f8e1088f3e9`: 30 automated tests, ESLint, TypeScript, static production build and GitHub Pages deployment all passed. This is the latest code revision, including the correction that keeps the rendered Moon at the same coordinates used by flight and landing physics. This verifies compilation and deployment, not live visual or two-device multiplayer testing. Manual review of the new flight/landing behavior remains pending. Paid AI generation is intentionally excluded; real networked multiplayer still requires a realtime WebSocket service.

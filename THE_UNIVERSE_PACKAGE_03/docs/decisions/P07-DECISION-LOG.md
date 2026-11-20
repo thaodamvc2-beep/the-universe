@@ -1,6 +1,6 @@
 # THE UNIVERSE — Gói 07 Decision Log
 
-**Version:** 1.2  
+**Version:** 1.3  
 **Date:** 2026-11-20  
 **Authority:** Owner's explicit request to complete flight, interplanetary exploration, expanded destinations, infinite universe, ambient sound and multiplayer.
 
@@ -43,9 +43,13 @@
 
 
 ## Deployment update (2026-11-20)
-- GitHub Actions run 44706387131 passed 23 tests, ESLint, TypeScript, static build and GitHub Pages deployment at commit `f694462c4a5f191b1dec8c3c42cbacf2f6e1df20`.
+- GitHub Actions run 44713629362 passed 30 tests, ESLint, TypeScript, static build and GitHub Pages deployment at commit `c74269965b6d22c7ddb55ff577694f8e1088f3e9`.
 - This is a deployable flight slice, not final full-production art. Paid AI generation is explicitly out of scope. Networked multiplayer remains unavailable until a secure realtime backend is provisioned and tested with separate devices.
 
 
 ## Owner change (2026-11-20)
 - Gói 07-CH-03: Remove AI-generation button, notices and API calls. Generate coordinate-seeded procedural regions locally in the browser; automatically stream nearby sectors while flying and allow manual opening of a new region. Also slow cruise speed, avoid celestial-body collisions, auto-land gently, sit when resting/stand when walking, add body labels, and light scenes from the Sun's actual world position. Status: deployed code, manual owner review pending.
+
+
+## Latest deployment evidence
+- Run 44713629362 deployed commit `c74269965b6d22c7ddb55ff577694f8e1088f3e9`; all 30 tests, ESLint, TypeScript, static build and GitHub Pages deployment passed.
