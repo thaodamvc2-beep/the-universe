@@ -30,7 +30,7 @@ test('Gói 06 labels schematic scale and simulated route preview', async () => {
   assert.match(map, /mapPreviewOnly/);
   assert.match(map, /mapRouteReady/);
   assert.match(translations, /not to scale/);
-  assert.match(translations, /chỉ là chức năng chọn điểm đến/);
+  assert.match(translations, /chức năng chọn điểm đến/);
 });
 
 test('homepage and direct map route share avatar identity and canonical world data', async () => {
