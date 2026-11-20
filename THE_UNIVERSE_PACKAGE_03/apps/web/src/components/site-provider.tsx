@@ -2,8 +2,8 @@
 
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import type { ReactNode } from 'react';
-import { loadOrCreateGuestIdentity, saveGuestIdentity, updateGuestIdentity as applyGuestIdentityChanges } from '@/lib/identity/guest-identity';
-import type { AvatarId, GuestIdentity } from '@/lib/identity/guest-identity';
+import { loadOrCreateGuestIdentity, saveGuestIdentity, updateGuestIdentity as applyGuestIdentityChanges } from '@/lib/identity/guest-identity.mjs';
+import type { AvatarId, GuestIdentity } from '@/lib/identity/guest-identity.mjs';
 import { translate, type Language, type TranslationKey } from '@/lib/i18n/translations';
 
 type SiteContextValue = {
