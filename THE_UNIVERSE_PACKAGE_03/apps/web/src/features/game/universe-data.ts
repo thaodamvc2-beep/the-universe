@@ -32,8 +32,24 @@ export const REAL_DESTINATIONS:Body[] = [
 {id:'bennu',name:'Bennu',kind:'Tiểu hành tinh',position:[31,5,3],radius:.14,color:'#85776c',landable:true,real:true,description:'Tiểu hành tinh được OSIRIS-REx lấy mẫu.',sourceUrl:'https://science.nasa.gov/solar-system/asteroids/101955-bennu/'},
 {id:'ryugu',name:'Ryugu',kind:'Tiểu hành tinh',position:[34,6,-2],radius:.15,color:'#786b60',landable:true,real:true,description:'Tiểu hành tinh được Hayabusa2 khảo sát và lấy mẫu.',sourceUrl:'https://science.nasa.gov/solar-system/asteroids/162173-ryugu/'},
 {id:'comet-67p',name:'Sao chổi 67P',kind:'Sao chổi',position:[61,7,2],radius:.2,color:'#8d8b84',landable:true,real:true,description:'Sao chổi được tàu Rosetta đồng hành khảo sát.',sourceUrl:'https://science.nasa.gov/solar-system/comets/67p-churyumov-gerasimenko/'}
-];
-const COLORS=['#8d7de0','#62b8b2','#d58c73','#8da9db','#b9a1c9','#8fbf91'];
+
+,{id:'mimas',name:'Mimas',kind:'Vệ tinh Sao Thổ',position:[84,2,2],radius:.22,color:'#bfc7d0',landable:true,real:true,description:'Vệ tinh băng có hố Herschel lớn.',sourceUrl:'https://science.nasa.gov/saturn/moons/mimas/'}
+,{id:'tethys',name:'Tethys',kind:'Vệ tinh Sao Thổ',position:[86,-2,1],radius:.32,color:'#cbd2d9',landable:true,real:true,description:'Vệ tinh băng được Cassini khảo sát.',sourceUrl:'https://science.nasa.gov/saturn/moons/tethys/'}
+,{id:'dione',name:'Dione',kind:'Vệ tinh Sao Thổ',position:[88,2,-1],radius:.34,color:'#c6cbd0',landable:true,real:true,description:'Vệ tinh băng với địa hình nứt gãy.',sourceUrl:'https://science.nasa.gov/saturn/moons/dione/'}
+,{id:'rhea',name:'Rhea',kind:'Vệ tinh Sao Thổ',position:[90,-2,-1],radius:.42,color:'#b9c0c8',landable:true,real:true,description:'Vệ tinh lớn thứ hai của Sao Thổ.',sourceUrl:'https://science.nasa.gov/saturn/moons/rhea/'}
+,{id:'iapetus',name:'Iapetus',kind:'Vệ tinh Sao Thổ',position:[92,2,1],radius:.38,color:'#8b8279',landable:true,real:true,description:'Vệ tinh có hai bán cầu sáng tối tương phản.',sourceUrl:'https://science.nasa.gov/saturn/moons/iapetus/'}
+,{id:'titania',name:'Titania',kind:'Vệ tinh Sao Thiên Vương',position:[103,2,1],radius:.4,color:'#aaa39a',landable:true,real:true,description:'Vệ tinh lớn nhất của Sao Thiên Vương.',sourceUrl:'https://science.nasa.gov/uranus/moons/titania/'}
+,{id:'oberon',name:'Oberon',kind:'Vệ tinh Sao Thiên Vương',position:[105,-2,1],radius:.38,color:'#8e8984',landable:true,real:true,description:'Vệ tinh lớn ngoài cùng của Sao Thiên Vương.',sourceUrl:'https://science.nasa.gov/uranus/moons/oberon/'}
+,{id:'ariel',name:'Ariel',kind:'Vệ tinh Sao Thiên Vương',position:[107,1,-1],radius:.3,color:'#b4b5b1',landable:true,real:true,description:'Vệ tinh băng có bề mặt địa chất trẻ.',sourceUrl:'https://science.nasa.gov/uranus/moons/ariel/'}
+,{id:'umbriel',name:'Umbriel',kind:'Vệ tinh Sao Thiên Vương',position:[109,-1,-1],radius:.3,color:'#77777b',landable:true,real:true,description:'Vệ tinh tối với nhiều hố va chạm.',sourceUrl:'https://science.nasa.gov/uranus/moons/umbriel/'}
+,{id:'miranda',name:'Miranda',kind:'Vệ tinh Sao Thiên Vương',position:[111,2,0],radius:.2,color:'#aaa49a',landable:true,real:true,description:'Vệ tinh nhỏ có địa hình cực kỳ đa dạng.',sourceUrl:'https://science.nasa.gov/uranus/moons/miranda/'}
+,{id:'proteus',name:'Proteus',kind:'Vệ tinh Sao Hải Vương',position:[132,-1,1],radius:.25,color:'#817b77',landable:true,real:true,description:'Vệ tinh không đều lớn thứ hai của Sao Hải Vương.',sourceUrl:'https://science.nasa.gov/neptune/moons/proteus/'}
+,{id:'nereid',name:'Nereid',kind:'Vệ tinh Sao Hải Vương',position:[134,2,-1],radius:.18,color:'#99918a',landable:true,real:true,description:'Vệ tinh có quỹ đạo rất lệch tâm.',sourceUrl:'https://science.nasa.gov/neptune/moons/nereid/'}
+,{id:'eros',name:'433 Eros',kind:'Tiểu hành tinh',position:[36,-5,4],radius:.18,color:'#9c8a7c',landable:true,real:true,description:'Tiểu hành tinh gần Trái Đất được NEAR Shoemaker khảo sát và hạ cánh.',sourceUrl:'https://science.nasa.gov/solar-system/asteroids/433-eros/'}
+,{id:'itokawa',name:'Itokawa',kind:'Tiểu hành tinh',position:[38,5,4],radius:.13,color:'#8f8278',landable:true,real:true,description:'Tiểu hành tinh được Hayabusa lấy mẫu.',sourceUrl:'https://science.nasa.gov/solar-system/asteroids/25143-itokawa/'}
+,{id:'halley',name:'Sao chổi Halley',kind:'Sao chổi',position:[65,-6,4],radius:.23,color:'#aaa49b',landable:true,real:true,description:'Sao chổi nổi tiếng được tàu vũ trụ quan sát cận cảnh năm 1986.',sourceUrl:'https://science.nasa.gov/solar-system/comets/1p-halley/'}
+,{id:'tempel-1',name:'Sao chổi Tempel 1',kind:'Sao chổi',position:[68,6,-4],radius:.2,color:'#8d8781',landable:true,real:true,description:'Sao chổi được sứ mệnh Deep Impact và Stardust khảo sát.',sourceUrl:'https://science.nasa.gov/solar-system/comets/9p-tempel-1/'}
+];\nconst COLORS=['#8d7de0','#62b8b2','#d58c73','#8da9db','#b9a1c9','#8fbf91'];
 export function makeImaginedWorlds(sector:number):Body[] {
  let seed=84191+sector*991; const random=()=>{seed=(seed*16807)%2147483647;return(seed-1)/2147483646;};
  const names=['Asterion','Lumen Vale','Nacre','Veloria','Serein','Eidolon','Mira Sol','Orphia'];
