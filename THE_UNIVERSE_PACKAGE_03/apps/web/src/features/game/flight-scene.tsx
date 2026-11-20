@@ -24,7 +24,7 @@ function PlanetLabel({body}:{body:Body}){
 }
 function Planet({body}:{body:Body}){
  const ref=useRef<Group>(null);
- useFrame((_s,d)=>{if(ref.current)ref.current.rotation.y+=d*(body.id==='earth'?.012:.004)});
+ useFrame((_s,d)=>{if(ref.current)ref.current.rotation.y+=d*(body.id === 'earth' ? 0.012 : 0.004)});
  return <group ref={ref} position={body.position}>
   <mesh><sphereGeometry args={[body.radius,body.real?28:20,body.real?22:16]}/><meshStandardMaterial color={body.color} roughness={.92} emissive={body.id==='sun'?'#ffb34f':'#000000'} emissiveIntensity={body.id==='sun'?2.1:0}/></mesh>
   {body.id==='earth'&&<mesh scale={1.035}><sphereGeometry args={[body.radius,28,20]}/><meshBasicMaterial color="#73c8ff" transparent opacity={.12} side={BackSide}/></mesh>}
@@ -36,7 +36,7 @@ function Planet({body}:{body:Body}){
 function Avatar({avatarId,flightRef,bodies}:{avatarId:AvatarId;flightRef:MutableRefObject<FlightState>;bodies:Body[]}){
  const ref=useRef<Group>(null);const pose=useRef<Group>(null);const leftLeg=useRef<Group>(null);const rightLeg=useRef<Group>(null);const thruster=useRef<PointLight>(null);
  const colors=AVATAR_PALETTE[avatarId]??AVATAR_PALETTE.stardust;const up=new Vector3(0,1,0);
- useFrame(()=>{if(!ref.current)return;const f=flightRef.current;const seated=!!f.groundedId;ref.current.position.copy(f.position);ref.current.quaternion.setFromUnitVectors(up,up);if(seated){const body=bodies.find(b=>b.id===f.groundedId);if(body){const n=f.position.clone().sub(new Vector3(...body.position)).normalize();ref.current.quaternion.setFromUnitVectors(up,n)}}ref.current.rotateY(f.yaw);if(pose.current)pose.current.rotation.x+=( (seated?-.42:0)-pose.current.rotation.x)*.18;if(leftLeg.current)leftLeg.current.rotation.x+=((seated?-1.0:0)-leftLeg.current.rotation.x)*.18;if(rightLeg.current)rightLeg.current.rotation.x+=((seated?-1.0:0)-rightLeg.current.rotation.x)*.18;if(thruster.current)thruster.current.intensity=seated?.08:1.0});
+ useFrame(()=>{if(!ref.current)return;const f=flightRef.current;const seated=!!f.groundedId;ref.current.position.copy(f.position);ref.current.quaternion.setFromUnitVectors(up,up);if(seated){const body=bodies.find(b=>b.id===f.groundedId);if(body){const n=f.position.clone().sub(new Vector3(...body.position)).normalize();ref.current.quaternion.setFromUnitVectors(up,n)}}ref.current.rotateY(f.yaw);if(pose.current)pose.current.rotation.x+=( (seated?-.42:0)-pose.current.rotation.x)*.18;if(leftLeg.current)leftLeg.current.rotation.x+=((seated?-1.0:0)-leftLeg.current.rotation.x)*.18;if(rightLeg.current)rightLeg.current.rotation.x+=((seated?-1.0:0)-rightLeg.current.rotation.x)*.18;if(thruster.current)thruster.current.intensity=seated ? 0.08 : 1.0});
  return <group ref={ref}>
   <group ref={pose}>
    <mesh position={[0,.19,0]} castShadow><capsuleGeometry args={[.105,.2,5,10]}/><meshStandardMaterial color={colors.suit}/></mesh>
@@ -70,7 +70,7 @@ export function FlightScene({bodies,avatarId,flightRef,inputRef,targetId,onArriv
   const dt=Math.min(delta,.04),f=flightRef.current,i=inputRef.current,body=f.groundedId?bodies.find(b=>b.id===f.groundedId):undefined;
   const cruise=(i.boost?4.2:1.75),step=cruise*dt;
   if(!targetId)previousTarget.current=null;
-  if(targetId){const target=bodies.find(b=>b.id===targetId);if(target){const center=new Vector3(...target.position),dir=center.clone().sub(f.position),distance=dir.length(),stop=target.radius+(target.landable?.2:1.8);if(distance>stop){dir.normalize();const amount=Math.min((i.boost?5:2.25)*dt,distance-stop);f.position.copy(moveAvoidingBodies(f.position,dir.multiplyScalar(amount),bodies,target.id));f.yaw=Math.atan2(dir.x,-dir.z);f.pitch=Math.asin(Math.max(-.95,Math.min(.95,dir.y)))}else if(previousTarget.current!==targetId){previousTarget.current=targetId;f.position.copy(center).addScaledVector(f.position.clone().sub(center).normalize(),stop);if(target.landable)f.groundedId=target.id;onArrive(targetId)}}}
+  if(targetId){const target=bodies.find(b=>b.id===targetId);if(target){const center=new Vector3(...target.position),dir=center.clone().sub(f.position),distance=dir.length(),stop=target.radius+(target.landable ? 0.2 : 1.8);if(distance>stop){dir.normalize();const amount=Math.min((i.boost?5:2.25)*dt,distance-stop);f.position.copy(moveAvoidingBodies(f.position,dir.multiplyScalar(amount),bodies,target.id));f.yaw=Math.atan2(dir.x,-dir.z);f.pitch=Math.asin(Math.max(-.95,Math.min(.95,dir.y)))}else if(previousTarget.current!==targetId){previousTarget.current=targetId;f.position.copy(center).addScaledVector(f.position.clone().sub(center).normalize(),stop);if(target.landable)f.groundedId=target.id;onArrive(targetId)}}}
   else if(body){
    const center=new Vector3(...body.position),normal=f.position.clone().sub(center).normalize();playerUp.copy(normal);
    forward.set(Math.sin(f.yaw),0,-Math.cos(f.yaw)).projectOnPlane(normal).normalize();if(forward.lengthSq()<.001)forward.set(1,0,0).projectOnPlane(normal).normalize();
