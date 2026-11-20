@@ -1,6 +1,6 @@
 # THE UNIVERSE — GÓI 04 DECISION LOG
 
-**Version:** 1.0  
+**Version:** 1.1  
 **Date:** 2026-11-20  
 **Authority:** Owner's explicit Package 04 instruction.
 
@@ -13,8 +13,10 @@
 ## P04-D02 — Avatar selection
 
 - **Status:** DECIDED FOR INITIAL RELEASE.
-- **Decision:** Provide several distinct built-in, source-authored/procedural avatar appearances that can be changed freely.
-- **Boundary:** This is a lightweight 2D identity presentation, not a final rigged 3D avatar system or marketplace.
+- **Decision:** Provide six distinct, friendly, cute human-style animated-film character portraits, each with its own face, hairstyle, outfit and color identity. Guests can switch freely.
+- **Visual source:** Original AI-generated artwork is bundled locally in `apps/web/public/avatars/celestial-avatars.webp`; no runtime third-party image request is required.
+- **Integration:** The selected character and nickname appear on the main homepage and shared site navigation, not only on the avatar editor page.
+- **Boundary:** This is a lightweight 2D portrait identity presentation, not a final rigged/animated 3D avatar system or marketplace.
 
 ## P04-D03 — Nickname
 
@@ -45,3 +47,4 @@
 | ID | Date | Change | Status |
 |---|---|---|---|
 | P04-CH-01 | 2026-11-20 | Reopened Gói 04 after the owner superseded the temporary deferral and explicitly requested implementation before overall website integration. | Authorized |
+| P04-CH-02 | 2026-11-20 | Owner clarified that avatars must be cute human characters rather than abstract glowing orbs, and that the selected character must be integrated into the main website design. Replaced the six orb placeholders with original locally bundled character portraits and added persistent homepage/header presence. | Implemented; deployment verification pending |
