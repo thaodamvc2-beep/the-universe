@@ -74,16 +74,16 @@ test('distant worlds show a directional miniature of the Solar System and Earth'
  const scene=await read('apps/web/src/features/game/flight-scene.tsx');
  assert.match(scene,/function HomeSystemBeacon/);
  assert.match(scene,/distance>75/);
- assert.match(scene,/<torusGeometry args=\{\[\.82/);
+ assert.ok(scene.includes('torusGeometry args={[.72'));
  assert.match(scene,/color="#3e9fe0"/);
 });
 test('player character is rendered as a lightweight flying angel rather than a spacesuit',async()=>{
  const scene=await read('apps/web/src/features/game/flight-scene.tsx');
  assert.match(scene,/function Avatar/);
- assert.match(scene,/leftWing/);
- assert.match(scene,/rightWing/);
- assert.match(scene,/torusGeometry args=\{\[\.145/);
- assert.doesNotMatch(scene,/thruster|capsuleGeometry args=\{\[\.105/);
+ assert.match(scene,/leftSilk/);
+ assert.match(scene,/rightSilk/);
+ assert.match(scene,/Cổ phục tiên gia/);
+ assert.doesNotMatch(scene,/thruster|leftWing|rightWing/);
 });
 
 test('keyboard camera look controls rotate the view independently of flight movement',async()=>{
@@ -92,4 +92,23 @@ test('keyboard camera look controls rotate the view independently of flight move
  assert.match(game,/lookKey==='l'/);
  assert.match(game,/lookKey==='i'/);
  assert.match(game,/lookKey==='k'/);
+});
+
+test('Asian immortal avatar uses flowing cổ phục, long hair and silk streamers rather than Western feather wings',async()=>{
+ const scene=await read('apps/web/src/features/game/flight-scene.tsx');
+ assert.match(scene,/Cổ phục tiên gia/);
+ assert.match(scene,/Tóc dài búi trâm cổ phong/);
+ assert.match(scene,/leftSilk/);
+ assert.match(scene,/rightSilk/);
+ assert.match(scene,/feminine=avatarId/);
+ assert.match(scene,/trailingSilk/);
+ assert.doesNotMatch(scene,/function feather|feather\(/);
+});
+test('home-system direction marker uses the real Sun position and camera-space direction at the screen edge',async()=>{
+ const scene=await read('apps/web/src/features/game/flight-scene.tsx');
+ assert.match(scene,/new Vector3\(-15\.6-p\.x,-p\.y,-p\.z\)/);
+ assert.match(scene,/camera\.quaternion\.clone\(\)\.invert\(\)/);
+ assert.match(scene,/camera\.position\)\.add\(cameraOffset\)/);
+ assert.match(scene,/camera\.quaternion\)/);
+ assert.match(scene,/distance>75/);
 });

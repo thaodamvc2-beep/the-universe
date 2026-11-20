@@ -2,7 +2,7 @@
 import { useEffect, useRef, useState } from 'react';
 import type { MutableRefObject } from 'react';
 import { useFrame, useThree } from '@react-three/fiber';
-import { BackSide, CanvasTexture, Group, Vector3 } from 'three';
+import { BackSide, Camera, CanvasTexture, Group, Vector3 } from 'three';
 import { AVATAR_PALETTE, type AvatarId, type Body } from './universe-data';
 
 export type FlightState={position:Vector3;yaw:number;pitch:number;groundedId:string|null};
@@ -26,7 +26,7 @@ function Planet({body,flightRef}:{body:Body;flightRef:MutableRefObject<FlightSta
  const ref=useRef<Group>(null);
  useFrame((_state,d)=>{if(ref.current){ref.current.position.set(body.position[0]-flightRef.current.position.x,body.position[1]-flightRef.current.position.y,body.position[2]-flightRef.current.position.z);ref.current.rotation.y+=d*(body.id === 'earth' ? 0.012 : 0.004)}});
  return <group ref={ref}>
-  <mesh><sphereGeometry args={[body.radius,body.real?28:20,body.real?22:16]}/><meshStandardMaterial color={body.color} roughness={.92} emissive={body.id==='sun'?'#ffb34f':'#000000'} emissiveIntensity={body.id==='sun'?2.1:0}/></mesh>
+  <mesh><sphereGeometry args={[body.radius,body.real?28:20,body.real?22:16]}/><meshStandardMaterial color={body.color} roughness={.92} emissive={body.id==='sun'?'#ffb34f':'#000000'} emissiveIntensity={body.id==='sun'?2.1:0}/></mesh>{body.id==='sun'&&<pointLight intensity={470} distance={260} decay={2} color="#fff1d2"/>}
   {body.id==='earth'&&<mesh scale={1.035}><sphereGeometry args={[body.radius,28,20]}/><meshBasicMaterial color="#73c8ff" transparent opacity={.12} side={BackSide}/></mesh>}
   {body.id==='saturn'&&<mesh rotation={[Math.PI/2.25,0,0]}><torusGeometry args={[body.radius*1.55,body.radius*.22,5,64]}/><meshStandardMaterial color="#cdbb9c" transparent opacity={.78}/></mesh>}
   {!body.real&&<><mesh scale={1.1}><sphereGeometry args={[body.radius,16,12]}/><meshBasicMaterial color="#d6c6ff" wireframe transparent opacity={.12}/></mesh><mesh rotation={[Math.PI/2.2,0,0]}><torusGeometry args={[body.radius*1.38,.035,4,36]}/><meshBasicMaterial color="#c3a7ff" transparent opacity={.55}/></mesh></>}
@@ -34,31 +34,54 @@ function Planet({body,flightRef}:{body:Body;flightRef:MutableRefObject<FlightSta
  </group>;
 }
 function Avatar({avatarId,flightRef,inputRef,bodies}:{avatarId:AvatarId;flightRef:MutableRefObject<FlightState>;inputRef:MutableRefObject<InputState>;bodies:Body[]}){
- const ref=useRef<Group>(null);const pose=useRef<Group>(null);const leftWing=useRef<Group>(null);const rightWing=useRef<Group>(null);
+ const ref=useRef<Group>(null);const pose=useRef<Group>(null);const leftSilk=useRef<Group>(null);const rightSilk=useRef<Group>(null);const trailingSilk=useRef<Group>(null);
  const colors=AVATAR_PALETTE[avatarId]??AVATAR_PALETTE.stardust;const up=new Vector3(0,1,0);
- useFrame((state,delta)=>{if(!ref.current)return;const f=flightRef.current,i=inputRef.current;const seated=!!f.groundedId&&!i.forward&&!i.back&&!i.left&&!i.right;
+ const feminine=avatarId==='lunar'||avatarId==='nebula'||avatarId==='aurora';
+ useFrame((state,delta)=>{
+  if(!ref.current)return;const f=flightRef.current,i=inputRef.current;const seated=!!f.groundedId&&!i.forward&&!i.back&&!i.left&&!i.right;
   ref.current.position.set(0,0,0);const body=f.groundedId?bodies.find(b=>b.id===f.groundedId):undefined;
   if(body){const normal=f.position.clone().sub(new Vector3(...body.position)).normalize();ref.current.quaternion.setFromUnitVectors(up,normal)}else ref.current.quaternion.identity();
   ref.current.rotateY(f.yaw);
-  const flap=Math.sin(state.clock.elapsedTime*2.2)*.055;
-  if(pose.current){pose.current.rotation.x+=( (seated?-.18:.12)-pose.current.rotation.x)*Math.min(1,delta*5);pose.current.position.y=.025+Math.sin(state.clock.elapsedTime*1.7)*.025}
-  if(leftWing.current)leftWing.current.rotation.z=-.14-flap;
-  if(rightWing.current)rightWing.current.rotation.z=.14+flap;
+  const wave=Math.sin(state.clock.elapsedTime*1.25)*.12;
+  if(pose.current){pose.current.rotation.x+=((seated?-.16:.08)-pose.current.rotation.x)*Math.min(1,delta*5);pose.current.position.y=.025+Math.sin(state.clock.elapsedTime*1.25)*.035}
+  if(leftSilk.current)leftSilk.current.rotation.z=-.12-wave;
+  if(rightSilk.current)rightSilk.current.rotation.z=.12+wave;
+  if(trailingSilk.current)trailingSilk.current.rotation.x=Math.sin(state.clock.elapsedTime*.8)*.08;
  });
- const feather=(side:number,index:number)=><mesh key={index} position={[side*(.12+index*.075),.02-index*.045,-.015-index*.018]} rotation={[0,0,side*(.28+index*.12)]} scale={[.105,.29-index*.018,.045]}><sphereGeometry args={[1,10,8]}/><meshStandardMaterial color={index%2?'#f1eaff':'#fff7e8'} emissive={colors.glow} emissiveIntensity={.16} roughness={.82}/></mesh>;
+ const robe=feminine?'#f0dce9':'#d9e5ef';
+ const hair=feminine?'#241a2d':'#29232a';
+ const silk=(side:number)=><group position={[side*.12,.25,-.06]}>
+  <mesh position={[side*.13,-.13,-.01]} rotation={[0,0,side*.42]} scale={[.11,.36,.045]}><sphereGeometry args={[1,12,10]}/><meshStandardMaterial color={colors.trim} transparent opacity={.72} roughness={.4} emissive={colors.glow} emissiveIntensity={.12}/></mesh>
+  <mesh position={[side*.29,-.43,-.04]} rotation={[0,0,side*.72]} scale={[.055,.36,.025]}><sphereGeometry args={[1,12,10]}/><meshStandardMaterial color={colors.glow} transparent opacity={.5} roughness={.35}/></mesh>
+  <mesh position={[side*.4,-.69,-.08]} rotation={[0,0,side*.95]} scale={[.025,.3,.018]}><sphereGeometry args={[1,10,8]}/><meshBasicMaterial color={colors.trim} transparent opacity={.55}/></mesh>
+ </group>;
  return <group ref={ref}>
   <group ref={pose}>
-   <mesh position={[0,.04,0]} scale={[1,1.25,.72]}><coneGeometry args={[.19,.5,12]}/><meshStandardMaterial color="#e8ddf5" roughness={.8}/></mesh>
-   <mesh position={[0,.25,.015]}><capsuleGeometry args={[.085,.18,5,10]}/><meshStandardMaterial color="#fff2df" roughness={.72}/></mesh>
-   <mesh position={[0,.43,.035]}><sphereGeometry args={[.105,16,12]}/><meshStandardMaterial color="#f5d9c9" roughness={.85}/></mesh>
-   <mesh position={[0,.47,.105]} scale={[.11,.09,.045]}><sphereGeometry args={[1,12,10]}/><meshStandardMaterial color="#b98b65" roughness={1}/></mesh>
-   <mesh position={[0,.59,.025]} rotation={[Math.PI/2.15,0,0]}><torusGeometry args={[.145,.012,6,28]}/><meshBasicMaterial color="#fff0bd" transparent opacity={.9}/></mesh>
-   <group ref={leftWing} position={[-.105,.23,-.045]}>{Array.from({length:5},(_,i)=>feather(-1,i))}</group>
-   <group ref={rightWing} position={[.105,.23,-.045]}>{Array.from({length:5},(_,i)=>feather(1,i))}</group>
-   {[-1,1].map(side=><mesh key={side} position={[side*.13,.13,.015]} rotation={[0,0,side*.5]}><capsuleGeometry args={[.025,.14,4,7]}/><meshStandardMaterial color="#f5e6d8" roughness={.85}/></mesh>)}
-   <mesh position={[0,-.18,-.2]} rotation={[Math.PI/2,0,0]}><coneGeometry args={[.065,.42,8]}/><meshBasicMaterial color={colors.glow} transparent opacity={.18}/></mesh>
+   {/* Cổ phục tiên gia: áo giao lĩnh, đai ngọc và tà áo dài nhiều lớp */}
+   <mesh position={[0,-.03,0]} scale={[1,.92,.72]}><coneGeometry args={[.27,.82,16]}/><meshStandardMaterial color={robe} roughness={.72}/></mesh>
+   <mesh position={[0,.12,.045]} rotation={[0,0,.12]} scale={[.19,.42,.76]}><coneGeometry args={[.22,.72,12]}/><meshStandardMaterial color={colors.suit} roughness={.62}/></mesh>
+   <mesh position={[0,.19,.12]} rotation={[0,0,-.18]} scale={[.15,.34,.7]}><coneGeometry args={[.2,.62,12]}/><meshStandardMaterial color={colors.trim} roughness={.65}/></mesh>
+   <mesh position={[0,.22,.01]}><torusGeometry args={[.16,.025,7,28]}/><meshStandardMaterial color="#d7b879" metalness={.55} roughness={.36}/></mesh>
+   <mesh position={[0,.34,.035]}><capsuleGeometry args={[.078,.19,5,12]}/><meshStandardMaterial color="#f2ddcf" roughness={.8}/></mesh>
+   <mesh position={[0,.51,.045]}><sphereGeometry args={[.105,18,14]}/><meshStandardMaterial color="#f0d8c9" roughness={.82}/></mesh>
+   {/* Tóc dài búi trâm cổ phong */}
+   <mesh position={[0,.55,-.035]} scale={[1.04,1.05,.9]}><sphereGeometry args={[.105,14,12]}/><meshStandardMaterial color={hair} roughness={.92}/></mesh>
+   <mesh position={[0,.38,-.085]} rotation={[-.12,0,0]} scale={[.12,.34,.055]}><capsuleGeometry args={[.08,.45,5,10]}/><meshStandardMaterial color={hair} roughness={1}/></mesh>
+   <mesh position={[0,.64,-.015]}><sphereGeometry args={[.055,12,10]}/><meshStandardMaterial color={hair}/></mesh>
+   <mesh position={[.035,.67,.005]} rotation={[0,0,-.35]}><cylinderGeometry args={[.008,.012,.18,7]}/><meshStandardMaterial color="#e5c47c" metalness={.7}/></mesh>
+   <mesh position={[0,.69,.005]} rotation={[Math.PI/2.15,0,0]}><torusGeometry args={[.13,.009,6,32]}/><meshBasicMaterial color={colors.trim} transparent opacity={.82}/></mesh>
+   {/* Tay áo rộng và dải lụa dài thay cho cánh lông vũ phương Tây */}
+   <group ref={leftSilk}>{silk(-1)}</group><group ref={rightSilk}>{silk(1)}</group>
+   {[-1,1].map(side=><group key={side}>
+    <mesh position={[side*.19,.2,.015]} rotation={[0,0,side*.62]}><capsuleGeometry args={[.035,.28,5,9]}/><meshStandardMaterial color="#f0dccc"/></mesh>
+    <mesh position={[side*.28,.08,.04]} rotation={[0,0,side*.82]} scale={[.12,.26,.055]}><sphereGeometry args={[1,12,10]}/><meshStandardMaterial color={colors.suit} roughness={.7}/></mesh>
+   </group>)}
+   <group ref={trailingSilk} position={[0,-.22,-.22]}>
+    <mesh position={[-.12,-.22,0]} rotation={[.12,0,-.24]} scale={[.045,.68,.018]}><sphereGeometry args={[1,10,8]}/><meshBasicMaterial color={colors.glow} transparent opacity={.34}/></mesh>
+    <mesh position={[.12,-.3,-.015]} rotation={[-.1,0,.22]} scale={[.04,.76,.016]}><sphereGeometry args={[1,10,8]}/><meshBasicMaterial color={colors.trim} transparent opacity={.38}/></mesh>
+   </group>
   </group>
-  <pointLight position={[0,.4,.12]} color={colors.glow} intensity={.42} distance={2.2}/>
+  <pointLight position={[0,.4,.12]} color={colors.glow} intensity={.32} distance={2.4}/>
  </group>;
 }
 function OtherAvatar({player,flightRef}:{player:RemotePlayer;flightRef:MutableRefObject<FlightState>}){
@@ -66,16 +89,33 @@ function OtherAvatar({player,flightRef}:{player:RemotePlayer;flightRef:MutableRe
  useFrame(()=>{if(ref.current)ref.current.position.set(player.position[0]-flightRef.current.position.x,player.position[1]-flightRef.current.position.y,player.position[2]-flightRef.current.position.z)});
  return <group ref={ref}><mesh position={[0,.2,0]}><capsuleGeometry args={[.11,.2,4,8]}/><meshStandardMaterial color={c.suit}/></mesh><mesh position={[0,.4,0]}><sphereGeometry args={[.11,14,12]}/><meshStandardMaterial color="#efd8c9"/></mesh><pointLight color={c.glow} intensity={.2} distance={1}/></group>;
 }
-function HomeSystemBeacon({flightRef}:{flightRef:MutableRefObject<FlightState>}){
+function HomeSystemBeacon({flightRef,camera}:{flightRef:MutableRefObject<FlightState>;camera:Camera}){
  const ref=useRef<Group>(null);
- useFrame((state)=>{if(!ref.current)return;const p=flightRef.current.position;const distance=p.length();ref.current.visible=distance>75;if(distance>0.001){ref.current.position.set(-p.x/distance*46,-p.y/distance*46,-p.z/distance*46);ref.current.rotation.y=state.clock.elapsedTime*.08}});
+ useFrame(()=>{
+  if(!ref.current)return;
+  const p=flightRef.current.position;
+  const toHome=new Vector3(-15.6-p.x,-p.y,-p.z);
+  const distance=toHome.length();
+  ref.current.visible=distance>75;
+  if(distance<=75)return;
+  // Chuyển vector về nhà sang hệ trục camera, rồi ghim mốc ở rìa màn hình theo đúng phương vị.
+  const local=toHome.normalize().applyQuaternion(camera.quaternion.clone().invert());
+  let sx=local.x,sy=local.y;const planar=Math.hypot(sx,sy);
+  if(planar<.06){sx=0;sy=local.z>0?1:-1}else{sx/=planar;sy/=planar}
+  const edge=Math.max(Math.abs(sx)/.78,Math.abs(sy)/.72,1);
+  const cameraOffset=new Vector3(sx/edge*3.25,sy/edge*2.05,-8).applyQuaternion(camera.quaternion);
+  ref.current.position.copy(camera.position).add(cameraOffset);
+  ref.current.quaternion.copy(camera.quaternion);
+  ref.current.scale.setScalar(.72);
+  ref.current.rotateZ(Math.atan2(-sy,-sx)-Math.PI/2);
+ });
  return <group ref={ref} visible={false}>
-  <pointLight position={[0,0,0]} color="#ffd98b" intensity={1.5} distance={7}/>
-  <mesh><sphereGeometry args={[.43,16,12]}/><meshBasicMaterial color="#ffd477"/></mesh>
-  <mesh rotation={[Math.PI/2,0,0]}><torusGeometry args={[.82,.012,4,48]}/><meshBasicMaterial color="#9bb8e9" transparent opacity={.72}/></mesh>
-  <mesh position={[.78,0,0]}><sphereGeometry args={[.14,14,10]}/><meshBasicMaterial color="#3e9fe0"/></mesh>
-  <mesh position={[.78,.025,0]} scale={[1.03,1.03,1.03]}><sphereGeometry args={[.14,14,10]}/><meshBasicMaterial color="#71c99c" wireframe transparent opacity={.55}/></mesh>
-  <mesh position={[0,0,0]}><sphereGeometry args={[.56,12,8]}/><meshBasicMaterial color="#ffd477" transparent opacity={.08}/></mesh>
+  <mesh><sphereGeometry args={[.32,16,12]}/><meshBasicMaterial color="#ffd477"/></mesh>
+  <mesh rotation={[Math.PI/2,0,0]}><torusGeometry args={[.72,.012,4,48]}/><meshBasicMaterial color="#9bb8e9" transparent opacity={.82}/></mesh>
+  <mesh position={[.68,0,0]}><sphereGeometry args={[.13,14,10]}/><meshBasicMaterial color="#3e9fe0"/></mesh>
+  <mesh position={[.68,.02,0]} scale={[1.03,1.03,1.03]}><sphereGeometry args={[.13,14,10]}/><meshBasicMaterial color="#71c99c" wireframe transparent opacity={.55}/></mesh>
+  <mesh position={[0,-.88,0]} rotation={[0,0,-Math.PI/2]}><coneGeometry args={[.095,.26,8]}/><meshBasicMaterial color="#fff0bd"/></mesh>
+  <mesh position={[0,0,0]}><sphereGeometry args={[.43,12,8]}/><meshBasicMaterial color="#ffd477" transparent opacity={.08}/></mesh>
  </group>;
 }
 function moveAvoidingBodies(start:Vector3,displacement:Vector3,bodies:Body[],ignoreId:string|null){
@@ -87,7 +127,7 @@ function moveAvoidingBodies(start:Vector3,displacement:Vector3,bodies:Body[],ign
  return candidate;
 }
 export function FlightScene({bodies,avatarId,flightRef,inputRef,targetId,onArrive,onLandRequest,remotePlayers}:{bodies:Body[];avatarId:AvatarId;flightRef:MutableRefObject<FlightState>;inputRef:MutableRefObject<InputState>;targetId:string|null;onArrive:(id:string)=>void;onLandRequest:(id:string)=>void;remotePlayers:RemotePlayer[]}){
- const {camera}=useThree();const forward=new Vector3();const right=new Vector3();const desired=new Vector3();const look=new Vector3();const playerUp=new Vector3(0,1,0);const smoothedCameraUp=useRef(new Vector3(0,1,0));const previousTarget=useRef<string|null>(null);const sun=bodies.find(b=>b.id==='sun');
+ const {camera}=useThree();const forward=new Vector3();const right=new Vector3();const desired=new Vector3();const look=new Vector3();const playerUp=new Vector3(0,1,0);const smoothedCameraUp=useRef(new Vector3(0,1,0));const previousTarget=useRef<string|null>(null);
  useFrame((_s,delta)=>{
   const dt=Math.min(delta,.04),f=flightRef.current,i=inputRef.current,body=f.groundedId?bodies.find(b=>b.id===f.groundedId):undefined;
   const cruise=(i.boost?5.2:2.25),step=cruise*dt;
@@ -112,7 +152,7 @@ export function FlightScene({bodies,avatarId,flightRef,inputRef,targetId,onArriv
   camera.position.lerp(desired,1-Math.exp(-4.8*dt));camera.up.copy(smoothedCameraUp.current);look.copy(forward).multiplyScalar(2.3);camera.lookAt(look);
  });
  return <>
-  <color attach="background" args={['#0a1a36']}/><ambientLight intensity={.38}/><hemisphereLight args={['#b8dcff','#55436f',.28]}/><pointLight position={sun?.position??[-15.6,0,0]} intensity={470} distance={260} decay={2} color="#fff1d2"/>
-  <Stars/>{bodies.map(body=><Planet key={body.id} body={body} flightRef={flightRef}/>)}<HomeSystemBeacon flightRef={flightRef}/>{remotePlayers.map(player=><OtherAvatar key={player.id} player={player} flightRef={flightRef}/>)}<Avatar avatarId={avatarId} flightRef={flightRef} inputRef={inputRef} bodies={bodies}/>
+  <color attach="background" args={['#0a1a36']}/><ambientLight intensity={.38}/><hemisphereLight args={['#b8dcff','#55436f',.28]}/>
+  <Stars/>{bodies.map(body=><Planet key={body.id} body={body} flightRef={flightRef}/>)}<HomeSystemBeacon flightRef={flightRef} camera={camera}/>{remotePlayers.map(player=><OtherAvatar key={player.id} player={player} flightRef={flightRef}/>)}<Avatar avatarId={avatarId} flightRef={flightRef} inputRef={inputRef} bodies={bodies}/>
  </>;
 }

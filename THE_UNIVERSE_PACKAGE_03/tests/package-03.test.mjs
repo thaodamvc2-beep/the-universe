@@ -82,7 +82,7 @@ test('flight uses slow collision-aware travel, gentle landing, planetary labels 
   assert.match(scene, /target\.landable/);
   assert.match(scene, /PlanetLabel/);
   assert.match(scene, /CanvasTexture/);
-  assert.match(scene, /pointLight position=\{sun\?\.position/);
+  assert.ok(scene.includes("body.id==='sun'&&<pointLight"));
   assert.match(scene, /camera\.lookAt/);
   assert.match(scene, /seated/);
 });
