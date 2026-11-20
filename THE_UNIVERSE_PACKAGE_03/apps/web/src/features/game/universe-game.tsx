@@ -35,9 +35,9 @@ export function UniverseGame(){
   if(!audioEnabled)return;
   const ctx=new AudioContext(),master=ctx.createGain(),filter=ctx.createBiquadFilter();
   master.gain.value=.045;filter.type='lowpass';filter.frequency.value=480;filter.connect(master);master.connect(ctx.destination);
-  const oscs=[55,82.41,110].map((hz,i)=>{const osc=ctx.createOscillator(),gain=ctx.createGain();osc.type=i===1?'triangle':'sine';osc.frequency.value=hz;gain.gain.value=i===1?.22:.13;osc.connect(gain);gain.connect(filter);osc.start();return osc});
+  const tones=currentBodyId==='earth'?[55,82.41,110]:currentBodyId==='mars'?[43,64,96]:currentBodyId==='moon'?[65.4,98,130.8]:[49,73.4,98];const oscs=tones.map((hz,i)=>{const osc=ctx.createOscillator(),gain=ctx.createGain();osc.type=i===1?'triangle':'sine';osc.frequency.value=hz;gain.gain.value=i===1?.22:.13;osc.connect(gain);gain.connect(filter);osc.start();return osc});
   void ctx.resume();return()=>{oscs.forEach(o=>o.stop());void ctx.close()};
- },[audioEnabled]);
+ },[audioEnabled,currentBodyId]);
 
  useEffect(()=>{
   const endpoint=process.env.NEXT_PUBLIC_UNIVERSE_REALTIME_URL;if(!endpoint)return;
@@ -76,6 +76,6 @@ export function UniverseGame(){
   <div className="game-controls explorer-controls"><div className="game-control-copy"><strong>Điều khiển phi hành gia</strong><span>WASD · Space / C · Shift · E · Kéo chuột để nhìn</span></div><div className="game-dpad"><button className="dpad-up" type="button" onPointerDown={()=>setDirection('forward',true)} onPointerUp={()=>setDirection('forward',false)} onPointerLeave={()=>setDirection('forward',false)}>↑</button><button className="dpad-left" type="button" onPointerDown={()=>setDirection('left',true)} onPointerUp={()=>setDirection('left',false)} onPointerLeave={()=>setDirection('left',false)}>←</button><button className="dpad-down" type="button" onPointerDown={()=>setDirection('back',true)} onPointerUp={()=>setDirection('back',false)} onPointerLeave={()=>setDirection('back',false)}>↓</button><button className="dpad-right" type="button" onPointerDown={()=>setDirection('right',true)} onPointerUp={()=>setDirection('right',false)} onPointerLeave={()=>setDirection('right',false)}>→</button></div><div className="flight-vertical"><button type="button" onPointerDown={()=>setDirection('up',true)} onPointerUp={()=>setDirection('up',false)} onPointerLeave={()=>setDirection('up',false)}>↑ Lên</button><button type="button" onPointerDown={()=>setDirection('down',true)} onPointerUp={()=>setDirection('down',false)} onPointerLeave={()=>setDirection('down',false)}>↓ Xuống</button></div></div>
   <div className="game-bottom-actions explorer-actions"><button type="button" onClick={takeoff}>↑ Cất cánh / Bay</button><button type="button" onClick={()=>input.current.land=true}>⌄ Hạ cánh (E)</button><button type="button" onClick={resetHome}>⌖ Trở về Trái Đất</button><button type="button" onClick={()=>setAudioEnabled(v=>!v)}>{audioEnabled?'♫ Tắt âm thanh':'♫ Bật âm thanh'}</button></div>
   <aside className="universe-expansion"><strong>Vũ trụ mở rộng</strong><span>{sector*4} thế giới hư cấu đã mở</span><div><button type="button" onClick={newSector}>＋ Mở vùng mới</button><button type="button" onClick={requestAI}>✧ Sáng tạo bằng AI</button></div>{aiStatus&&<small>{aiStatus}</small>}</aside>
-  <aside className="multiplayer-indicator"><i className={remotePlayers.length?'online-dot':'offline-dot'}/>{remotePlayers.length?remotePlayers.length+' người chơi cùng khu vực':'Multiplayer: chờ máy chủ đồng bộ'}</aside>
+  <aside className="multiplayer-indicator"><i className={remotePlayers.length?'online-dot':'offline-dot'}/>{remotePlayers.length?'Có người chơi khác trong khu vực':'Multiplayer: chờ máy chủ đồng bộ'}</aside>
  </main>;
 }
