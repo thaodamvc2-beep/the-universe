@@ -1,12 +1,12 @@
 # THE UNIVERSE — MASTER SOFTWARE SPECIFICATION
 
 **Document ID:** TU-ARCH-MASTER-001
-**Version:** 1.6
+**Version:** 1.7
 **Document date:** 2026-11-19
 **Last updated:** 2026-11-20
 **Status:** **APPROVED — GÓI 01 ACCEPTED BY PROJECT OWNER**
 **Baseline source:** Gói 01 — Master Software Architecture, Version 1.1 (review draft)
-**Authority:** Gói 01 Version 1.1 remains the owner-approved product and architecture baseline. Version 1.2 records Gói 02 authorization and delegated D02 direction. Version 1.3 records the owner’s provisional Gói 02 approval for transition and explicit Gói 03 authorization. Version 1.4 records the Gói 03 implementation handover and verification limitations. Version 1.5 aligns the Gói 03 scope references with the current governing document versions; it does not close Gói 02 technical verification or accept Gói 03. Version 1.6 records the owner-approved delivery-sequence adjustment: defer Gói 04, execute Gói 05 then Gói 06, with package acceptance gates preserved.
+**Authority:** Gói 01 Version 1.1 remains the owner-approved product and architecture baseline. Version 1.2 records Gói 02 authorization and delegated D02 direction. Version 1.3 records the owner’s provisional Gói 02 approval for transition and explicit Gói 03 authorization. Version 1.4 records the Gói 03 implementation handover and verification limitations. Version 1.5 aligns the Gói 03 scope references with the current governing document versions; it does not close Gói 02 technical verification or accept Gói 03. Version 1.6 records the owner-approved delivery-sequence adjustment: defer Gói 04, execute Gói 05 then Gói 06, with package acceptance gates preserved. Version 1.7 records Gói 05 implementation and automated deployment evidence; Gói 05 awaits owner review, and Gói 06 remains gated on its acceptance.
 
 > **Approval record:** The project owner explicitly approved Gói 01 Version 1.1 on 2026-11-19. This establishes the Gói 01 product and architecture baseline. It does **not** automatically approve individually pending decisions (D01–D14) or validate proposed performance targets. The owner subsequently authorized Gói 02, provisionally approved it for transition, and explicitly authorized Gói 03 on 2026-11-19; see Change History 1.2–1.3 and the corresponding package records.
 
@@ -649,6 +649,7 @@ A decision becomes approved only when the owner explicitly confirms it and the d
 | 1.4 | 2026-11-19 | **Gói 03 implementation handover prepared** | Homepage, EN/VI language switch, guest-first prototype entry and an isolated React Three Fiber Earth prototype are implemented. Automated Node tests: 10/10 pass. npm dependency installation is blocked by DNS/network failure (`EAI_AGAIN`); lint, dependency-backed typecheck, production build and browser/device verification remain pending. D01 remains open; Gói 03 is ready for owner review but not accepted. |
 | 1.5 | 2026-11-19 | **Gói 03 scope document references aligned** | Updated `PACKAGE_03_SCOPE_AND_ACCEPTANCE.md` to reference the current versions of `AGENTS.md`, Master Spec, and Gói 02 scope/decision records. No product or architecture decision changed. |
 | 1.6 | 2026-11-20 | **Owner-approved delivery-sequence adjustment** | The owner explicitly approved deferring Gói 04 and prioritizing Gói 05 (Celestial Data), followed by Gói 06 (Cosmic Travel Map). This changes delivery priority only; it does not waive package dependencies, scope controls, or acceptance gates. Gói 05 is authorized to begin. Gói 06 is authorized as the next package after Gói 05 is reviewed and accepted. Gói 04 remains deferred, not cancelled. |
+| 1.7 | 2026-11-20 | **Gói 05 implementation deployed; owner review pending** | Added the canonical Solar System catalogue (Sun, eight planets and Earth's Moon), real-astronomy classification, English/Vietnamese content and responsive selection/detail UI. Package-scoped tests passed 11/11; lint, typecheck, production static build and GitHub Pages deployment passed in run 44659882005. Manual browser/device review remains pending. Full legacy Gói 02 foundation test gaps are documented in the Gói 05 verification record and remain open. Gói 06 implementation remains gated on explicit Gói 05 acceptance. |
 
 ### 20.1 Change procedure
 
@@ -672,6 +673,6 @@ Do not overwrite the approved baseline. After approval, increment the document v
 - D02: package-level web/backend direction recorded in `docs/decisions/P02-DECISION-LOG.md`.
 - D01 and D03–D14: remain pending unless explicitly resolved in the Gói 02 decision log; no downstream decision is silently approved.
 - Gói 03: explicitly authorized by the owner on 2026-11-19; homepage, language foundation and initial R3F prototype are prepared. Status: READY FOR OWNER REVIEW — RUNTIME/DEVICE VERIFICATION PENDING; not accepted.
-- Delivery sequence update (2026-11-20): owner approved deferring Gói 04, prioritizing Gói 05 then Gói 06. Gói 05 is authorized/in progress; Gói 06 is authorized but gated on Gói 05 acceptance. Gói 04 remains deferred.
+- Delivery sequence update (2026-11-20): owner approved deferring Gói 04, prioritizing Gói 05 then Gói 06. Gói 05 implementation is deployed and ready for owner review; Gói 06 is authorized but gated on Gói 05 acceptance. Gói 04 remains deferred.
 
 **End of document.**
