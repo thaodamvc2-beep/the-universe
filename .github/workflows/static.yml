@@ -33,6 +33,18 @@ jobs:
         working-directory: THE_UNIVERSE_PACKAGE_03
         run: npm install --no-audit --no-fund
 
+      - name: Run automated tests
+        working-directory: THE_UNIVERSE_PACKAGE_03
+        run: npm test
+
+      - name: Run lint
+        working-directory: THE_UNIVERSE_PACKAGE_03
+        run: npm run lint
+
+      - name: Run typecheck
+        working-directory: THE_UNIVERSE_PACKAGE_03
+        run: npm run typecheck
+
       - name: Build static website
         working-directory: THE_UNIVERSE_PACKAGE_03
         env:
@@ -52,6 +64,11 @@ jobs:
     runs-on: ubuntu-latest
     needs: build
     steps:
+      - name: Enable and configure GitHub Pages
+        uses: actions/configure-pages@v5
+        with:
+          enablement: true
+
       - name: Publish website
         id: deployment
         uses: actions/deploy-pages@v5
