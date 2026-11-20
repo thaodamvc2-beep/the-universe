@@ -64,7 +64,7 @@ export function makeProceduralRegion(cx:number,cy:number,cz:number):Body[] {
   const radius=.42+random()*.85;
   const color=COLORS[Math.floor(random()*COLORS.length)];
   const position:[number,number,number]=[base[0]+16+random()*52,base[1]+(random()-.5)*48,base[2]+(random()-.5)*48];
-  return {id:`proc-${key.replaceAll(':','-')}-${i}`,name:`${name} ${Math.abs(cx+cy+cz)%97+1}`,kind:'Hành tinh hư cấu · Sinh tự động',position,radius,color:color||hue,landable:true,real:false,description:'Thế giới được sinh trực tiếp trong trình duyệt bằng thuật toán xác định theo tọa độ không gian; không gọi dịch vụ bên ngoài.'};
+  return {id:`proc-${key.replaceAll(':','-')}-${i}`,name:`${name} ${Math.abs(cx+cy+cz)%97+1}`,kind:'Hành tinh hư cấu · Sinh tự động',position,radius,color:color||hue,landable:true,real:false,description:'Thế giới hư cấu được sinh trực tiếp trong trình duyệt bằng thuật toán xác định theo tọa độ không gian; không gọi dịch vụ bên ngoài.'};
  });
 }
 export function makeImaginedWorlds(sector:number):Body[] {
