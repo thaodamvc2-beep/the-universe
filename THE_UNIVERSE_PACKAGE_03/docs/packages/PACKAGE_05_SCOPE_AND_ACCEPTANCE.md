@@ -54,11 +54,12 @@ Establish the first canonical, typed celestial catalogue for the Solar System an
 | P05-AC-09 | Lint, typecheck, automated tests and production build pass | Actual CI/local output |
 
 ## 7. Test plan
-Run workspace commands: `npm run lint`, `npm run typecheck`, `npm test`, `npm run build`. Browser review must test desktop and narrow mobile layouts, select all catalogue cards, verify detail updates, check source links and confirm Earth is the default.
+Run workspace commands: `npm run lint`, `npm run typecheck`, `node --test tests/package-03.test.mjs tests/celestial-catalog.test.mjs`, and `npm run build`. Browser review must test desktop and narrow mobile layouts, select all catalogue cards, verify bilingual detail updates, check source links and confirm Earth is the default.
 
 ## 8. Known limitations
 - AU distances and radii are rounded reference values, not real-time positions.
 - This package does not implement travel, orbit rendering, or 3D planet models.
+- The full legacy `npm test` suite also runs Gói 02 foundation checks. Those currently fail on assumptions that a static GitHub Pages host can emit dynamic `Cache-Control` and HTTP security headers. Those Gói 02 limitations remain open and are not represented as passing; Gói 05 runs its package-scoped tests separately.
 - Physical-device performance and Gói 03 acceptance remain separate open items.
 
 ## 9. Handover
