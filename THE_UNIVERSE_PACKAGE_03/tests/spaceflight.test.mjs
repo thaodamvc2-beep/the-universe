@@ -46,9 +46,9 @@ test('ambient audio and optional realtime multiplayer adapters are not misrepres
 test('spaceflight now slows down, avoids planets and lands gently with visible world names',async()=>{
  const scene=await read('apps/web/src/features/game/flight-scene.tsx');
  assert.match(scene,/moveAvoidingBodies/);
- assert.match(scene,/target\\.landable/);
+ assert.ok(scene.includes("target.landable"));
  assert.match(scene,/PlanetLabel/);
- assert.match(scene,/camera\\.lookAt/);
+ assert.ok(scene.includes("camera.lookAt"));
  assert.match(scene,/seated/);
- assert.match(scene,/4\\.2:1\\.75/);
+ assert.ok(scene.includes("4.2:1.75"));
 });
