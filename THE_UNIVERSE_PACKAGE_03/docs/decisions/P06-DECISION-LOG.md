@@ -32,4 +32,4 @@
 | ID | Date | Change | Status |
 |---|---|---|---|
 | P06-CH-01 | 2026-11-20 | Owner provisionally accepted Gói 05 with corrections allowed and authorized immediate Gói 06 implementation. | Recorded |
-| P06-CH-02 | 2026-11-20 | Integrated canonical Solar System map into homepage with bilingual controls, avatar identity, destination selection, route preview and Earth recovery. | Implemented; CI pending |
+| P06-CH-02 | 2026-11-20 | Integrated canonical Solar System map into homepage with bilingual controls, avatar identity, destination selection, route preview and Earth recovery. | Deployed; CI passed in run 44700029296 |

@@ -1,7 +1,7 @@
 # THE UNIVERSE — PACKAGE 05 SCOPE & ACCEPTANCE
 
 **Document ID:** TU-PKG-05-001  
-**Version:** 1.1  
+**Version:** 1.2  
 **Date:** 2026-11-20  
 **Status:** PROVISIONALLY ACCEPTED BY OWNER — CORRECTIONS REMAIN ALLOWED  
 **Package:** 05 — Celestial Data  
@@ -79,4 +79,4 @@ The full legacy `npm test` suite was attempted during verification and exposed t
 - Physical-device performance and Gói 03 acceptance remain separate open items.
 
 ## 10. Owner review and handover
-On 2026-11-20 the owner explicitly granted provisional acceptance of Gói 05 and authorized immediate Gói 06 implementation. This is not a claim that manual browser/device review has occurred. Gói 05 remains editable: factual corrections, content improvements, accessibility fixes and integration adjustments may be made without discarding its canonical IDs or Home World invariant. Gói 06 uses the current canonical data and must not imply that the map is a physically accurate orbital simulation. Gói 04 remains implemented and available for owner review.
+On 2026-11-20 the owner explicitly granted provisional acceptance of Gói 05 and authorized immediate Gói 06 implementation. This is not a claim that manual browser/device review has occurred. The Gói 06 integration consumes the canonical IDs and does not require freezing the catalogue. Gói 05 remains editable: factual corrections, content improvements, accessibility fixes and integration adjustments may be made without discarding its canonical IDs or Home World invariant. Gói 06 uses the current canonical data and must not imply that the map is a physically accurate orbital simulation. Gói 04 remains implemented and available for owner review.
