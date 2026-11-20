@@ -1,6 +1,7 @@
 'use client';
 
 import { Suspense, useEffect, useMemo, useRef, useState } from 'react';
+import type { MutableRefObject } from 'react';
 import Link from 'next/link';
 import { Canvas, useFrame, useThree } from '@react-three/fiber';
 import { BackSide, Group, Vector3 } from 'three';
@@ -41,8 +42,8 @@ function StarField() {
   </points>;
 }
 
-function Avatar({ nickname, avatarId, input, resetRef }: {
-  nickname: string; avatarId: AvatarId; input: React.MutableRefObject<InputState>;
+function Avatar({ avatarId, input, resetRef }: {
+  avatarId: AvatarId; input: MutableRefObject<InputState>;
   resetRef: React.MutableRefObject<boolean>;
 }) {
   const person = useRef<Group>(null);
@@ -106,8 +107,8 @@ function Avatar({ nickname, avatarId, input, resetRef }: {
   </group>;
 }
 
-function EarthWorld({ nickname, avatarId, input, resetRef, reducedMotion }: {
-  nickname: string; avatarId: AvatarId; input: React.MutableRefObject<InputState>;
+function EarthWorld({ avatarId, input, resetRef, reducedMotion }: {
+  avatarId: AvatarId; input: React.MutableRefObject<InputState>;
   resetRef: React.MutableRefObject<boolean>; reducedMotion: boolean;
 }) {
   const earth = useRef<Group>(null);
@@ -139,7 +140,7 @@ function EarthWorld({ nickname, avatarId, input, resetRef, reducedMotion }: {
     <mesh position={[-0.45, -1.12, -0.95]} rotation={[0.2, 0.7, -0.4]} scale={[0.52, 0.09, 0.28]}>
       <sphereGeometry args={[1, 20, 16]} /><meshStandardMaterial color="#759d79" roughness={1} />
     </mesh>
-    <Avatar nickname={nickname} avatarId={avatarId} input={input} resetRef={resetRef} />
+    <Avatar avatarId={avatarId} input={input} resetRef={resetRef} />
   </group>;
 }
 
@@ -178,8 +179,8 @@ function CameraControls() {
   return null;
 }
 
-function Scene({ nickname, avatarId, input, resetRef, reducedMotion }: {
-  nickname: string; avatarId: AvatarId; input: React.MutableRefObject<InputState>;
+function Scene({ avatarId, input, resetRef, reducedMotion }: {
+  avatarId: AvatarId; input: React.MutableRefObject<InputState>;
   resetRef: React.MutableRefObject<boolean>; reducedMotion: boolean;
 }) {
   return <>
@@ -189,7 +190,7 @@ function Scene({ nickname, avatarId, input, resetRef, reducedMotion }: {
     <directionalLight position={[-4, 4, 5]} intensity={2.15} color="#d9e9ff" />
     <pointLight position={[4, -2, -4]} intensity={18} distance={18} color="#557dff" />
     <StarField />
-    <EarthWorld nickname={nickname} avatarId={avatarId} input={input} resetRef={resetRef} reducedMotion={reducedMotion} />
+    <EarthWorld avatarId={avatarId} input={input} resetRef={resetRef} reducedMotion={reducedMotion} />
     <Moon />
     <CameraControls />
   </>;
@@ -250,7 +251,7 @@ export function UniverseGame() {
         onCreated={({ gl }) => gl.domElement.addEventListener('webglcontextlost', () => setContextLost(true), { once: true })}
         fallback={<div className="game-fallback">{language === 'vi' ? 'Thiết bị chưa hỗ trợ cảnh 3D. Hãy thử trình duyệt khác.' : 'This device cannot display the 3D scene. Try another browser.'}</div>}
       >
-        <Suspense fallback={null}><Scene nickname={nickname} avatarId={avatarId} input={input} resetRef={resetRef} reducedMotion={reducedMotion} /></Suspense>
+        <Suspense fallback={null}><Scene avatarId={avatarId} input={input} resetRef={resetRef} reducedMotion={reducedMotion} /></Suspense>
       </Canvas> : <div className="game-fallback">{language === 'vi' ? 'Cảnh 3D đã tạm dừng do thiết bị thiếu bộ nhớ đồ họa.' : 'The 3D scene paused because the device lost its graphics context.'}</div>}
     </div>
     <div className="game-vignette" aria-hidden="true" />
