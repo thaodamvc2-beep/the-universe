@@ -1,8 +1,8 @@
 # THE UNIVERSE — Gói 07: Spaceflight & Open Universe
 
-**Version:** 1.1  
+**Version:** 1.2  
 **Date:** 2026-11-20  
-**Status:** CORE FLIGHT SLICE DEPLOYED — MANUAL REVIEW PENDING; AI AND ONLINE MULTIPLAYER BACKEND BLOCKED  
+**Status:** CORE FLIGHT SLICE DEPLOYED — LOCAL PROCEDURAL GENERATION; AI API OUT OF SCOPE; MULTIPLAYER BACKEND BLOCKED  
 **Owner authorization:** Explicit request on 2026-11-20 to complete six-axis avatar flight, interplanetary travel/landing, expanded explored-body catalogue, infinite universe generation, ambient audio and multiplayer, then integrate as one web game.
 
 ## 1. Product outcome
@@ -17,16 +17,18 @@ The root route remains a single guest-first game. Existing six avatar IDs and sa
 - Preserved the six existing guest avatar IDs and nickname in the game HUD and procedural 3D avatar suit palette.
 - Expanded destinations to the eight planets, Earth's Moon, selected major moons, dwarf planets, asteroids and comets explored by spacecraft.
 - Gas/ice giants and the Sun are observation destinations, not walkable landing surfaces.
-- Procedural fictional sectors can be opened repeatedly; they are explicitly labelled fictional and not confused with real astronomical data.
+- Procedural fictional sectors are generated automatically in the browser from spatial coordinates as the player flies into new regions; a manual control opens another region nearby. No paid AI API or external generation service is called.
+- Travel speed is deliberately slow for observation, with collision-aware steering around celestial bodies.
+- Arrival at a landable body triggers a gentle landing; the avatar rests seated when idle and stands to walk over the curved surface.
+- Planet and moon names are rendered as readable labels. Sunlight is calculated from the Sun's world position and camera orientation follows the player's local surface normal, producing different views from Earth and the Moon.
+- Solar-system distances are compressed for a legible panoramic game view; this is an artistic navigation scale, not a to-scale ephemeris.
 - Original ambient drone generated with Web Audio; user-controlled on/off.
-- Optional AI endpoint and WebSocket realtime client contracts are scaffolded through public endpoint variables; no API keys are embedded in browser code.
+- Optional WebSocket realtime client contract remains available for a future multiplayer service; no AI world-generation endpoint is used.
 
 ## 3. Not yet delivered / external dependencies
 
-### 3.1 Real AI universe generation — BLOCKED
-NEXT_PUBLIC_UNIVERSE_AI_ENDPOINT must point to a secure server-side generation service. The static GitHub Pages client must never hold an AI provider secret. The current local procedural sector generator is deterministic algorithmic content, not language-model AI and must not be represented as AI-generated.
-
-The server endpoint must return validated world records, source/classification labels, bounded geometry values and moderation status. Only records explicitly classified as fictional may enter the fictional universe collection.
+### 3.1 Paid AI world generation — OUT OF SCOPE
+The owner explicitly rejected paid AI API calls for environment generation. The shipped game uses deterministic, coordinate-seeded procedural generation entirely in the browser. It requires no AI provider, API key, server endpoint or network connection. Generated bodies remain clearly classified as fictional and are not mixed with real astronomical catalogue entries.
 
 ### 3.2 Online multiplayer — BLOCKED
 NEXT_PUBLIC_UNIVERSE_REALTIME_URL must point to a secure WebSocket/realtime server. The current UI reports disconnected until this endpoint is configured. The client protocol expects join, state, and players messages; no global online presence is claimed without a working server.
@@ -62,15 +64,15 @@ Owner reported the previous build works similarly on desktop and mobile. This ne
 - Return to Earth always restores the home spawn.
 - Every real destination has a source URL and real classification; every invented world is explicitly fictional.
 - Ambient sound is opt-in and can be disabled.
-- AI generation is accepted only after a real server-side model call returns valid moderated fictional worlds.
+- New regions are generated locally from coordinates without paid AI APIs or external calls; generated worlds remain classified as fictional.
 - Multiplayer is accepted only after two separate devices can see each other's live avatar position and nickname in the same room.
 - CI tests, ESLint, TypeScript and static production build pass; manual owner review is still required.
 
 ## 6. Current truthfulness rule
 
-A procedural world is not AI. A configured WebSocket endpoint is not multiplayer until it is live and tested with two devices. Do not mark this package complete while either service is unavailable.
+Procedural generation is the intentional production choice for infinite exploration; do not add paid AI calls or AI-connection warnings. A configured WebSocket endpoint is not multiplayer until it is live and tested with two devices.
 
 
 ## 7. Deployment evidence update (2026-11-20)
 
-GitHub Actions run 44706387131 completed successfully for commit `f694462c4a5f191b1dec8c3c42cbacf2f6e1df20`: 23 automated tests, ESLint, TypeScript, static production build and GitHub Pages deployment all passed. This verifies compilation and deployment, not live visual or two-device multiplayer testing. The AI generation endpoint and realtime WebSocket endpoint are not provisioned; those features remain blocked.
+GitHub Actions run 44712919413 completed successfully for commit `e163ad5537ba8223c9173562b72b9ca2009fbf3e`: 30 automated tests, ESLint, TypeScript, static production build and GitHub Pages deployment all passed. This verifies compilation and deployment, not live visual or two-device multiplayer testing. Manual review of the new flight/landing behavior remains pending. Paid AI generation is intentionally excluded; real networked multiplayer still requires a realtime WebSocket service.

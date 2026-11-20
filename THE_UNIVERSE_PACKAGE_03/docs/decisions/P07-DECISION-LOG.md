@@ -1,6 +1,6 @@
 # THE UNIVERSE — Gói 07 Decision Log
 
-**Version:** 1.1  
+**Version:** 1.2  
 **Date:** 2026-11-20  
 **Authority:** Owner's explicit request to complete flight, interplanetary exploration, expanded destinations, infinite universe, ambient sound and multiplayer.
 
@@ -17,10 +17,11 @@
 - **Status:** DECIDED.
 - **Decision:** Preserve real astronomical catalogue/source references; procedural fictional worlds carry an explicit fictional label. Never mix them silently.
 
-## P07-D04 — AI generation must be server-side
-- **Status:** BLOCKED ON BACKEND.
-- **Decision:** Browser calls a configured server endpoint; AI provider secrets remain server-side. Deterministic procedural generation is a fallback, not a substitute for AI.
-- **Reason:** GitHub Pages is static hosting and cannot safely store provider secrets or execute private API routes.
+## P07-D04 — Procedural universe generation is local; no paid AI API
+- **Status:** DECIDED AND IMPLEMENTED.
+- **Decision:** Generate new regions, stars and fictional planets deterministically in the browser from spatial coordinates. Do not call a paid AI API, do not require an AI server endpoint, and do not show AI connection controls or warnings.
+- **Reason:** The owner explicitly requested an endless procedural environment without per-visit AI API charges or external generation dependencies.
+- **Classification:** Generated worlds are labelled fictional and remain separate from real astronomical data.
 
 ## P07-D05 — Multiplayer must be genuinely networked
 - **Status:** BLOCKED ON REALTIME SERVICE.
@@ -38,9 +39,13 @@
 | ID | Date | Change | Status |
 |---|---|---|---|
 | P07-CH-01 | 2026-11-20 | Owner authorized integrated spaceflight, planetary landing, expanded explored-body catalogue, infinite world generation, ambient sound and multiplayer. | Authorized |
-| P07-CH-02 | 2026-11-20 | Added flight scene, movement controls, destination approach/landing, expanded astronomical targets, procedural fictional sectors and optional audio. | Core flight slice deployed; manual review pending; AI/realtime backend blocked |
+| P07-CH-02 | 2026-11-20 | Added flight scene, movement controls, destination approach/landing, expanded astronomical targets, procedural fictional sectors and optional audio. | Core flight slice deployed; local procedural generation implemented; manual review pending; realtime backend blocked |
 
 
 ## Deployment update (2026-11-20)
 - GitHub Actions run 44706387131 passed 23 tests, ESLint, TypeScript, static build and GitHub Pages deployment at commit `f694462c4a5f191b1dec8c3c42cbacf2f6e1df20`.
-- This is a deployable flight slice, not final full-production art. Real AI generation and networked multiplayer remain unavailable until secure backend endpoints are provisioned and tested with separate devices.
+- This is a deployable flight slice, not final full-production art. Paid AI generation is explicitly out of scope. Networked multiplayer remains unavailable until a secure realtime backend is provisioned and tested with separate devices.
+
+
+## Owner change (2026-11-20)
+- Gói 07-CH-03: Remove AI-generation button, notices and API calls. Generate coordinate-seeded procedural regions locally in the browser; automatically stream nearby sectors while flying and allow manual opening of a new region. Also slow cruise speed, avoid celestial-body collisions, auto-land gently, sit when resting/stand when walking, add body labels, and light scenes from the Sun's actual world position. Status: deployed code, manual owner review pending.

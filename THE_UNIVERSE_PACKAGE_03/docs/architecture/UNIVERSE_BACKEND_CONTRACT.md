@@ -1,25 +1,9 @@
-# THE UNIVERSE — Secure AI and Multiplayer Backend Contract
+# THE UNIVERSE — Multiplayer Backend Contract
 
-**Version:** 1.0  
-**Status:** Interface contract only; no live backend endpoint has been provisioned.
+**Version:** 1.1  
+**Status:** Multiplayer interface contract only; no live realtime endpoint has been provisioned.
 
-The public website remains a static GitHub Pages export. It may contain public endpoint URLs, but never AI provider API keys, database service-role keys, signing secrets or privileged credentials.
-
-## AI world-generation endpoint
-
-Environment variable: NEXT_PUBLIC_UNIVERSE_AI_ENDPOINT
-
-Request fields:
-- language: vi or en
-- theme: peaceful cosmic exploration
-- seed: numeric generation seed
-
-Expected response fields:
-- message: short status message
-- worlds: array of fictional world records
-- each world requires stable id, name, classification FICTIONAL_AI_GENERATED, description, kind, bounded radius/color/position, landable flag and moderation status approved.
-
-Server responsibilities: call the selected model, validate output schema and numeric bounds, moderate content, assign stable IDs, reject real astronomical misinformation and return only fictional worlds under the fictional classification. Provider credentials are server-side only.
+The public website remains a static GitHub Pages export. The current universe and fictional world generation run locally in the browser using deterministic procedural algorithms. No AI provider endpoint, API key, paid generation service or AI-connection UI is used for exploration.
 
 ## Realtime multiplayer WebSocket endpoint
 
@@ -36,4 +20,4 @@ Server responsibilities: validate every field, cap movement speed and coordinate
 
 ## Hosting constraint
 
-GitHub Pages cannot execute server-side API routes or host a WebSocket service. Keep the game client static and connect it to separately provisioned secure services. Do not ship a browser-only mock and label it global multiplayer or AI.
+GitHub Pages cannot host a WebSocket service. Keep the game client static and connect it to a separately provisioned secure realtime service only when multiplayer is explicitly implemented and tested. Never represent a disconnected client adapter as live multiplayer.
