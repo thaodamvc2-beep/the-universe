@@ -32,7 +32,7 @@ Client messages:
 Server broadcast:
 - players: array of players with ID, nickname, avatar ID and 3D position
 
-Server responsibilities: validate every field, cap movement speed and coordinate ranges, assign rooms, rate-limit state updates, remove disconnected clients, prevent spoofing other player IDs, and keep presence data ephemeral unless persistence is explicitly approved.
+Server responsibilities: validate every field, cap movement speed and coordinate ranges, assign planet rooms, enforce a maximum of three real users per planet room, rate-limit state updates, remove disconnected clients, prevent spoofing other player IDs, and keep presence data ephemeral unless persistence is explicitly approved. Do not expose player lists, counts, chat, friends, invitations or public profiles; only nearby avatar and nickname may be rendered in the shared world.
 
 ## Hosting constraint
 
