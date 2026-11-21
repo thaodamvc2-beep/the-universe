@@ -39,8 +39,8 @@ function Avatar({avatarId,flightRef,inputRef,bodies}:{avatarId:AvatarId;flightRe
  const cell:Record<AvatarId,{x:number;y:number}>={stardust:{x:0,y:0},lunar:{x:1,y:0},nebula:{x:2,y:0},crystal:{x:0,y:1},aurora:{x:1,y:1},solar:{x:2,y:1}};
  const texture=useMemo(()=>{const t=atlas.clone();const c=cell[avatarId]??cell.stardust;t.repeat.set(1/3,.42);t.offset.set(c.x/3,c.y===0?.58:.08);t.colorSpace=SRGBColorSpace;t.needsUpdate=true;return t},[atlas,avatarId]);
  const sprite=useMemo(()=>{const material=new SpriteMaterial({map:texture,transparent:true,depthWrite:false,alphaTest:.015});material.onBeforeCompile=(shader)=>{shader.fragmentShader=shader.fragmentShader.replace('#include <map_fragment>',`#include <map_fragment>
- float bgDistance = distance(diffuseColor.rgb, vec3(0.035, 0.055, 0.12));
- diffuseColor.a *= smoothstep(0.018, 0.105, bgDistance);`)};material.needsUpdate=true;const s=new Sprite(material);s.center.set(.5,.025);s.scale.set(1.28,1.78,1);return s},[texture]);
+ float bgDistance = distance(diffuseColor.rgb, vec3(0.047, 0.078, 0.157));
+ diffuseColor.a *= smoothstep(0.018, 0.075, bgDistance);`)};material.needsUpdate=true;const s=new Sprite(material);s.center.set(.5,.025);s.scale.set(1.28,1.78,1);return s},[texture]);
  useEffect(()=>()=>{sprite.material.dispose();texture.dispose()},[sprite,texture]);
  useFrame((state)=>{if(!ref.current)return;const f=flightRef.current,i=inputRef.current,body=f.groundedId?bodies.find(b=>b.id===f.groundedId):undefined;const wave=Math.sin(state.clock.elapsedTime*1.05);ref.current.visible=true;ref.current.position.set(0,0,0);if(body)ref.current.position.y=.02;const seated=!!body&&!i.forward&&!i.back&&!i.left&&!i.right;const size=body?Math.max(.78,Math.min(1.12,body.radius*.58)):1;ref.current.scale.setScalar(size);ref.current.rotation.set(0,0,Math.sin(state.clock.elapsedTime*.55)*.012);sprite.position.y=.025+wave*.018+(seated?-.012:((i.forward || i.back) ? .025 : 0))});
  return <group ref={ref}><primitive object={sprite}/><pointLight position={[0,.3,.18]} color="#b9d8ff" intensity={.22} distance={2.8}/></group>;
