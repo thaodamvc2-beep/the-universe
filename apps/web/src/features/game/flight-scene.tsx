@@ -19,11 +19,11 @@ function Stars(){
 function NebulaBackdrop({flightRef}:{flightRef:MutableRefObject<FlightState>}){
  const [glow,setGlow]=useState<CanvasTexture|null>(null);
  const refs=[useRef<Sprite>(null),useRef<Sprite>(null),useRef<Sprite>(null),useRef<Sprite>(null)];
- const clouds=useMemo(()=>[{color:'#547dff',center:[-34,16,-72],size:[76,52]},{color:'#a66bdb',center:[42,-12,-88],size:[82,58]},{color:'#38bfc9',center:[8,28,-112],size:[68,48]},{color:'#f0a66e',center:[-68,-22,-96],size:[70,50]}] as const,[]);
+ const clouds=useMemo(()=>[{color:'#765bff',center:[-34,16,-72],size:[88,62]},{color:'#ff55ad',center:[42,-12,-88],size:[92,66]},{color:'#26e5d0',center:[8,28,-112],size:[78,56]},{color:'#ffb34f',center:[-68,-22,-96],size:[82,58]}] as const,[]);
  useEffect(()=>{const canvas=document.createElement('canvas');canvas.width=512;canvas.height=512;const ctx=canvas.getContext('2d');if(!ctx)return;const gradient=ctx.createRadialGradient(256,256,8,256,256,250);gradient.addColorStop(0,'rgba(255,255,255,.8)');gradient.addColorStop(.22,'rgba(255,255,255,.38)');gradient.addColorStop(.58,'rgba(255,255,255,.1)');gradient.addColorStop(1,'rgba(255,255,255,0)');ctx.fillStyle=gradient;ctx.fillRect(0,0,512,512);const texture=new CanvasTexture(canvas);texture.needsUpdate=true;setGlow(texture);return()=>texture.dispose()},[]);
  useFrame(()=>{refs.forEach((ref,i)=>{if(ref.current){const c=clouds[i];ref.current.position.set(c.center[0]-flightRef.current.position.x,c.center[1]-flightRef.current.position.y,c.center[2]-flightRef.current.position.z)}})});
  if(!glow)return null;
- return <>{clouds.map((cloud,i)=><sprite key={i} ref={refs[i]} scale={[cloud.size[0],cloud.size[1],1]}><spriteMaterial map={glow} color={cloud.color} transparent opacity={.24} blending={AdditiveBlending} depthWrite={false} /></sprite>)}</>;
+ return <>{clouds.map((cloud,i)=><sprite key={i} ref={refs[i]} scale={[cloud.size[0],cloud.size[1],1]}><spriteMaterial map={glow} color={cloud.color} transparent opacity={.32} blending={AdditiveBlending} depthWrite={false} /></sprite>)}</>;
 }
 function PlanetLabel({body}:{body:Body}){
  const [texture,setTexture]=useState<CanvasTexture|null>(null);
@@ -44,7 +44,7 @@ function Planet({body,flightRef}:{body:Body;flightRef:MutableRefObject<FlightSta
 }
 function Avatar({avatarId,flightRef,inputRef,bodies}:{avatarId:AvatarId;flightRef:MutableRefObject<FlightState>;inputRef:MutableRefObject<InputState>;bodies:Body[]}){
  const ref=useRef<Group>(null);
- const atlas=useLoader(TextureLoader,'/the-universe/avatars/celestial-six.webp');
+ const atlas=useLoader(TextureLoader,'/the-universe/avatars/celestial-avatars.webp');
  const cell:Record<AvatarId,{x:number;y:number}>={stardust:{x:0,y:0},lunar:{x:1,y:0},nebula:{x:2,y:0},crystal:{x:0,y:1},aurora:{x:1,y:1},solar:{x:2,y:1}};
  const texture=useMemo(()=>{const t=atlas.clone();const c=cell[avatarId]??cell.stardust;t.repeat.set(1/3,.5);t.offset.set(c.x/3,c.y===0?.5:0);t.colorSpace=SRGBColorSpace;t.needsUpdate=true;return t},[atlas,avatarId]);
  const sprite=useMemo(()=>{const material=new SpriteMaterial({map:texture,transparent:true,depthWrite:false,depthTest:false,alphaTest:.008,blending:AdditiveBlending,toneMapped:false});const s=new Sprite(material);s.center.set(.5,.02);s.scale.set(2.5,3.8,1);s.renderOrder=10;return s},[texture]);
@@ -141,7 +141,7 @@ export function FlightScene({bodies,avatarId,flightRef,inputRef,targetId,onArriv
   camera.position.lerp(desired,1-Math.exp(-7*dt));camera.up.copy(smoothedCameraUp.current);look.copy(forward).multiplyScalar(landedBody?2.6:2.6).addScaledVector(smoothedCameraUp.current,landedBody?.18:0);camera.lookAt(look);
  });
  return <>
-  <color attach="background" args={['#0a1a36']}/><ambientLight intensity={.38}/><hemisphereLight args={['#b8dcff','#55436f',.28]}/>
+  <color attach="background" args={['#080d2b']}/><ambientLight intensity={.5}/><hemisphereLight args={['#c8eaff','#7a3d8f',.42]}/>
   <Stars/><NebulaBackdrop flightRef={flightRef}/>{bodies.map(body=><Planet key={body.id} body={body} flightRef={flightRef}/>)}<HomeSystemBeacon flightRef={flightRef} camera={camera}/>{remotePlayers.map(player=><OtherAvatar key={player.id} player={player} flightRef={flightRef}/>)}<Avatar avatarId={avatarId} flightRef={flightRef} inputRef={inputRef} bodies={bodies}/>
  </>;
 }
