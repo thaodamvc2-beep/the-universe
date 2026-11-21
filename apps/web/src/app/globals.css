@@ -475,3 +475,31 @@
  .universe-explorer .cosmic-action-dock button>span{font-size:16px}
  .universe-explorer .cosmic-action-dock button>small{font-size:7px}
 }
+
+/* 2026-11-21: resolve control collisions and expose player feedback. */
+.universe-explorer .explorer-controls{left:28px;bottom:48px;display:flex;flex-direction:column;align-items:flex-start;gap:10px}
+.universe-explorer .flight-vertical{order:0;flex-direction:row;gap:8px;margin-left:8px}
+.universe-explorer .game-dpad{order:1}
+.universe-explorer .destination-panel{top:224px;right:24px;max-height:calc(100svh - 250px)}
+.universe-explorer .cosmic-utility-rail{top:50%;transform:translateY(-50%);gap:9px}
+.universe-explorer .cosmic-utility-rail button{width:48px;height:48px}
+.universe-explorer .cosmic-feedback-panel{position:absolute;z-index:18;right:88px;top:50%;transform:translateY(-50%);display:flex;width:min(370px,calc(100vw - 120px));max-height:calc(100svh - 40px);flex-direction:column;gap:10px;padding:16px;border:1px solid rgba(185,205,255,.5);border-radius:18px;background:rgba(5,13,34,.94);box-shadow:0 18px 54px rgba(0,0,0,.45);backdrop-filter:blur(18px)}
+.universe-explorer .cosmic-feedback-panel[hidden]{display:none}
+.universe-explorer .cosmic-feedback-panel p,.universe-explorer .cosmic-feedback-panel small{margin:0;color:#bfcae6;font-size:11px;line-height:1.55}
+.universe-explorer .cosmic-feedback-panel textarea{width:100%;resize:vertical;min-height:110px;padding:11px;border:1px solid rgba(169,195,255,.3);border-radius:10px;background:rgba(4,10,27,.8);color:#f5f7ff;font:inherit;font-size:12px}
+.universe-explorer .cosmic-feedback-panel>button{padding:11px 13px;border:1px solid rgba(185,205,255,.4);border-radius:12px;background:linear-gradient(110deg,rgba(80,123,205,.55),rgba(137,100,195,.48));color:white;font-size:12px;cursor:pointer}
+.universe-explorer .cosmic-feedback-panel>button:disabled{opacity:.4;cursor:not-allowed}
+@media(max-width:760px){
+ .universe-explorer .explorer-controls{left:10px;bottom:16px;gap:6px}
+ .universe-explorer .flight-vertical{display:flex;flex-direction:row;gap:5px;margin-left:5px}
+ .universe-explorer .flight-vertical button{width:34px;min-width:34px;min-height:34px}
+ .universe-explorer .destination-panel{top:164px;right:10px;max-height:calc(100svh - 180px)}
+ .universe-explorer .cosmic-utility-rail{top:auto;right:10px;bottom:190px;transform:none}
+ .universe-explorer .cosmic-utility-rail button{width:38px;height:38px}
+ .universe-explorer .cosmic-feedback-panel{right:56px;top:auto;bottom:150px;transform:none;width:min(330px,calc(100vw - 70px));max-height:calc(100svh - 180px);padding:12px}
+}
+@media(max-width:420px){
+ .universe-explorer .explorer-controls{bottom:12px}
+ .universe-explorer .game-dpad{width:94px;height:94px}
+ .universe-explorer .cosmic-feedback-panel{right:52px;bottom:140px;width:calc(100vw - 64px)}
+}

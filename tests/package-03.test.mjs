@@ -106,3 +106,14 @@ test('immersive game HUD follows the supplied celestial exploration layout witho
  assert.match(css,/Reference-matched immersive HUD/);
  assert.match(css,/game-dpad\{position:relative;display:grid;width:148px;height:148px/);
 });
+
+test('player feedback is accessible in-game and only posts after explicit GitHub confirmation',async()=>{
+ const game=await read('apps/web/src/features/game/universe-game.tsx');
+ const css=await read('apps/web/src/app/globals.css');
+ assert.match(game,/cosmic-feedback-panel/);
+ assert.match(game,/issues\/new\?title=/);
+ assert.match(game,/Nothing is submitted until you confirm on GitHub|Không có nội dung nào được gửi trước khi bạn xác nhận trên GitHub/);
+ assert.match(game,/feedbackText\.trim\(\)/);
+ assert.match(css,/resolve control collisions and expose player feedback/);
+ assert.match(css,/destination-panel\{top:224px/);
+});
