@@ -59,9 +59,11 @@ test('Sun and giant planets support the playful landing mechanic',async()=>{cons
 
 test('long-distance destination travel accelerates while keeping a safe approach stop',async()=>{
  const scene=await read('apps/web/src/features/game/flight-scene.tsx');
- assert.match(scene,/distanceSpeed=Math\.min\(34,2\.8\+distance\*\.24\)/);
- assert.match(scene,/distanceSpeed\*\(i\.boost\?1\.35:1\)/);
+ assert.match(scene,/maximumSpeed=Math\.min\(42,3\.4\+distance\*\.32\)/);
+ assert.match(scene,/brakingSpeed=Math\.sqrt\(2\*9\*remaining\)/);
+ assert.match(scene,/targetFlightSpeed\.current\+=/);
  assert.match(scene,/distance-stop/);
+ assert.match(scene,/desiredYaw/);
 });
 test('far-world scene uses a floating origin so the angel and destinations remain visible',async()=>{
  const scene=await read('apps/web/src/features/game/flight-scene.tsx');
@@ -74,14 +76,16 @@ test('distant worlds show a directional miniature of the Solar System and Earth'
  const scene=await read('apps/web/src/features/game/flight-scene.tsx');
  assert.match(scene,/function HomeSystemBeacon/);
  assert.match(scene,/distance>75/);
- assert.ok(scene.includes('torusGeometry args={[.72'));
- assert.match(scene,/color="#3e9fe0"/);
+ assert.match(scene,/function BeaconName/);
+ for(const name of ['Mercury','Venus','Earth','Mars','Jupiter','Saturn','Uranus','Neptune'])assert.ok(scene.includes(`name:'${name}'`));
+ assert.match(scene,/cameraOffset/);
 });
 test('player character is rendered as a lightweight flying angel rather than a spacesuit',async()=>{
  const scene=await read('apps/web/src/features/game/flight-scene.tsx');
  assert.match(scene,/function Avatar/);
  assert.match(scene,/leftSilk/);
  assert.match(scene,/rightSilk/);
+ assert.match(scene,/coneGeometry args=\{\[\.16,\.92,12\]\}/);
  assert.match(scene,/Cổ phục tiên gia/);
  assert.doesNotMatch(scene,/thruster|leftWing|rightWing/);
 });
@@ -111,4 +115,16 @@ test('home-system direction marker uses the real Sun position and camera-space d
  assert.match(scene,/camera\.position\)\.add\(cameraOffset\)/);
  assert.match(scene,/camera\.quaternion\)/);
  assert.match(scene,/distance>75/);
+});
+
+test('angel remains at the floating origin and scales to the destination surface',async()=>{
+ const scene=await read('apps/web/src/features/game/flight-scene.tsx');
+ assert.match(scene,/ref\.current\.position\.set\(0,0,0\)/);
+ assert.match(scene,/ref\.current\.scale\.setScalar\(body\?Math\.max\(\.28,Math\.min\(\.72,body\.radius\*\.42\)\):\.62\)/);
+ assert.match(scene,/pose\.current\.rotation\.x\+=\(\(seated\?\-\.16:\-\.14\)/);
+});
+test('manual landing enters a short controlled approach instead of snapping from far away',async()=>{
+ const scene=await read('apps/web/src/features/game/flight-scene.tsx');
+ assert.match(scene,/nearest\.d<=nearest\.body\.radius\+\.55/);
+ assert.match(scene,/brakingSpeed=Math\.sqrt\(2\*9\*remaining\)/);
 });
