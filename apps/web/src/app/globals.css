@@ -364,3 +364,86 @@
 /* Show the whole portrait, not a circular crop or the atlas labels. */
 .celestial-avatar-artwork.avatar-portrait{border:0;border-radius:0;background:transparent;box-shadow:none;overflow:hidden}
 .celestial-avatar-artwork.avatar-portrait:before,.celestial-avatar-artwork.avatar-portrait:after{display:none;content:none}
+
+/* Reference-matched immersive HUD: preserve the live 3D world and change only presentation. */
+.universe-explorer{position:relative;isolation:isolate;width:100%;height:100svh;min-height:560px;overflow:hidden;background:#06112b;color:#f7f5ff}
+.universe-explorer .game-canvas{z-index:0;inset:0}
+.universe-explorer .game-canvas canvas{display:block;width:100%;height:100%;touch-action:none}
+.universe-explorer .game-vignette{z-index:1;position:absolute;inset:0;pointer-events:none;background:linear-gradient(180deg,rgba(3,7,23,.3),transparent 22%,transparent 68%,rgba(3,8,28,.28)),radial-gradient(ellipse at center,transparent 48%,rgba(1,5,20,.28) 100%)}
+.universe-explorer .game-topbar{position:absolute;z-index:8;top:0;left:0;width:100%;height:74px;display:flex;align-items:center;justify-content:flex-end;padding:0 24px;border:0;background:linear-gradient(180deg,rgba(3,7,22,.48),transparent);pointer-events:none}
+.universe-explorer .game-brand{display:none}
+.universe-explorer .game-nav{display:none}
+.game-live-status{display:flex;align-items:center;gap:9px;margin-right:60px;padding:9px 18px;border:1px solid rgba(188,203,255,.35);border-radius:30px;background:rgba(7,15,36,.52);backdrop-filter:blur(12px);font-size:12px;color:#edf1ff}
+.online-dot,.offline-dot{display:inline-block;width:8px;height:8px;border-radius:50%;background:#38d69a;box-shadow:0 0 10px #38d69a}
+.offline-dot{background:#e5b96a;box-shadow:0 0 10px #e5b96a}
+.game-fullscreen{position:absolute;right:22px;top:19px;width:38px;height:38px;border:0;background:transparent;color:#f4f5ff;font-size:28px;cursor:pointer;pointer-events:auto}
+.cosmic-location-pill{top:20px;left:22px;transform:none;min-width:260px;justify-content:flex-start;padding:10px 18px;border-color:rgba(192,204,255,.65);border-radius:28px;background:rgba(7,15,39,.5);box-shadow:0 0 22px rgba(104,142,255,.17);text-align:left}
+.cosmic-location-pill>span{font-size:26px}
+.cosmic-location-pill strong{font-size:17px}
+.cosmic-location-pill small{font-size:12px}
+.cosmic-compass{top:92px;right:24px;transform:none;width:116px;height:116px;border-color:rgba(203,214,255,.6);background:rgba(5,13,34,.22)}
+.cosmic-compass span{font-size:34px}
+.cosmic-compass i{bottom:25px}
+.universe-explorer .game-identity{display:none}
+.universe-explorer .game-player{display:none}
+.universe-explorer .explorer-status{position:absolute;z-index:6;top:92px;left:24px;max-width:220px;padding:8px 12px;border:1px solid rgba(185,202,255,.18);border-radius:12px;background:rgba(5,12,31,.35);backdrop-filter:blur(8px)}
+.universe-explorer .explorer-status span,.universe-explorer .explorer-status small{display:block;color:#b9c9ec;font-size:10px}
+.universe-explorer .explorer-status strong{display:block;margin:3px 0;color:#fff;font-size:13px}
+.universe-explorer .explorer-controls{position:absolute;z-index:7;left:30px;bottom:58px;display:flex;align-items:center;gap:16px;padding:0;border:0;background:transparent;box-shadow:none}
+.universe-explorer .game-control-copy{display:none}
+.universe-explorer .game-dpad{position:relative;display:grid;width:148px;height:148px;grid-template:repeat(3,1fr)/repeat(3,1fr);place-items:center;border:1px solid rgba(192,211,255,.55);border-radius:50%;background:rgba(8,22,53,.32);box-shadow:inset 0 0 24px rgba(155,185,255,.12),0 0 20px rgba(60,113,222,.12);backdrop-filter:blur(8px)}
+.universe-explorer .game-dpad button{width:34px;height:34px;border:0;border-radius:50%;background:rgba(190,210,255,.12);color:#fff;font-size:15px;touch-action:none}
+.universe-explorer .dpad-up{grid-area:1/2}.universe-explorer .dpad-left{grid-area:2/1}.universe-explorer .dpad-down{grid-area:3/2}.universe-explorer .dpad-right{grid-area:2/3}
+.universe-explorer .flight-vertical{display:flex;flex-direction:column;gap:8px}
+.universe-explorer .flight-vertical button{min-height:38px;padding:0 10px;border:1px solid rgba(183,205,255,.38);border-radius:22px;background:rgba(8,18,43,.48);color:#edf3ff;font-size:11px;touch-action:none}
+.universe-explorer .explorer-actions{position:absolute;z-index:7;right:30px;bottom:48px;left:auto;display:flex;gap:12px;padding:0;border:0;background:transparent;box-shadow:none}
+.universe-explorer .cosmic-action-dock button{display:flex;width:76px;height:76px;flex-direction:column;align-items:center;justify-content:center;gap:5px;border:1px solid rgba(185,205,255,.45);border-radius:50%;background:rgba(8,19,47,.43);box-shadow:inset 0 0 18px rgba(159,185,255,.1);color:#f4f5ff;backdrop-filter:blur(8px);cursor:pointer}
+.universe-explorer .cosmic-action-dock button>span{font-size:27px;line-height:1}
+.universe-explorer .cosmic-action-dock button>small{font-size:11px;color:#e5eaff}
+.cosmic-utility-rail{position:absolute;z-index:7;right:24px;top:58%;display:flex;flex-direction:column;gap:10px}
+.cosmic-utility-rail button{display:grid;width:54px;height:54px;place-items:center;border:1px solid rgba(185,205,255,.42);border-radius:50%;background:rgba(8,19,47,.4);color:#fff;font-size:22px;backdrop-filter:blur(8px);cursor:pointer}
+.cosmic-level-card{position:absolute;z-index:7;left:220px;bottom:34px;display:flex;min-width:270px;align-items:center;gap:12px;padding:10px 16px;border:1px solid rgba(185,205,255,.45);border-radius:28px;background:rgba(7,15,39,.58);backdrop-filter:blur(10px)}
+.cosmic-level-wing{font-size:28px;color:#e8efff}
+.cosmic-level-card>span:last-child{display:grid;flex:1;gap:6px}
+.cosmic-level-card small{font-size:12px;color:#e8edff}
+.cosmic-level-card i{display:block;height:7px;overflow:hidden;border-radius:9px;background:rgba(160,182,225,.2)}
+.cosmic-level-card b{display:block;width:68%;height:100%;border-radius:9px;background:linear-gradient(90deg,#36c5ef,#62d8f7);box-shadow:0 0 12px #36c5ef}
+.universe-explorer .universe-expansion{position:absolute;z-index:6;top:218px;left:24px;max-width:210px;padding:9px 12px;border:1px solid rgba(185,202,255,.15);border-radius:10px;background:rgba(5,12,31,.25);backdrop-filter:blur(6px)}
+.universe-explorer .universe-expansion strong,.universe-explorer .universe-expansion span,.universe-explorer .universe-expansion small{display:block;font-size:10px}
+.universe-explorer .universe-expansion span,.universe-explorer .universe-expansion small{color:#aebcdb}
+.universe-explorer .universe-expansion button{margin-top:6px;padding:5px 8px;border:1px solid rgba(185,205,255,.35);border-radius:16px;background:rgba(16,35,73,.45);color:#eaf0ff;font-size:10px}
+.universe-explorer .multiplayer-indicator{display:none}
+.universe-explorer .destination-panel{z-index:15;top:90px;right:22px;max-height:calc(100svh - 120px)}
+.universe-explorer .cosmic-avatar-overlay{z-index:20;background:rgba(2,7,22,.62);backdrop-filter:blur(4px)}
+@media(max-width:760px){
+ .universe-explorer{min-height:520px}
+ .universe-explorer .game-topbar{height:60px;padding:0 10px}
+ .cosmic-location-pill{top:10px;left:10px;min-width:0;padding:7px 10px;gap:7px}
+ .cosmic-location-pill>span{font-size:20px}.cosmic-location-pill strong{font-size:12px}.cosmic-location-pill small{font-size:9px}
+ .game-live-status{margin-right:42px;padding:7px 10px;font-size:10px}
+ .game-fullscreen{top:12px;right:8px;font-size:23px}
+ .cosmic-compass{top:78px;right:10px;width:76px;height:76px}
+ .universe-explorer .explorer-status{top:74px;left:10px;padding:6px 8px}
+ .universe-explorer .explorer-status span,.universe-explorer .explorer-status small{font-size:8px}
+ .universe-explorer .explorer-controls{left:12px;bottom:22px;gap:6px}
+ .universe-explorer .game-dpad{width:116px;height:116px}
+ .universe-explorer .game-dpad button{width:28px;height:28px;font-size:12px}
+ .universe-explorer .flight-vertical{display:none}
+ .universe-explorer .explorer-actions{right:10px;bottom:22px;gap:5px}
+ .universe-explorer .cosmic-action-dock button{width:54px;height:54px;gap:2px}
+ .universe-explorer .cosmic-action-dock button>span{font-size:19px}
+ .universe-explorer .cosmic-action-dock button>small{font-size:8px}
+ .cosmic-utility-rail{right:10px;top:auto;bottom:180px;gap:6px}
+ .cosmic-utility-rail button{width:38px;height:38px;font-size:16px}
+ .cosmic-level-card{left:142px;bottom:86px;min-width:150px;padding:6px 9px;gap:7px}
+ .cosmic-level-wing{font-size:19px}.cosmic-level-card small{font-size:9px}
+ .universe-explorer .universe-expansion{top:auto;left:10px;bottom:154px;max-width:170px;padding:6px 8px}
+ .universe-explorer .universe-expansion strong,.universe-explorer .universe-expansion span,.universe-explorer .universe-expansion small{font-size:8px}
+}
+@media(max-width:420px){
+ .universe-explorer .game-dpad{width:98px;height:98px}
+ .universe-explorer .cosmic-action-dock button{width:48px;height:48px}
+ .universe-explorer .explorer-actions{gap:3px;right:6px}
+ .cosmic-level-card{left:112px;min-width:132px}
+ .cosmic-utility-rail{bottom:156px}
+}

@@ -93,3 +93,16 @@ test('manual region expansion uses the same 150-unit spatial cells as automatic 
  const game=await read('apps/web/src/features/game/universe-game.tsx');
  assert.match(game,/new Vector3\(cx\*150,cy\*150,cz\*150\)/);
 });
+
+test('immersive game HUD follows the supplied celestial exploration layout without replacing the flight world',async()=>{
+ const game=await read('apps/web/src/features/game/universe-game.tsx');
+ const scene=await read('apps/web/src/features/game/flight-scene.tsx');
+ const css=await read('apps/web/src/app/globals.css');
+ assert.match(game,/cosmic-action-dock/);
+ assert.match(game,/game-fullscreen/);
+ assert.match(game,/cosmic-utility-rail/);
+ assert.match(scene,/s\.scale\.set\(1\.72,2\.42,1\)/);
+ assert.match(scene,/landedBody\?3\.35:2\.3/);
+ assert.match(css,/Reference-matched immersive HUD/);
+ assert.match(css,/game-dpad\{width:148px;height:148px/);
+});
