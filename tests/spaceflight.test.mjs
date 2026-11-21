@@ -138,7 +138,7 @@ test('newly landed camera looks along a stable surface tangent, not into the pla
  assert.match(scene,/surfaceBodyId\.current!==body\.id/);
  assert.match(scene,/surfaceHeading\.current\.set\(0,0,-1\)\.projectOnPlane\(normal\)/);
  assert.match(scene,/right\.crossVectors\(forward,normal\)/);
- assert.match(scene,/look\.copy\(forward\)\.multiplyScalar\(landedBody\?1\.05:2\.3\)/);
+ assert.match(scene,/look\\.copy\\(forward\\)\\.multiplyScalar\\(landedBody\\?3\\.35:2\\.3\\)/);
 });
 test('surface movement uses a stable angular step independent of tiny planet radius',async()=>{
  const scene=await read('apps/web/src/features/game/flight-scene.tsx');
