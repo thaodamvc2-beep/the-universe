@@ -88,7 +88,7 @@ test('player character is rendered as a lightweight flying angel rather than a s
  assert.match(scene,/leftWing/);
  assert.match(scene,/rightWing/);
  assert.match(scene,/capsuleGeometry args=\{\[\.022,\.3,3,6\]\}/);
- assert.match(scene,/Short, natural hair silhouettes/);
+ assert.match(scene,/Long flowing hair/);
  assert.doesNotMatch(scene,/thruster/);
 });
 

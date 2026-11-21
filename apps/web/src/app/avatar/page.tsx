@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
 import { SiteHeader } from '@/components/site-header';
 import { useSite } from '@/components/site-provider';
+import { CelestialAvatarArtwork } from '@/components/celestial-avatar-artwork';
 import { AVATAR_OPTIONS, validateNickname, type AvatarId } from '@/lib/identity/guest-identity.mjs';
 
 export default function AvatarPage() {
@@ -50,7 +51,7 @@ export default function AvatarPage() {
                   <span className="avatar-art-glow" />
                   <span className="avatar-art-orbit avatar-art-orbit-one" />
                   <span className="avatar-art-orbit avatar-art-orbit-two" />
-                  <span className={`avatar-portrait avatar-${avatarId}`} aria-hidden="true"><i /><b /></span>
+                  <CelestialAvatarArtwork avatarId={avatarId} className="avatar-portrait avatar-stage-illustration" />
                   <span className="avatar-art-stars" aria-hidden="true">✦　·　✧　　·　✦</span>
                 </div>
                 <div className="avatar-phone-caption">
@@ -78,7 +79,7 @@ export default function AvatarPage() {
                   aria-pressed={avatarId === avatar.id}
                   onClick={() => { setAvatarId(avatar.id); setSaved(false); setStorageFailed(false); }}
                 >
-                  <span className={`avatar-portrait avatar-${avatar.id}`} aria-hidden="true"><i /><b /></span>
+                  <CelestialAvatarArtwork avatarId={avatar.id} className="avatar-portrait avatar-choice-illustration" />
                   <span className="avatar-option-name">{t(`avatarName_${avatar.id}` as never)}</span>
                   <span className="avatar-option-index">0{index + 1}</span>
                 </button>

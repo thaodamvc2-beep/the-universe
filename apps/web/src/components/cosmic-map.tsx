@@ -4,6 +4,7 @@ import { useMemo, useState } from 'react';
 import Link from 'next/link';
 import { SiteHeader } from '@/components/site-header';
 import { useSite } from '@/components/site-provider';
+import { CelestialAvatarArtwork } from '@/components/celestial-avatar-artwork';
 import bodies from '@/data/celestial-bodies.json';
 
 type CelestialBody = (typeof bodies)[number];
@@ -39,7 +40,7 @@ export function CosmicMap() {
         </div>
         {guestIdentity ? (
           <Link className="map-companion" href="/avatar">
-            <span className={`avatar-portrait avatar-${guestIdentity.avatarId}`} aria-hidden="true" />
+            <CelestialAvatarArtwork avatarId={guestIdentity.avatarId} className="avatar-portrait map-companion-illustration" />
             <span><small>{t('yourCompanion')}</small><strong>{guestIdentity.nickname}</strong></span>
           </Link>
         ) : null}
