@@ -53,3 +53,7 @@
 
 ## Latest deployment evidence
 - Run 44713629362 deployed commit `c74269965b6d22c7ddb55ff577694f8e1088f3e9`; all 30 tests, ESLint, TypeScript, static build and GitHub Pages deployment passed.
+
+
+## Owner-directed visual integration refinement (2026-11-21)
+- **P07-CH-04 — Owner-authorized:** Match the supplied in-game reference through a panoramic composition while retaining the animated celestial scene, world streaming, six-axis flight and navigation. Place live location/coordinates upper-left, a camera-relative compass upper-right, movement controls lower-left and land/sit/walk/fly/menu lower-right. Remove obstructive status panels and all online/player-count UI. Keep destinations, avatar selection, language, local procedural region discovery and Earth return accessible through the menu. Increase the selected local 2D angel sprite and refine the third-person follow-camera framing; do not claim a 3D conversion. **Status:** implementation committed; CI and Pages deployment evidence pending.

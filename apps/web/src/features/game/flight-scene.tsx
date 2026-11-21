@@ -6,7 +6,7 @@ import { BackSide, Camera, CanvasTexture, Group, Sprite, SpriteMaterial, SRGBCol
 import { AVATAR_PALETTE, type AvatarId, type Body } from './universe-data';
 
 export type FlightState={position:Vector3;yaw:number;pitch:number;groundedId:string|null};
-export type InputState=Record<'forward'|'back'|'left'|'right'|'up'|'down',boolean>&{land:boolean;takeoff:boolean;boost:boolean};
+export type InputState=Record<'forward'|'back'|'left'|'right'|'up'|'down',boolean>&{land:boolean;takeoff:boolean;boost:boolean;resting:boolean};
 export type RemotePlayer={id:string;nickname:string;avatarId:AvatarId;position:[number,number,number]};
 
 function Stars(){
@@ -40,9 +40,9 @@ function Avatar({avatarId,flightRef,inputRef,bodies}:{avatarId:AvatarId;flightRe
  const texture=useMemo(()=>{const t=atlas.clone();const c=cell[avatarId]??cell.stardust;t.repeat.set(1/3,.42);t.offset.set(c.x/3,c.y===0?.58:.08);t.colorSpace=SRGBColorSpace;t.needsUpdate=true;return t},[atlas,avatarId]);
  const sprite=useMemo(()=>{const material=new SpriteMaterial({map:texture,transparent:true,depthWrite:false,alphaTest:.015});material.onBeforeCompile=(shader)=>{shader.fragmentShader=shader.fragmentShader.replace('#include <map_fragment>',`#include <map_fragment>
  float bgDistance = distance(diffuseColor.rgb, vec3(0.047, 0.078, 0.157));
- diffuseColor.a *= smoothstep(0.018, 0.075, bgDistance);`)};material.needsUpdate=true;const s=new Sprite(material);s.center.set(.5,.025);s.scale.set(1.72,2.42,1);return s},[texture]);
+ diffuseColor.a *= smoothstep(0.018, 0.075, bgDistance);`)};material.needsUpdate=true;const s=new Sprite(material);s.center.set(.5,.025);s.scale.set(1.95,2.9,1);return s},[texture]);
  useEffect(()=>()=>{sprite.material.dispose();texture.dispose()},[sprite,texture]);
- useFrame((state)=>{if(!ref.current)return;const f=flightRef.current,i=inputRef.current,body=f.groundedId?bodies.find(b=>b.id===f.groundedId):undefined;const wave=Math.sin(state.clock.elapsedTime*1.05);ref.current.visible=true;ref.current.position.set(0,0,0);if(body)ref.current.position.y=.02;const seated=!!body&&!i.forward&&!i.back&&!i.left&&!i.right;const size=body?Math.max(.78,Math.min(1.12,body.radius*.58)):1;ref.current.scale.setScalar(size);ref.current.rotation.set(0,0,Math.sin(state.clock.elapsedTime*.55)*.012);sprite.position.y=.025+wave*.018+(seated?-.012:((i.forward || i.back) ? .025 : 0))});
+ useFrame((state)=>{if(!ref.current)return;const f=flightRef.current,i=inputRef.current,body=f.groundedId?bodies.find(b=>b.id===f.groundedId):undefined;const wave=Math.sin(state.clock.elapsedTime*1.05);ref.current.visible=true;ref.current.position.set(0,0,0);if(body)ref.current.position.y=.02;const seated=!!body&&i.resting;const size=body?Math.max(.92,Math.min(1.2,body.radius*.66)):1.08;ref.current.scale.setScalar(size);ref.current.rotation.set(0,0,Math.sin(state.clock.elapsedTime*.55)*.012);sprite.position.y=.025+wave*.018+(seated?-.085:((i.forward || i.back) ? .025 : 0))});
  return <group ref={ref}><primitive object={sprite}/><pointLight position={[0,.3,.18]} color="#b9d8ff" intensity={.22} distance={2.8}/></group>;
 }
 function OtherAvatar({player,flightRef}:{player:RemotePlayer;flightRef:MutableRefObject<FlightState>}){
@@ -120,7 +120,7 @@ export function FlightScene({bodies,avatarId,flightRef,inputRef,targetId,onArriv
    const yawDelta=f.yaw-lastSurfaceYaw.current;if(Math.abs(yawDelta)>.00001){surfaceHeading.current.applyAxisAngle(normal,yawDelta).projectOnPlane(normal).normalize();lastSurfaceYaw.current=f.yaw}
    forward.copy(surfaceHeading.current).projectOnPlane(normal).normalize();if(forward.lengthSq()<.001){forward.crossVectors(new Vector3(0,1,0),normal);if(forward.lengthSq()<.001)forward.crossVectors(new Vector3(1,0,0),normal);forward.normalize();surfaceHeading.current.copy(forward)}
    right.crossVectors(forward,normal).normalize();const move=new Vector3();if(i.forward)move.add(forward);if(i.back)move.sub(forward);if(i.right)move.add(right);if(i.left)move.sub(right);
-   if(move.lengthSq()>0){const tangent=move.normalize();const nextNormal=normal.clone().addScaledVector(tangent,(i.boost?.62:.36)*dt).normalize();surfaceHeading.current.copy(forward).projectOnPlane(nextNormal).normalize();f.position.copy(center).addScaledVector(nextNormal,body.radius+.22)}
+   if(move.lengthSq()>0){i.resting=false;const tangent=move.normalize();const nextNormal=normal.clone().addScaledVector(tangent,(i.boost?.62:.36)*dt).normalize();surfaceHeading.current.copy(forward).projectOnPlane(nextNormal).normalize();f.position.copy(center).addScaledVector(nextNormal,body.radius+.22)}
    if(i.takeoff||i.up){f.yaw=Math.atan2(surfaceHeading.current.x,-surfaceHeading.current.z);f.pitch=Math.asin(Math.max(-.95,Math.min(.95,surfaceHeading.current.y)));surfaceBodyId.current=null;f.groundedId=null;f.position.addScaledVector(normal,.9);i.takeoff=false}i.land=false;
   }else{
    forward.set(Math.sin(f.yaw)*Math.cos(f.pitch),Math.sin(f.pitch),-Math.cos(f.yaw)*Math.cos(f.pitch)).normalize();right.set(Math.cos(f.yaw),0,Math.sin(f.yaw)).normalize();
@@ -130,8 +130,8 @@ export function FlightScene({bodies,avatarId,flightRef,inputRef,targetId,onArriv
    i.takeoff=false;
   }
   const landedBody=f.groundedId?bodies.find(b=>b.id===f.groundedId):undefined;if(landedBody){playerUp.copy(f.position).sub(new Vector3(...landedBody.position)).normalize();forward.copy(surfaceHeading.current).projectOnPlane(playerUp).normalize();if(forward.lengthSq()<.001){forward.crossVectors(new Vector3(0,1,0),playerUp);if(forward.lengthSq()<.001)forward.crossVectors(new Vector3(1,0,0),playerUp);forward.normalize();surfaceHeading.current.copy(forward)}}else{playerUp.set(0,1,0);forward.set(Math.sin(f.yaw)*Math.cos(f.pitch),Math.sin(f.pitch),-Math.cos(f.yaw)*Math.cos(f.pitch)).normalize()}
-  smoothedCameraUp.current.lerp(playerUp,1-Math.exp(-7*dt)).normalize();desired.copy(forward).multiplyScalar(landedBody?-6.1:-5.8).addScaledVector(smoothedCameraUp.current,landedBody?2.75:2.25);
-  camera.position.lerp(desired,1-Math.exp(-7*dt));camera.up.copy(smoothedCameraUp.current);look.copy(forward).multiplyScalar(landedBody?3.35:2.3).addScaledVector(smoothedCameraUp.current,landedBody?.08:0);camera.lookAt(look);
+  smoothedCameraUp.current.lerp(playerUp,1-Math.exp(-7*dt)).normalize();desired.copy(forward).multiplyScalar(landedBody?-5.35:-5.55).addScaledVector(smoothedCameraUp.current,landedBody?2.05:1.98);
+  camera.position.lerp(desired,1-Math.exp(-7*dt));camera.up.copy(smoothedCameraUp.current);look.copy(forward).multiplyScalar(landedBody?2.6:2.6).addScaledVector(smoothedCameraUp.current,landedBody?.18:0);camera.lookAt(look);
  });
  return <>
   <color attach="background" args={['#0a1a36']}/><ambientLight intensity={.38}/><hemisphereLight args={['#b8dcff','#55436f',.28]}/>

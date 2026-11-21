@@ -158,3 +158,6 @@ test('avatar chooser no longer blocks the live universe on initial entry and the
  assert.doesNotMatch(game,/cosmic-solar-widget/);
  assert.match(game,/CelestialAvatarArtwork avatarId=\{avatarId\}/);
 });
+
+test('reference HUD removes player counts and obstructive panels while keeping navigation accessible',async()=>{const game=await read('apps/web/src/features/game/universe-game.tsx');const css=await read('apps/web/src/app/globals.css');assert.match(game,/cosmic-location-pill/);assert.match(game,/cosmic-compass/);assert.match(game,/cosmic-action-dock/);assert.match(game,/cosmic-joystick/);assert.match(game,/cosmic-menu-panel/);assert.match(game,/cosmic-settings-panel/);assert.doesNotMatch(game,/Online:\s*\$\{|<div className="game-live-status"/);assert.doesNotMatch(game,/cosmic-level-card|multiplayer-indicator/);assert.match(css,/hide online count/);});
+test('in-world angel remains a local 2D sprite with enlarged third-person framing and sit state',async()=>{const scene=await read('apps/web/src/features/game/flight-scene.tsx');assert.match(scene,/celestial-six\.webp/);assert.match(scene,/s\.scale\.set\(1\.95,2\.9,1\)/);assert.match(scene,/multiplyScalar\(landedBody\?-5\.35:-5\.55\)/);assert.match(scene,/i\.resting/);});
