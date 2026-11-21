@@ -120,3 +120,6 @@
 .setting-control-row button{width:30px;height:30px;padding:0!important;text-align:center!important;font-size:18px!important}
 .setting-control-row strong{min-width:42px;text-align:center;color:#fff;font-variant-numeric:tabular-nums}
 @media(max-width:760px){.destination-stats{gap:5px}.destination-stats>div{padding:6px 5px}.destination-stats strong{font-size:15px}.destination-stats span{font-size:8px}}
+
+/* Bright, playful nebula treatment for the game view. */
+.universe-explorer .game-vignette{background:radial-gradient(ellipse at 55% 42%,transparent 38%,rgba(23,10,58,.12) 72%,rgba(8,6,34,.42) 100%)}
