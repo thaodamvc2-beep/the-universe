@@ -463,3 +463,15 @@
 .universe-explorer .cosmic-action-dock button:disabled{opacity:.42;cursor:not-allowed}
 .universe-explorer .cosmic-action-dock button[aria-pressed=true]{border-color:rgba(220,235,255,.8);box-shadow:0 0 18px rgba(128,174,255,.24)}
 @media(max-width:760px){.universe-explorer .cosmic-location-pill{top:10px;left:10px;min-width:0;max-width:calc(100vw - 126px);padding:7px 10px;gap:7px}.universe-explorer .cosmic-location-pill strong{font-size:12px}.universe-explorer .cosmic-location-pill small{font-size:9px}.universe-explorer .cosmic-compass{top:78px;right:10px;width:76px;height:76px}.universe-explorer .cosmic-compass span{font-size:24px}.universe-explorer .cosmic-menu-panel,.universe-explorer .cosmic-settings-panel{right:10px;bottom:92px;width:min(290px,calc(100vw - 20px))}}
+
+/* Keep touch altitude controls reachable beside the movement pad. */
+@media(max-width:760px){
+ .universe-explorer .flight-vertical{display:flex;flex-direction:column;gap:5px}
+ .universe-explorer .flight-vertical button{width:34px;min-width:34px;min-height:34px;padding:0;border-radius:50%;font-size:15px}
+ .universe-explorer .cosmic-action-dock button{width:46px;height:46px}
+}
+@media(max-width:420px){
+ .universe-explorer .cosmic-action-dock button{width:40px;height:40px}
+ .universe-explorer .cosmic-action-dock button>span{font-size:16px}
+ .universe-explorer .cosmic-action-dock button>small{font-size:7px}
+}

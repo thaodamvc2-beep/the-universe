@@ -138,7 +138,7 @@ test('newly landed camera looks along a stable surface tangent, not into the pla
  assert.match(scene,/surfaceBodyId\.current!==body\.id/);
  assert.match(scene,/surfaceHeading\.current\.set\(0,0,-1\)\.projectOnPlane\(normal\)/);
  assert.match(scene,/right\.crossVectors\(forward,normal\)/);
- assert.match(scene,/look\.copy\(forward\)\.multiplyScalar\(landedBody\?3\.35:2\.3\)/);
+ assert.match(scene,/look\.copy\(forward\)\.multiplyScalar\(landedBody\?2\.6:2\.6\)/);
 });
 test('surface movement uses a stable angular step independent of tiny planet radius',async()=>{
  const scene=await read('apps/web/src/features/game/flight-scene.tsx');
@@ -159,5 +159,7 @@ test('avatar chooser no longer blocks the live universe on initial entry and the
  assert.match(game,/CelestialAvatarArtwork avatarId=\{avatarId\}/);
 });
 
-test('reference HUD removes player counts and obstructive panels while keeping navigation accessible',async()=>{const game=await read('apps/web/src/features/game/universe-game.tsx');const css=await read('apps/web/src/app/globals.css');assert.match(game,/cosmic-location-pill/);assert.match(game,/cosmic-compass/);assert.match(game,/cosmic-action-dock/);assert.match(game,/cosmic-joystick/);assert.match(game,/cosmic-menu-panel/);assert.match(game,/cosmic-settings-panel/);assert.doesNotMatch(game,/Online:\s*\$\{|<div className="game-live-status"/);assert.doesNotMatch(game,/cosmic-level-card|multiplayer-indicator/);assert.match(css,/hide online count/);});
+test('reference HUD removes player counts and obstructive panels while keeping navigation accessible',async()=>{const game=await read('apps/web/src/features/game/universe-game.tsx');const css=await read('apps/web/src/app/globals.css');assert.match(game,/cosmic-location-pill/);assert.match(game,/cosmic-compass/);assert.match(game,/cosmic-action-dock/);assert.match(game,/cosmic-joystick/);assert.match(game,/cosmic-menu-panel/);assert.match(game,/cosmic-settings-panel/);assert.doesNotMatch(game,/Online:\s*\$\{|<div className="game-live-status"/);assert.doesNotMatch(game,/cosmic-level-card|multiplayer-indicator/);assert.match(css,/\.game-live-status\{display:none!important\}/);});
 test('in-world angel remains a local 2D sprite with enlarged third-person framing and sit state',async()=>{const scene=await read('apps/web/src/features/game/flight-scene.tsx');assert.match(scene,/celestial-six\.webp/);assert.match(scene,/s\.scale\.set\(1\.95,2\.9,1\)/);assert.match(scene,/multiplyScalar\(landedBody\?-5\.35:-5\.55\)/);assert.match(scene,/i\.resting/);});
+
+test('touch altitude controls remain available in the compact reference HUD',async()=>{const css=await read('apps/web/src/app/globals.css');assert.match(css,/flight-vertical\{display:flex/);assert.match(css,/cosmic-action-dock button\{width:40px;height:40px\}/)});

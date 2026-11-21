@@ -63,7 +63,7 @@ export function UniverseGame(){
 
  const resetHome=()=>{flightRef.current.position.set(0,0,1.91);flightRef.current.yaw=Math.PI/2;flightRef.current.pitch=0;flightRef.current.groundedId='earth';setCurrentBodyId('earth');setTargetId(null);setResting(false);input.current={forward:false,back:false,left:false,right:false,up:false,down:false,land:false,takeoff:false,boost:false,resting:false}};
  const takeoff=()=>{setResting(false);input.current.resting=false;if(flightRef.current.groundedId){const b=bodies.find(x=>x.id===flightRef.current.groundedId);if(b){const n=flightRef.current.position.clone().sub(new Vector3(...b.position)).normalize();flightRef.current.position.addScaledVector(n,.9)}flightRef.current.groundedId=null;setCurrentBodyId(null)}input.current.takeoff=true};
- const setDirection=(key:keyof Pick<InputState,'forward'|'back'|'left'|'right'|'up'|'down'>,active:boolean)=>{input.current[key]=active};
+ const setDirection=(key:keyof Pick<InputState,'forward'|'back'|'left'|'right'|'up'|'down'>,active:boolean)=>{if(active){setResting(false);input.current.resting=false}input.current[key]=active};
  const onPointerDown=(e:ReactPointerEvent<HTMLDivElement>)=>{drag.current={active:true,x:e.clientX,y:e.clientY};e.currentTarget.setPointerCapture(e.pointerId)};
  const onPointerMove=(e:ReactPointerEvent<HTMLDivElement>)=>{if(!drag.current.active)return;const dx=e.clientX-drag.current.x,dy=e.clientY-drag.current.y;drag.current.x=e.clientX;drag.current.y=e.clientY;flightRef.current.yaw-=dx*.004;flightRef.current.pitch=Math.max(-1.25,Math.min(1.25,flightRef.current.pitch-dy*.003))};
  const onPointerUp=()=>{drag.current.active=false};
