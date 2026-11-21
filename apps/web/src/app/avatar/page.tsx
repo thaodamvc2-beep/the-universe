@@ -80,7 +80,7 @@ export default function AvatarPage() {
                   onClick={() => { setAvatarId(avatar.id); setSaved(false); setStorageFailed(false); }}
                 >
                   <CelestialAvatarArtwork avatarId={avatar.id} className="avatar-portrait avatar-choice-illustration" />
-                  <span className="avatar-option-name">{t(`avatarName_${avatar.id}` as never)}</span>
+                  <span className="avatar-option-name">{t(`avatarName_${avatar.id}` as never)}</span><span className="avatar-option-gender">{index < 3 ? t('avatarMale') : t('avatarFemale')}</span>
                   <span className="avatar-option-index">0{index + 1}</span>
                 </button>
               ))}

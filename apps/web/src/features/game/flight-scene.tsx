@@ -34,63 +34,34 @@ function Planet({body,flightRef}:{body:Body;flightRef:MutableRefObject<FlightSta
  </group>;
 }
 function Avatar({avatarId,flightRef,inputRef,bodies}:{avatarId:AvatarId;flightRef:MutableRefObject<FlightState>;inputRef:MutableRefObject<InputState>;bodies:Body[]}){
- const ref=useRef<Group>(null),pose=useRef<Group>(null),leftWing=useRef<Group>(null),rightWing=useRef<Group>(null),hairFlow=useRef<Group>(null),dressFlow=useRef<Group>(null),trail=useRef<Group>(null);
+ const ref=useRef<Group>(null),pose=useRef<Group>(null),leftWing=useRef<Group>(null),rightWing=useRef<Group>(null),hairFlow=useRef<Group>(null),robeFlow=useRef<Group>(null),trail=useRef<Group>(null);
  const colors=AVATAR_PALETTE[avatarId]??AVATAR_PALETTE.stardust,up=new Vector3(0,1,0);
- const looks:Record<AvatarId,{hair:string;skin:string;cloth:string;wing:string}>={
-  stardust:{hair:'#b8c9df',skin:'#f1d5ca',cloth:'#d9e8f5',wing:'#d8efff'},lunar:{hair:'#c7b9ad',skin:'#f2d8c9',cloth:'#eee6dc',wing:'#f1e8ff'},
-  nebula:{hair:'#b9829d',skin:'#f0c9bd',cloth:'#e7c4df',wing:'#f5d8f1'},crystal:{hair:'#78aebd',skin:'#e9cbb9',cloth:'#c6e5eb',wing:'#d1f8ff'},
-  aurora:{hair:'#8dbb9d',skin:'#f0d3c2',cloth:'#d0ead9',wing:'#d9f7e5'},solar:{hair:'#d4a16c',skin:'#f1d2b9',cloth:'#f0d9ae',wing:'#ffe8bd'}
- };
- const look=looks[avatarId]??looks.stardust;
- useFrame((state,delta)=>{
-  if(!ref.current)return;
-  const f=flightRef.current,i=inputRef.current,body=f.groundedId?bodies.find(b=>b.id===f.groundedId):undefined;
-  const seated=!!body&&!i.forward&&!i.back&&!i.left&&!i.right,wave=Math.sin(state.clock.elapsedTime*1.15);
-  ref.current.visible=true;ref.current.position.set(0,0,0);ref.current.scale.setScalar(body?Math.max(.34,Math.min(.62,body.radius*.36)):.56);
-  if(body){const normal=f.position.clone().sub(new Vector3(...body.position)).normalize();ref.current.quaternion.setFromUnitVectors(up,normal)}else ref.current.quaternion.identity();
-  ref.current.rotateY(f.yaw);
-  if(pose.current){pose.current.rotation.x+=((seated?.04:.1)-pose.current.rotation.x)*Math.min(1,delta*3.5);pose.current.position.y=.012+wave*.014}
-  if(leftWing.current){leftWing.current.rotation.z=-.1-wave*.055;leftWing.current.rotation.x=-.06+wave*.035}
-  if(rightWing.current){rightWing.current.rotation.z=.1+wave*.055;rightWing.current.rotation.x=-.06-wave*.035}
-  if(hairFlow.current)hairFlow.current.rotation.z=wave*.025;
-  if(dressFlow.current)dressFlow.current.rotation.z=wave*.018;
-  if(trail.current)trail.current.rotation.x=wave*.025;
- });
- const skin=look.skin,hair=look.hair,cloth=look.cloth,wing=look.wing;
+ const looks:Record<AvatarId,{hair:string;skin:string;cloth:string;wing:string;metal:string;male:boolean}>={
+ stardust:{hair:'#b8c9df',skin:'#e9c9bb',cloth:'#d9e8f5',wing:'#d8efff',metal:'#d9c5a0',male:true},
+ lunar:{hair:'#443d50',skin:'#eac9b9',cloth:'#333e68',wing:'#b9d9ff',metal:'#d7c4a7',male:true},
+ nebula:{hair:'#9b6349',skin:'#efcdbb',cloth:'#f0dfbd',wing:'#ffe5b4',metal:'#e8c77f',male:true},
+ crystal:{hair:'#e5b6a9',skin:'#f0c9bd',cloth:'#f4dce0',wing:'#f5d8f1',metal:'#e9c5a5',male:false},
+ aurora:{hair:'#654c5c',skin:'#efcfbd',cloth:'#dfc8f0',wing:'#e5d7ff',metal:'#e7c9a8',male:false},
+ solar:{hair:'#b8cbd7',skin:'#f1d2b9',cloth:'#d5e9f2',wing:'#d8efff',metal:'#e5c98d',male:false}};
+ const look=looks[avatarId]??looks.stardust,male=look.male,female=!male;
+ useFrame((state,delta)=>{if(!ref.current)return;const f=flightRef.current,i=inputRef.current,body=f.groundedId?bodies.find(b=>b.id===f.groundedId):undefined,wave=Math.sin(state.clock.elapsedTime*1.1),seated=!!body&&!i.forward&&!i.back&&!i.left&&!i.right;ref.current.visible=true;ref.current.position.set(0,0,0);ref.current.scale.setScalar(body?Math.max(.34,Math.min(.62,body.radius*.36)):.56);if(body){const normal=f.position.clone().sub(new Vector3(...body.position)).normalize();ref.current.quaternion.setFromUnitVectors(up,normal)}else ref.current.quaternion.identity();ref.current.rotateY(f.yaw);if(pose.current){pose.current.rotation.x+=((seated?.035:.08)-pose.current.rotation.x)*Math.min(1,delta*3.5);pose.current.position.y=.012+wave*.012}if(leftWing.current){leftWing.current.rotation.z=-.12-wave*.045;leftWing.current.rotation.x=-.07+wave*.04}if(rightWing.current){rightWing.current.rotation.z=.12+wave*.045;rightWing.current.rotation.x=-.07-wave*.04}if(hairFlow.current)hairFlow.current.rotation.z=wave*.018;if(robeFlow.current)robeFlow.current.rotation.z=wave*.022;if(trail.current)trail.current.rotation.x=wave*.02});
+ const {skin,hair,cloth,wing,metal}=look;
+ const feather=(side:number,n:number)=><mesh key={n} position={[side*(.16+n*.052),.19+n*.064,-.11-n*.006]} rotation={[0,0,side*(.54+n*.055)]} scale={[.072,.255-n*.012,.022]}><sphereGeometry args={[1,16,12]}/><meshBasicMaterial color={wing} transparent opacity={.28+n*.045} depthWrite={false}/></mesh>;
  return <group ref={ref}><group ref={pose}>
-  {/* Long flowing hair, a luminous layered gown and broad feather-like wings follow the supplied angel references. */}
-  <mesh position={[0,-.055,0]}><capsuleGeometry args={[.105,.31,4,8]}/><meshStandardMaterial color={cloth} roughness={.86}/></mesh>
-  <mesh position={[0,-.255,.015]}><coneGeometry args={[.235,.48,20]}/><meshStandardMaterial color={cloth} roughness={.88}/></mesh>
-  <mesh position={[0,-.22,.024]}><coneGeometry args={[.19,.39,18]}/><meshStandardMaterial color="#fff8ed" roughness={.86} transparent opacity={.8}/></mesh>
-  <mesh position={[0,.12,.02]}><torusGeometry args={[.11,.012,5,20]}/><meshStandardMaterial color={colors.trim} metalness={.18} roughness={.58}/></mesh>
-  <mesh position={[0,.345,.035]}><sphereGeometry args={[.103,16,14]}/><meshStandardMaterial color={skin} roughness={.9}/></mesh>
-  <group ref={hairFlow}>
-   <mesh position={[0,.395,-.012]} scale={[1.08,.84,.92]}><sphereGeometry args={[.108,14,12]}/><meshStandardMaterial color={hair} roughness={.94}/></mesh>
-   <mesh position={[-.084,.33,-.005]} scale={[.36,.7,.44]}><sphereGeometry args={[.09,10,8]}/><meshStandardMaterial color={hair} roughness={.94}/></mesh>
-   <mesh position={[.084,.33,-.005]} scale={[.36,.7,.44]}><sphereGeometry args={[.09,10,8]}/><meshStandardMaterial color={hair} roughness={.94}/></mesh>
-   <mesh position={[0,.405,.095]} scale={[.62,.2,.16]}><sphereGeometry args={[.09,10,8]}/><meshStandardMaterial color={hair} roughness={.94}/></mesh>
-   <mesh position={[-.075,.16,-.025]} rotation={[0,0,-.12]}><capsuleGeometry args={[.025,.27,3,6]}/><meshStandardMaterial color={hair} roughness={.94}/></mesh>
-   <mesh position={[.075,.15,-.025]} rotation={[0,0,.12]}><capsuleGeometry args={[.025,.27,3,6]}/><meshStandardMaterial color={hair} roughness={.94}/></mesh>
-  </group>
-  {[-1,1].map(side=><group key={side}>
-   <mesh position={[side*.16,.045,0]} rotation={[0,0,side*.68]}><capsuleGeometry args={[.025,.24,3,6]}/><meshStandardMaterial color={skin} roughness={.9}/></mesh>
-   <mesh position={[side*.205,-.005,-.008]} rotation={[0,0,side*.68]}><coneGeometry args={[.06,.18,10]}/><meshStandardMaterial color={cloth} transparent opacity={.78}/></mesh>
-   <mesh position={[side*.07,-.48,.035]} rotation={[.18,0,side*.08]}><capsuleGeometry args={[.028,.23,3,6]}/><meshStandardMaterial color={skin} roughness={.9}/></mesh>
-  </group>)}
-  <group ref={leftWing} position={[-.09,.18,-.09]}>
-   {Array.from({length:6},(_,n)=><mesh key={n} position={[-.12-n*.045,.16+n*.055,-.12-n*.008]} rotation={[0,0,-(.48+n*.075)]} scale={[.105,.29-n*.018,.025]}><sphereGeometry args={[1,10,8]}/><meshBasicMaterial color={wing} transparent opacity={.24+n*.025} depthWrite={false}/></mesh>)}
-   <mesh position={[-.2,.22,-.13]} rotation={[0,0,-.55]} scale={[.12,.37,.025]}><sphereGeometry args={[1,12,10]}/><meshBasicMaterial color="#fff" transparent opacity={.26} depthWrite={false}/></mesh>
-  </group>
-  <group ref={rightWing} position={[.09,.18,-.09]}>
-   {Array.from({length:6},(_,n)=><mesh key={n} position={[.12+n*.045,.16+n*.055,-.12-n*.008]} rotation={[0,0,.48+n*.075]} scale={[.105,.29-n*.018,.025]}><sphereGeometry args={[1,10,8]}/><meshBasicMaterial color={wing} transparent opacity={.24+n*.025} depthWrite={false}/></mesh>)}
-   <mesh position={[.2,.22,-.13]} rotation={[0,0,.55]} scale={[.12,.37,.025]}><sphereGeometry args={[1,12,10]}/><meshBasicMaterial color="#fff" transparent opacity={.26} depthWrite={false}/></mesh>
-  </group>
-  <group ref={dressFlow} position={[0,-.2,-.13]}>
-   <mesh position={[-.14,-.08,-.05]} rotation={[0,0,-.28]}><capsuleGeometry args={[.018,.48,3,6]}/><meshBasicMaterial color={cloth} transparent opacity={.58} depthWrite={false}/></mesh>
-   <mesh position={[.15,-.13,-.06]} rotation={[0,0,.3]}><capsuleGeometry args={[.014,.56,3,6]}/><meshBasicMaterial color="#fff4df" transparent opacity={.54} depthWrite={false}/></mesh>
-  </group>
-  <group ref={trail} position={[0,-.25,-.2]}><mesh position={[0,-.2,-.08]}><capsuleGeometry args={[.012,.48,3,5]}/><meshBasicMaterial color={colors.glow} transparent opacity={.2} depthWrite={false}/></mesh></group>
- </group><pointLight position={[0,.28,.12]} color={colors.glow} intensity={.16} distance={1.7}/></group>;
+ {/* Long flowing hair, adult masculine/feminine silhouettes, sculpted layered robes and broad feather-like wings. */}
+ <mesh position={[0,-.045,0]}><capsuleGeometry args={[male?.105:.092,male?.32:.27,8,16]}/><meshStandardMaterial color={cloth} roughness={.7}/></mesh>
+ <mesh position={[0,.025,.012]} scale={[male?1.2:1.05,.92,.72]}><sphereGeometry args={[.105,24,20]}/><meshStandardMaterial color={cloth}/></mesh>
+ {male?<group><mesh position={[0,-.25,.01]}><coneGeometry args={[.2,.46,24]}/><meshStandardMaterial color={cloth}/></mesh><mesh position={[-.064,-.43,.045]}><capsuleGeometry args={[.045,.28,6,12]}/><meshStandardMaterial color={cloth}/></mesh><mesh position={[.064,-.43,.045]}><capsuleGeometry args={[.045,.28,6,12]}/><meshStandardMaterial color={cloth}/></mesh></group>:<mesh position={[0,-.265,.02]}><coneGeometry args={[.245,.5,28]}/><meshStandardMaterial color={cloth} side={BackSide}/></mesh>}
+ <mesh position={[0,.12,.09]}><torusGeometry args={[.112,.012,8,32]}/><meshStandardMaterial color={metal} metalness={.55} roughness={.32}/></mesh>
+ <mesh position={[0,.345,.035]} scale={[1,male?1.02:1.08,.92]}><sphereGeometry args={[.103,24,20]}/><meshStandardMaterial color={skin}/></mesh>
+ <group ref={hairFlow}><mesh position={[0,.397,-.012]} scale={male?[1.08,.76,.9]:[1.12,.84,.92]}><sphereGeometry args={[.108,20,16]}/><meshStandardMaterial color={hair}/></mesh><mesh position={[-.082,.34,-.005]} scale={female?[.38,.92,.44]:[.42,.52,.44]}><sphereGeometry args={[.09,16,12]}/><meshStandardMaterial color={hair}/></mesh><mesh position={[.082,.34,-.005]} scale={female?[.38,.92,.44]:[.42,.52,.44]}><sphereGeometry args={[.09,16,12]}/><meshStandardMaterial color={hair}/></mesh><mesh position={[0,.415,.092]} scale={[.68,.2,.18]}><sphereGeometry args={[.09,16,12]}/><meshStandardMaterial color={hair}/></mesh>{female&&[-1,1].map(side=><mesh key={side} position={[side*.09,.08,-.03]}><capsuleGeometry args={[.027,.34,5,10]}/><meshStandardMaterial color={hair}/></mesh>)}</group>
+ {[-1,1].map(side=><group key={side}><mesh position={[side*.155,.105,.005]} scale={[1.2,1,.9]}><sphereGeometry args={[male?.07:.055,18,14]}/><meshStandardMaterial color={skin}/></mesh><mesh position={[side*.17,.005,.015]} rotation={[0,0,side*.42]}><capsuleGeometry args={[.026,.245,6,12]}/><meshStandardMaterial color={skin}/></mesh><mesh position={[side*.07,-.49,.04]}><capsuleGeometry args={[.03,.245,6,12]}/><meshStandardMaterial color={skin}/></mesh></group>)}
+ <mesh position={[0,.23,.08]} scale={[.12,.055,.035]}><sphereGeometry args={[1,18,12]}/><meshStandardMaterial color={metal} metalness={.72}/></mesh>
+ <group ref={leftWing} position={[-.1,.18,-.12]}>{Array.from({length:8},(_,n)=>feather(-1,n))}</group><group ref={rightWing} position={[.1,.18,-.12]}>{Array.from({length:8},(_,n)=>feather(1,n))}</group>
+ <group ref={robeFlow} position={[0,-.2,-.13]}><mesh position={[-.14,-.08,-.05]} rotation={[0,0,-.28]}><capsuleGeometry args={[.018,.5,5,10]}/><meshBasicMaterial color={cloth} transparent opacity={.58} depthWrite={false}/></mesh><mesh position={[.15,-.13,-.06]} rotation={[0,0,.3]}><capsuleGeometry args={[.014,.58,5,10]}/><meshBasicMaterial color="#fff4df" transparent opacity={.55} depthWrite={false}/></mesh></group>
+ <group ref={trail} position={[0,-.25,-.2]}><mesh position={[0,-.2,-.08]}><capsuleGeometry args={[.012,.48,4,8]}/><meshBasicMaterial color={colors.glow} transparent opacity={.2} depthWrite={false}/></mesh></group>
+ <mesh position={[0,.59,-.06]} rotation={[Math.PI/2,0,0]}><torusGeometry args={[.16,.008,6,40]}/><meshBasicMaterial color={metal} transparent opacity={.8}/></mesh>
+ </group><pointLight position={[0,.28,.12]} color={colors.glow} intensity={.2} distance={1.9}/></group>;
 }
 function OtherAvatar({player,flightRef}:{player:RemotePlayer;flightRef:MutableRefObject<FlightState>}){
  const ref=useRef<Group>(null);const c=AVATAR_PALETTE[player.avatarId]??AVATAR_PALETTE.stardust;
