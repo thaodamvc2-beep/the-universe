@@ -8,7 +8,6 @@ import { AVATAR_PALETTE, type AvatarId, type Body } from './universe-data';
 export type FlightState={position:Vector3;yaw:number;pitch:number;groundedId:string|null};
 export type InputState=Record<'forward'|'back'|'left'|'right'|'up'|'down',boolean>&{land:boolean;takeoff:boolean;boost:boolean;resting:boolean};
 export type RemotePlayer={id:string;nickname:string;avatarId:AvatarId;position:[number,number,number]};
-const AVATAR_CELLS:Record<AvatarId,{x:number;y:number}>={stardust:{x:0,y:0},lunar:{x:1,y:0},nebula:{x:2,y:0},crystal:{x:0,y:1},aurora:{x:1,y:1},solar:{x:2,y:1}};
 
 function Stars(){
  const ref=useRef<Group>(null);
