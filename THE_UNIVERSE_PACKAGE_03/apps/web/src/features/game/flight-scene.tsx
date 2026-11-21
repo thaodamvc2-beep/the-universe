@@ -43,7 +43,7 @@ function Avatar({avatarId,flightRef,inputRef,bodies}:{avatarId:AvatarId;flightRe
   if(body){const normal=f.position.clone().sub(new Vector3(...body.position)).normalize();ref.current.quaternion.setFromUnitVectors(up,normal)}else ref.current.quaternion.identity();
   ref.current.rotateY(f.yaw);
   const wave=Math.sin(state.clock.elapsedTime*1.25)*.12;
-  if(pose.current){pose.current.rotation.x+=((seated?-.16:-.14)-pose.current.rotation.x*Math.min(1,delta*5);pose.current.position.y=.025+Math.sin(state.clock.elapsedTime*1.25)*.035}
+  if(pose.current){pose.current.rotation.x+=((seated?-.16:-.14)-pose.current.rotation.x)*Math.min(1,delta*5);pose.current.position.y=.025+Math.sin(state.clock.elapsedTime*1.25)*.035}
   if(leftSilk.current)leftSilk.current.rotation.z=-.12-wave;
   if(rightSilk.current)rightSilk.current.rotation.z=.12+wave;
   if(trailingSilk.current)trailingSilk.current.rotation.x=Math.sin(state.clock.elapsedTime*.8)*.08;
