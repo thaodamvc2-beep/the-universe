@@ -200,3 +200,61 @@
 @media(max-width:980px){.map-workspace{grid-template-columns:minmax(0,1.4fr) minmax(270px,.9fr)}.map-destination-strip{grid-template-columns:repeat(5,minmax(0,1fr))}.map-destination-chip{justify-content:center;padding:.4rem .2rem}.map-destination-chip span:nth-child(2){font-size:.52rem}}
 @media(max-width:760px){.map-heading,.map-workspace,.map-footer{width:calc(100% - 2rem)}.map-heading{align-items:flex-start;margin-top:2rem}.map-companion{display:none}.map-workspace{grid-template-columns:1fr;gap:.8rem}.cosmic-map-stage{min-height:340px}.map-detail-panel{padding:1rem}.map-detail-description{font-size:.75rem}.map-destination-strip{grid-template-columns:repeat(5,minmax(0,1fr));gap:.3rem}.map-destination-chip{min-height:54px;flex-direction:column;gap:.2rem}.map-destination-chip small{display:none}.map-footer{flex-direction:column}}
 @media(max-width:460px){.map-heading h1{font-size:2.25rem}.cosmic-map-stage{min-height:310px}.map-coordinate{font-size:.38rem}.map-marker{min-width:1.7rem}.map-marker-name{font-size:.43rem}.map-destination-chip span:nth-child(2){font-size:.47rem}.map-detail-panel h2{font-size:1.6rem}}
+
+/* Avatar sanctuary — portrait-led celestial character editor */
+.avatar-sanctuary{isolation:isolate;background:radial-gradient(ellipse at 23% 47%,rgba(68,113,166,.18),transparent 36%),radial-gradient(ellipse at 78% 30%,rgba(145,112,191,.2),transparent 38%),linear-gradient(145deg,#060b1a 0%,#0b1025 52%,#080b19 100%)}
+.avatar-sanctuary:before,.avatar-sanctuary:after{position:absolute;z-index:-1;pointer-events:none;content:"";inset:0;background-image:radial-gradient(1px 1px at 12% 18%,rgba(255,255,255,.9) 99%,transparent),radial-gradient(1px 1px at 82% 28%,rgba(211,225,255,.8) 99%,transparent),radial-gradient(1.5px 1.5px at 63% 74%,rgba(255,255,255,.8) 99%,transparent),radial-gradient(1px 1px at 28% 86%,rgba(211,225,255,.8) 99%,transparent);background-size:260px 240px;opacity:.42}
+.avatar-sanctuary:after{inset:15% 5%;border:1px solid rgba(179,203,255,.07);border-radius:50%;transform:rotate(-13deg);background:none;box-shadow:0 0 90px rgba(101,142,204,.06)}
+.avatar-sanctuary-intro{position:relative;margin-top:3.2rem;margin-bottom:2.2rem;text-align:center}
+.avatar-sanctuary-intro .eyebrow{justify-content:center}
+.avatar-sanctuary-intro h1{margin-inline:auto;font-size:clamp(2.6rem,5vw,4.3rem);text-shadow:0 0 34px rgba(192,202,255,.17)}
+.avatar-sanctuary-intro>p:last-child{margin-inline:auto}
+.avatar-sanctuary-editor{grid-template-columns:minmax(290px,.9fr) minmax(0,1.1fr);align-items:center;gap:clamp(2rem,6vw,5.5rem);max-width:1050px;margin-bottom:4.5rem}
+.avatar-stage-column{display:flex;flex-direction:column;align-items:center;min-width:0}
+.avatar-phone-stage{position:relative;width:min(100%,350px);padding:10px;border:1px solid rgba(220,226,255,.6);border-radius:38px;background:linear-gradient(135deg,#68728a,#171e31 18%,#070b18 52%,#77839b 100%);box-shadow:0 0 0 3px rgba(0,0,0,.75),0 22px 70px rgba(0,0,0,.55),0 0 48px rgba(137,169,232,.13)}
+.avatar-phone-screen{overflow:hidden;border:1px solid rgba(190,213,255,.32);border-radius:29px;background:linear-gradient(180deg,#0b1730,#0c1c32 72%,#081020)}
+.avatar-phone-topline{display:flex;justify-content:space-between;gap:.5rem;padding:1rem 1.15rem .75rem;color:#bfcce7;font-size:.52rem;letter-spacing:.13em}
+.avatar-phone-topline span:first-child{color:#f0e8d7}
+.avatar-artwork{position:relative;display:grid;min-height:390px;place-items:center;overflow:hidden;background:radial-gradient(ellipse at 50% 45%,rgba(166,205,255,.23),transparent 50%),linear-gradient(155deg,#101b37,#0c2038 70%,#102d42)}
+.avatar-artwork:before{position:absolute;inset:0;content:"";background:radial-gradient(ellipse at 50% 90%,rgba(131,207,225,.17),transparent 45%),radial-gradient(1px 1px at 22% 20%,#fff 99%,transparent),radial-gradient(1px 1px at 78% 33%,#fff 99%,transparent),radial-gradient(1px 1px at 30% 75%,#fff 99%,transparent);background-size:auto,130px 120px,170px 150px,210px 190px;opacity:.8}
+.avatar-art-glow{position:absolute;width:65%;aspect-ratio:1;border-radius:50%;background:rgba(170,204,255,.17);filter:blur(48px)}
+.avatar-art-orbit{position:absolute;width:78%;height:55%;border:1px solid rgba(201,224,255,.18);border-radius:50%;transform:rotate(-24deg)}
+.avatar-art-orbit-two{width:90%;height:72%;border-color:rgba(228,208,255,.12);transform:rotate(36deg)}
+.avatar-artwork .avatar-portrait{z-index:1;width:74%;height:82%;border:0;border-radius:0;background-size:300% 200%;box-shadow:none;filter:drop-shadow(0 10px 24px rgba(166,204,255,.2));animation:avatar-float 5s ease-in-out infinite}
+.avatar-artwork .avatar-portrait:before,.avatar-artwork .avatar-portrait:after,.avatar-artwork .avatar-portrait i,.avatar-artwork .avatar-portrait b{display:none}
+.avatar-art-stars{position:absolute;z-index:2;right:9%;bottom:7%;color:rgba(245,239,255,.75);font-size:.75rem;letter-spacing:.3em}
+.avatar-artwork.avatar-artwork-lunar{background:radial-gradient(ellipse at 50% 45%,rgba(218,226,255,.23),transparent 52%),linear-gradient(155deg,#10172d,#19243b 70%,#101a2e)}
+.avatar-artwork.avatar-artwork-nebula{background:radial-gradient(ellipse at 50% 45%,rgba(255,190,231,.22),transparent 52%),linear-gradient(155deg,#24152f,#211b3c 70%,#101a32)}
+.avatar-artwork.avatar-artwork-crystal{background:radial-gradient(ellipse at 50% 45%,rgba(167,244,255,.22),transparent 52%),linear-gradient(155deg,#0d2438,#103448 70%,#0b1b30)}
+.avatar-artwork.avatar-artwork-aurora{background:radial-gradient(ellipse at 50% 45%,rgba(180,255,221,.2),transparent 52%),linear-gradient(155deg,#102b31,#123d48 70%,#0c1e31)}
+.avatar-artwork.avatar-artwork-solar{background:radial-gradient(ellipse at 50% 45%,rgba(255,221,165,.23),transparent 52%),linear-gradient(155deg,#33213a,#342b46 70%,#142039)}
+.avatar-phone-caption{display:flex;flex-direction:column;align-items:center;gap:.35rem;padding:1.05rem .8rem 1.3rem;text-align:center}
+.avatar-phone-caption span{color:#aebbd4;font-size:.48rem;letter-spacing:.18em}
+.avatar-phone-caption strong{max-width:100%;overflow-wrap:anywhere;color:#fff;font-family:Georgia,serif;font-size:1.45rem;font-weight:400}
+.avatar-phone-caption small{color:#b8c7df;font-size:.68rem;letter-spacing:.12em}
+.avatar-phone-home-indicator{width:72px;height:3px;margin:9px auto 1px;border-radius:4px;background:rgba(235,240,255,.55)}
+.avatar-stage-note{margin:1rem 0 0;color:#9daaca;font-size:.55rem;letter-spacing:.14em}
+.avatar-customizer{padding:clamp(1.1rem,3vw,2rem);border:1px solid rgba(190,206,242,.18);border-radius:18px;background:linear-gradient(145deg,rgba(17,25,49,.88),rgba(8,14,31,.88));box-shadow:0 24px 65px rgba(0,0,0,.2),inset 0 1px rgba(255,255,255,.04);backdrop-filter:blur(18px)}
+.avatar-customizer-heading{display:flex;justify-content:space-between;align-items:end;gap:1rem;margin-bottom:1.2rem}
+.avatar-kicker{color:#b8b2e5;font-size:.55rem;letter-spacing:.18em}
+.avatar-customizer-heading h2{margin:.45rem 0 0;color:#f4f0ff;font-family:Georgia,serif;font-size:2rem;font-weight:400}
+.avatar-count{padding:.4rem .6rem;border:1px solid rgba(202,198,245,.2);border-radius:20px;color:#c9c4e8;font-size:.55rem;letter-spacing:.13em}
+.avatar-sanctuary-options{grid-template-columns:repeat(3,minmax(0,1fr));gap:.65rem;margin-bottom:1.5rem}
+.avatar-sanctuary-option{position:relative;min-height:142px;gap:.55rem;padding:.7rem .35rem;border:1px solid rgba(191,206,240,.16);border-radius:12px;background:rgba(25,34,61,.55);color:#e3e4f4}
+.avatar-sanctuary-option:hover,.avatar-sanctuary-option[aria-pressed=true]{transform:translateY(-3px);border-color:rgba(204,208,255,.78);background:linear-gradient(160deg,rgba(93,103,158,.35),rgba(38,46,80,.55));box-shadow:0 0 24px rgba(147,169,232,.13)}
+.avatar-sanctuary-option[aria-pressed=true]:after{position:absolute;top:8px;right:9px;width:6px;height:6px;border-radius:50%;background:#e6e3ff;box-shadow:0 0 10px #c8c8ff;content:""}
+.avatar-sanctuary-option .avatar-portrait{width:4.1rem;height:4.1rem;border-radius:50%;background-size:300% 200%;box-shadow:0 0 22px rgba(155,181,240,.2)}
+.avatar-option-name{font-size:.67rem;letter-spacing:.04em}
+.avatar-option-index{color:#7f8cab;font-size:.48rem;letter-spacing:.15em}
+.avatar-name-block{padding-top:1.2rem;border-top:1px solid rgba(190,206,242,.13)}
+.avatar-sanctuary .nickname-label{color:#e9e9f7;font-size:.7rem}
+.avatar-sanctuary .nickname-input{border-color:rgba(190,206,242,.23);border-radius:9px;background:rgba(4,9,23,.65)}
+.avatar-sanctuary .nickname-help,.avatar-sanctuary .nickname-feedback{font-size:.59rem}
+.avatar-sanctuary-save{display:flex;width:100%;justify-content:space-between;margin-top:1rem;border:1px solid rgba(219,212,255,.5);border-radius:9px;background:linear-gradient(100deg,rgba(122,121,192,.3),rgba(114,160,195,.2));font-size:.6rem}
+.avatar-sanctuary-save:hover:not(:disabled){background:linear-gradient(100deg,rgba(145,139,220,.45),rgba(121,183,211,.35))}
+.avatar-sanctuary .avatar-save-status{min-height:1.1rem;text-align:center}
+.avatar-sanctuary .avatar-signin-link{display:block;text-align:center}
+.avatar-sanctuary-footer{max-width:1050px}
+@keyframes avatar-float{0%,100%{transform:translateY(0)}50%{transform:translateY(-7px)}}
+@media(max-width:760px){.avatar-sanctuary-intro{margin-top:2.4rem}.avatar-sanctuary-editor{grid-template-columns:1fr;max-width:470px;gap:2rem}.avatar-phone-stage{width:min(100%,320px)}.avatar-artwork{min-height:340px}.avatar-customizer{padding:1rem}.avatar-sanctuary-option{min-height:126px}.avatar-sanctuary-option .avatar-portrait{width:3.65rem;height:3.65rem}}
+@media(max-width:380px){.avatar-phone-stage{width:100%;border-radius:30px}.avatar-artwork{min-height:300px}.avatar-sanctuary-options{gap:.45rem}.avatar-sanctuary-option{min-height:112px;padding:.5rem .2rem}.avatar-sanctuary-option .avatar-portrait{width:3.2rem;height:3.2rem}}
