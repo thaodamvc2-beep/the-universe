@@ -139,11 +139,11 @@ test('game visibly composites the selected 2D guardian and keeps utility control
  assert.match(game,/cosmic-movement-rail/);
  assert.match(game,/role="group" aria-label="Điều khiển nhân vật"/);
  for(const label of ['Hạ cánh','Ngồi','Đi bộ','Bay']) assert.ok(game.slice(game.indexOf('cosmic-movement-rail'),game.indexOf('game-bottom-actions explorer-actions cosmic-action-dock')).includes(label),label);
- assert.match(css,/cosmic-movement-rail\\{position:absolute;z-index:7;right:.*left:auto;.*display:flex;flex-direction:column/);
- assert.match(css,/game-avatar-stage\\{position:absolute;z-index:6;left:50%;bottom:clamp/);
- assert.match(css,/game-avatar-stage-art\\{width:100%;height:100%;overflow:hidden;mix-blend-mode:normal/);
+ assert.ok(css.includes('.universe-explorer .cosmic-movement-rail{position:absolute;z-index:7;right:') && css.includes('left:auto;top:50%;transform:translateY(-50%);display:flex;flex-direction:column'));
+ assert.ok(css.includes('.universe-explorer .game-avatar-stage{position:absolute;z-index:6;left:50%;bottom:clamp'));
+ assert.ok(css.includes('.universe-explorer .game-avatar-stage-art{width:100%;height:100%;overflow:hidden;mix-blend-mode:screen}'));
  const artwork=await read('apps/web/src/components/celestial-avatar-artwork.tsx');
- assert.match(artwork,/backgroundImage:"url\\('\\/the-universe\\/avatars\\/celestial-six\\.webp'\\)"/);
+ assert.ok(artwork.includes(`backgroundImage:"url('/the-universe/avatars/celestial-six.webp')"`));
  assert.match(artwork,/backgroundSize:'300% 200%'/);
  assert.match(artwork,/backgroundPosition:/);
   assert.match(scene,/t\.repeat\.set\(1\/3,\.5\);t\.offset\.set\(c\.x\/3,c\.y===0\?\.5:0\)/);
