@@ -144,14 +144,22 @@ test('game visibly composites the selected 2D guardian and keeps utility control
  assert.ok(css.includes('.universe-explorer .game-avatar-stage-art{width:100%;height:100%;overflow:hidden;mix-blend-mode:screen}'));
  const artwork=await read('apps/web/src/components/celestial-avatar-artwork.tsx');
  assert.match(artwork,/SPRITE_URL = '\/the-universe\/avatars\/celestial-avatars\.webp'/);
- assert.match(artwork,/backgroundImage:/);
- assert.match(artwork,/backgroundSize:'300% 200%'/);
+ assert.ok(artwork.includes('src={SPRITE_URL}'));
+ assert.ok(artwork.includes("width:'300%',height:'200%'"));
  assert.match(artwork,/backgroundPosition:/);
   assert.match(scene,/t\.repeat\.set\(1\/3,\.5\);t\.offset\.set\(c\.x\/3,c\.y===0\?\.5:0\)/);
  assert.match(scene,/alphaTest:\.008/);
  assert.match(scene,/depthTest:false,alphaTest:\.008,blending:AdditiveBlending,toneMapped:false/);
  assert.doesNotMatch(scene,/bgDistance = distance/);
  assert.match(game,/dpr=\{\[1,1\.75\]\} gl=\{\{antialias:true/);
+ assert.ok(game.includes('onClick={()=>setAudioEnabled(v=>!v)}'));
+ assert.match(game,/Điểm đến & thống kê 100 thiên thể/);
+ assert.match(game,/Đăng nhập \/ khôi phục nickname/);
+ assert.match(game,/Nickname và nhân vật tự lưu trên trình duyệt này/);
+ const settings=game.slice(game.indexOf('cosmic-settings-panel'));
+ assert.doesNotMatch(settings,/setAudioEnabled|Âm thanh/);
+ assert.match(settings,/Độ nhạy xoay góc nhìn/);
+ assert.match(settings,/Chất lượng đồ họa/);
 });
 test('nebula uses smooth radial glow sprites instead of blocky square point particles',async()=>{
  const scene=await read('apps/web/src/features/game/flight-scene.tsx');
