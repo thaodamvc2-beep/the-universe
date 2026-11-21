@@ -34,55 +34,61 @@ function Planet({body,flightRef}:{body:Body;flightRef:MutableRefObject<FlightSta
  </group>;
 }
 function Avatar({avatarId,flightRef,inputRef,bodies}:{avatarId:AvatarId;flightRef:MutableRefObject<FlightState>;inputRef:MutableRefObject<InputState>;bodies:Body[]}){
- const ref=useRef<Group>(null);const pose=useRef<Group>(null);const leftSilk=useRef<Group>(null);const rightSilk=useRef<Group>(null);const trailingSilk=useRef<Group>(null);
+ const ref=useRef<Group>(null);const pose=useRef<Group>(null);const leftWing=useRef<Group>(null);const rightWing=useRef<Group>(null);const trail=useRef<Group>(null);
  const colors=AVATAR_PALETTE[avatarId]??AVATAR_PALETTE.stardust;const up=new Vector3(0,1,0);
- const feminine=avatarId==='lunar'||avatarId==='nebula'||avatarId==='aurora';
+ const looks:Record<AvatarId,{hair:string;skin:string}>={
+  stardust:{hair:'#382b32',skin:'#e9c9b6'},lunar:{hair:'#b9b5ad',skin:'#f0d8c8'},
+  nebula:{hair:'#9a5140',skin:'#e7c0ad'},crystal:{hair:'#263d48',skin:'#d9b59f'},
+  aurora:{hair:'#654535',skin:'#edcbb4'},solar:{hair:'#c28b4f',skin:'#f0d2b5'}
+ };
+ const look=looks[avatarId]??looks.stardust;
  useFrame((state,delta)=>{
-  if(!ref.current)return;const f=flightRef.current,i=inputRef.current;const seated=!!f.groundedId&&!i.forward&&!i.back&&!i.left&&!i.right;
-  ref.current.position.set(0,0,0);const body=f.groundedId?bodies.find(b=>b.id===f.groundedId):undefined;ref.current.scale.setScalar(body?Math.max(.28,Math.min(.72,body.radius*.42)):.62);
+  if(!ref.current)return;
+  const f=flightRef.current,i=inputRef.current,body=f.groundedId?bodies.find(b=>b.id===f.groundedId):undefined;
+  ref.current.visible=true;
+  ref.current.position.set(0,0,0);
+  ref.current.scale.setScalar(body?Math.max(.34,Math.min(.62,body.radius*.36)):.56);
   if(body){const normal=f.position.clone().sub(new Vector3(...body.position)).normalize();ref.current.quaternion.setFromUnitVectors(up,normal)}else ref.current.quaternion.identity();
   ref.current.rotateY(f.yaw);
-  const wave=Math.sin(state.clock.elapsedTime*1.25)*.12;
-  if(pose.current){pose.current.rotation.x+=((seated?-.16:-.14)-pose.current.rotation.x)*Math.min(1,delta*5);pose.current.position.y=.025+Math.sin(state.clock.elapsedTime*1.25)*.035}
-  if(leftSilk.current)leftSilk.current.rotation.z=-.12-wave;
-  if(rightSilk.current)rightSilk.current.rotation.z=.12+wave;
-  if(trailingSilk.current)trailingSilk.current.rotation.x=Math.sin(state.clock.elapsedTime*.8)*.08;
+  const wave=Math.sin(state.clock.elapsedTime*1.35);
+  if(pose.current){pose.current.rotation.x+=(.19-pose.current.rotation.x)*Math.min(1,delta*4.5);pose.current.rotation.z+=(wave*.018-pose.current.rotation.z)*Math.min(1,delta*3);pose.current.position.y=.015+wave*.018}
+  if(leftWing.current){leftWing.current.rotation.z=-.12-wave*.035;leftWing.current.rotation.x=-.08+wave*.025}
+  if(rightWing.current){rightWing.current.rotation.z=.12+wave*.035;rightWing.current.rotation.x=-.08-wave*.025}
+  if(trail.current)trail.current.rotation.x=wave*.035;
  });
- const robe='#f7f3ed';
- const hair=feminine?'#241a2d':'#29232a';
- const silk=(side:number)=><group position={[side*.14,.28,-.1]} rotation={[0,0,side*.18]}>
-  {/* Cánh lụa mảnh như hai tay áo dài, kéo nhẹ về phía sau khi bay */}
-  <mesh position={[side*.25,.04,-.2]} rotation={[0,0,-side*.82]} scale={[.11,.42,.055]}><coneGeometry args={[.16,.92,12]}/><meshStandardMaterial color="#f7f1e9" transparent opacity={.82} roughness={.55} emissive={colors.glow} emissiveIntensity={.08}/></mesh>
-  <mesh position={[side*.28,.02,-.23]} rotation={[0,0,-side*.82]} scale={[.045,.38,.025]}><coneGeometry args={[.12,.88,10]}/><meshBasicMaterial color={colors.trim} transparent opacity={.52}/></mesh>
-  <mesh position={[side*.4,-.31,-.34]} rotation={[0,0,side*.72]} scale={[.025,.34,.018]}><sphereGeometry args={[1,10,8]}/><meshBasicMaterial color={colors.glow} transparent opacity={.42}/></mesh>
- </group>;
+ const skin=look.skin,hair=look.hair;
  return <group ref={ref}>
   <group ref={pose}>
-   {/* Cổ phục tiên gia: áo giao lĩnh, đai ngọc và tà áo dài nhiều lớp */}
-   <mesh position={[0,-.03,0]} scale={[1,.92,.72]}><coneGeometry args={[.27,.82,16]}/><meshStandardMaterial color={robe} roughness={.72}/></mesh>
-   <mesh position={[0,.12,.045]} rotation={[0,0,.12]} scale={[.19,.42,.76]}><coneGeometry args={[.22,.72,12]}/><meshStandardMaterial color={colors.suit} roughness={.62}/></mesh>
-   <mesh position={[0,.19,.12]} rotation={[0,0,-.18]} scale={[.15,.34,.7]}><coneGeometry args={[.2,.62,12]}/><meshStandardMaterial color={colors.trim} roughness={.65}/></mesh>
-   <mesh position={[0,.22,.01]}><torusGeometry args={[.16,.025,7,28]}/><meshStandardMaterial color="#d7b879" metalness={.55} roughness={.36}/></mesh>
-   <mesh position={[0,.34,.035]}><capsuleGeometry args={[.078,.19,5,12]}/><meshStandardMaterial color="#f2ddcf" roughness={.8}/></mesh>
-   <mesh position={[0,.51,.045]}><sphereGeometry args={[.105,18,14]}/><meshStandardMaterial color="#f0d8c9" roughness={.82}/></mesh>
-   {/* Tóc dài búi trâm cổ phong */}
-   <mesh position={[0,.55,-.035]} scale={[1.04,1.05,.9]}><sphereGeometry args={[.105,14,12]}/><meshStandardMaterial color={hair} roughness={.92}/></mesh>
-   <mesh position={[0,.38,-.085]} rotation={[-.12,0,0]} scale={[.12,.34,.055]}><capsuleGeometry args={[.08,.45,5,10]}/><meshStandardMaterial color={hair} roughness={1}/></mesh>
-   <mesh position={[0,.64,-.015]}><sphereGeometry args={[.055,12,10]}/><meshStandardMaterial color={hair}/></mesh>
-   <mesh position={[.035,.67,.005]} rotation={[0,0,-.35]}><cylinderGeometry args={[.008,.012,.18,7]}/><meshStandardMaterial color="#e5c47c" metalness={.7}/></mesh>
-   <mesh position={[0,.69,.005]} rotation={[Math.PI/2.15,0,0]}><torusGeometry args={[.13,.009,6,32]}/><meshBasicMaterial color={colors.trim} transparent opacity={.82}/></mesh>
-   {/* Đôi cánh lụa thanh mảnh, hòa vào tay áo cổ phục */}
-   <group ref={leftSilk}>{silk(-1)}</group><group ref={rightSilk}>{silk(1)}</group>
+   {/* Clean, modern celestial outfit based on the six friendly portrait identities in the avatar editor. */}
+   <mesh position={[0,-.06,0]} rotation={[0,0,0]}><capsuleGeometry args={[.115,.34,4,8]}/><meshStandardMaterial color={colors.suit} roughness={.78}/></mesh>
+   <mesh position={[0,-.25,.012]}><coneGeometry args={[.19,.34,12]}/><meshStandardMaterial color="#f4f0e9" roughness={.8}/></mesh>
+   <mesh position={[0,.16,.012]}><torusGeometry args={[.115,.012,5,18]}/><meshStandardMaterial color={colors.trim} metalness={.2} roughness={.55}/></mesh>
+   <mesh position={[0,.36,.025]}><sphereGeometry args={[.105,14,12]}/><meshStandardMaterial color={skin} roughness={.86}/></mesh>
+   {/* Short, natural hair silhouettes; no long trailing hair or ornate accessories. */}
+   <mesh position={[0,.405,-.012]} scale={[1.02,.86,.88]}><sphereGeometry args={[.108,12,10]}/><meshStandardMaterial color={hair} roughness={.94}/></mesh>
+   <mesh position={[-.083,.34,-.005]} scale={[.34,.68,.42]}><sphereGeometry args={[.09,10,8]}/><meshStandardMaterial color={hair} roughness={.94}/></mesh>
+   <mesh position={[.083,.34,-.005]} scale={[.34,.68,.42]}><sphereGeometry args={[.09,10,8]}/><meshStandardMaterial color={hair} roughness={.94}/></mesh>
+   <mesh position={[0,.405,.103]} scale={[.58,.2,.16]}><sphereGeometry args={[.09,10,8]}/><meshStandardMaterial color={hair} roughness={.94}/></mesh>
+   {[-1,1].map(side=><mesh key={side} position={[side*.038,.365,.119]}><sphereGeometry args={[.009,6,6]}/><meshBasicMaterial color="#44363a"/></mesh>)}
+   {/* Relaxed arms and legs create a soft, weightless gliding silhouette. */}
    {[-1,1].map(side=><group key={side}>
-    <mesh position={[side*.19,.2,.015]} rotation={[0,0,side*.62]}><capsuleGeometry args={[.035,.28,5,9]}/><meshStandardMaterial color="#f0dccc"/></mesh>
-    <mesh position={[side*.28,.08,.04]} rotation={[0,0,side*.82]} scale={[.12,.26,.055]}><sphereGeometry args={[1,12,10]}/><meshStandardMaterial color={colors.suit} roughness={.7}/></mesh>
+    <mesh position={[side*.17,.04,0]} rotation={[0,0,side*.72]}><capsuleGeometry args={[.028,.25,3,6]}/><meshStandardMaterial color={colors.suit} roughness={.8}/></mesh>
+    <mesh position={[side*.07,-.39,.035]} rotation={[.24,0,side*.08]}><capsuleGeometry args={[.035,.2,3,6]}/><meshStandardMaterial color={colors.suit} roughness={.82}/></mesh>
    </group>)}
-   <group ref={trailingSilk} position={[0,-.22,-.22]}>
-    <mesh position={[-.12,-.22,0]} rotation={[.12,0,-.24]} scale={[.045,.68,.018]}><sphereGeometry args={[1,10,8]}/><meshBasicMaterial color={colors.glow} transparent opacity={.34}/></mesh>
-    <mesh position={[.12,-.3,-.015]} rotation={[-.1,0,.22]} scale={[.04,.76,.016]}><sphereGeometry args={[1,10,8]}/><meshBasicMaterial color={colors.trim} transparent opacity={.38}/></mesh>
+   {/* Two narrow translucent silk fins: understated, animated, and feather-free. */}
+   <group ref={leftWing} position={[-.105,.18,-.085]}>
+    <mesh position={[-.13,.025,-.12]} rotation={[0,0,-.62]}><capsuleGeometry args={[.022,.3,3,6]}/><meshBasicMaterial color="#f8f5ef" transparent opacity={.66} depthWrite={false}/></mesh>
+    <mesh position={[-.19,.01,-.22]} rotation={[0,0,-.68]}><capsuleGeometry args={[.009,.25,3,5]}/><meshBasicMaterial color={colors.glow} transparent opacity={.34} depthWrite={false}/></mesh>
+   </group>
+   <group ref={rightWing} position={[.105,.18,-.085]}>
+    <mesh position={[.13,.025,-.12]} rotation={[0,0,.62]}><capsuleGeometry args={[.022,.3,3,6]}/><meshBasicMaterial color="#f8f5ef" transparent opacity={.66} depthWrite={false}/></mesh>
+    <mesh position={[.19,.01,-.22]} rotation={[0,0,.68]}><capsuleGeometry args={[.009,.25,3,5]}/><meshBasicMaterial color={colors.glow} transparent opacity={.34} depthWrite={false}/></mesh>
+   </group>
+   <group ref={trail} position={[0,-.24,-.2]}>
+    <mesh position={[0,-.2,-.08]}><capsuleGeometry args={[.012,.48,3,5]}/><meshBasicMaterial color={colors.glow} transparent opacity={.2} depthWrite={false}/></mesh>
    </group>
   </group>
-  <pointLight position={[0,.4,.12]} color={colors.glow} intensity={.32} distance={2.4}/>
+  <pointLight position={[0,.28,.12]} color={colors.glow} intensity={.12} distance={1.5}/>
  </group>;
 }
 function OtherAvatar({player,flightRef}:{player:RemotePlayer;flightRef:MutableRefObject<FlightState>}){
@@ -94,7 +100,7 @@ function BeaconName({name,position}:{name:string;position:[number,number,number]
  const [texture,setTexture]=useState<CanvasTexture|null>(null);
  useEffect(()=>{const canvas=document.createElement('canvas');canvas.width=180;canvas.height=42;const ctx=canvas.getContext('2d');if(!ctx)return;ctx.fillStyle='rgba(7,15,31,.84)';ctx.beginPath();ctx.roundRect(4,4,172,34,9);ctx.fill();ctx.font='600 18px Arial,sans-serif';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillStyle='#f4f5ff';ctx.fillText(name,90,21,164);const map=new CanvasTexture(canvas);map.needsUpdate=true;setTexture(map);return()=>map.dispose()},[name]);
  if(!texture)return null;
- return <sprite position={position} scale={[.48,.12,1]}><spriteMaterial map={texture} transparent depthWrite={false}/></sprite>;
+ return <sprite position={position} scale={[.58,.145,1]}><spriteMaterial map={texture} transparent depthWrite={false}/></sprite>;
 }
 function HomeSystemBeacon({flightRef,camera}:{flightRef:MutableRefObject<FlightState>;camera:Camera}){
  const ref=useRef<Group>(null);
@@ -109,10 +115,10 @@ function HomeSystemBeacon({flightRef,camera}:{flightRef:MutableRefObject<FlightS
   let sx=local.x,sy=local.y;const planar=Math.hypot(sx,sy);
   if(planar<.06){sx=0;sy=local.z>0?1:-1}else{sx/=planar;sy/=planar}
   const edge=Math.max(Math.abs(sx)/.68,Math.abs(sy)/.62,1);
-  const cameraOffset=new Vector3(sx/edge*2.35,sy/edge*1.35,-7.5).applyQuaternion(camera.quaternion);
+  const cameraOffset=new Vector3(sx/edge*2.7,sy/edge*1.58,-8.2).applyQuaternion(camera.quaternion);
   ref.current.position.copy(camera.position).add(cameraOffset);
   ref.current.quaternion.copy(camera.quaternion);
-  ref.current.scale.setScalar(.62);
+  ref.current.scale.setScalar(.8);
  });
  const planets=[
   {name:'Mercury',x:-1.05,color:'#a9a19b',r:.035,labelY:.25},
@@ -148,18 +154,20 @@ function moveAvoidingBodies(start:Vector3,displacement:Vector3,bodies:Body[],ign
  return candidate;
 }
 export function FlightScene({bodies,avatarId,flightRef,inputRef,targetId,onArrive,onLandRequest,remotePlayers}:{bodies:Body[];avatarId:AvatarId;flightRef:MutableRefObject<FlightState>;inputRef:MutableRefObject<InputState>;targetId:string|null;onArrive:(id:string)=>void;onLandRequest:(id:string)=>void;remotePlayers:RemotePlayer[]}){
- const {camera}=useThree();const forward=new Vector3();const right=new Vector3();const desired=new Vector3();const look=new Vector3();const playerUp=new Vector3(0,1,0);const smoothedCameraUp=useRef(new Vector3(0,1,0));const previousTarget=useRef<string|null>(null);const targetFlightSpeed=useRef(2.25);
+ const {camera}=useThree();const forward=new Vector3();const right=new Vector3();const desired=new Vector3();const look=new Vector3();const playerUp=new Vector3(0,1,0);const smoothedCameraUp=useRef(new Vector3(0,1,0));const previousTarget=useRef<string|null>(null);const targetFlightSpeed=useRef(2.25);const surfaceHeading=useRef(new Vector3(0,0,-1));const surfaceBodyId=useRef<string|null>(null);const lastSurfaceYaw=useRef(0);
  useFrame((_s,delta)=>{
   const dt=Math.min(delta,.04),f=flightRef.current,i=inputRef.current,body=f.groundedId?bodies.find(b=>b.id===f.groundedId):undefined;
   const cruise=(i.boost?5.2:2.25),step=cruise*dt;
-  if(!targetId){previousTarget.current=null;targetFlightSpeed.current=2.25;}
+  if(!targetId){previousTarget.current=null;targetFlightSpeed.current=2.25;if(!f.groundedId)surfaceBodyId.current=null;}
   if(targetId){const target=bodies.find(b=>b.id===targetId);if(target){const center=new Vector3(...target.position),dir=center.clone().sub(f.position),distance=dir.length(),stop=target.radius+(target.landable ? 0.24 : 1.8);if(distance>stop){const remaining=distance-stop;dir.normalize();const maximumSpeed=Math.min(42,3.4+distance*.32)*(i.boost?1.25:1);const brakingSpeed=Math.sqrt(2*9*remaining);const desiredSpeed=Math.min(maximumSpeed,Math.max(.9,brakingSpeed));targetFlightSpeed.current+=(desiredSpeed-targetFlightSpeed.current)*(1-Math.exp(-2.6*dt));const amount=Math.min(targetFlightSpeed.current*dt,remaining);f.position.copy(moveAvoidingBodies(f.position,dir.clone().multiplyScalar(amount),bodies,target.id));const desiredYaw=Math.atan2(dir.x,-dir.z);const yawDelta=Math.atan2(Math.sin(desiredYaw-f.yaw),Math.cos(desiredYaw-f.yaw));f.yaw+=yawDelta*(1-Math.exp(-3.8*dt));const desiredPitch=Math.asin(Math.max(-.95,Math.min(.95,dir.y)));f.pitch+=(desiredPitch-f.pitch)*(1-Math.exp(-3.8*dt))}else if(previousTarget.current!==targetId){previousTarget.current=targetId;f.position.copy(center).addScaledVector(f.position.clone().sub(center).normalize(),stop);if(target.landable){f.groundedId=target.id;f.pitch=0}onArrive(targetId)}}}
   else if(body){
    const center=new Vector3(...body.position),normal=f.position.clone().sub(center).normalize();playerUp.copy(normal);
-   forward.set(Math.sin(f.yaw),0,-Math.cos(f.yaw)).projectOnPlane(normal).normalize();if(forward.lengthSq()<.001)forward.set(1,0,0).projectOnPlane(normal).normalize();
+   if(surfaceBodyId.current!==body.id){surfaceBodyId.current=body.id;surfaceHeading.current.set(Math.sin(f.yaw),0,-Math.cos(f.yaw)).projectOnPlane(normal);if(surfaceHeading.current.lengthSq()<.001)surfaceHeading.current.set(0,0,-1).projectOnPlane(normal);if(surfaceHeading.current.lengthSq()<.001)surfaceHeading.current.set(1,0,0).projectOnPlane(normal);surfaceHeading.current.normalize();lastSurfaceYaw.current=f.yaw;f.yaw=Math.atan2(surfaceHeading.current.x,-surfaceHeading.current.z);f.pitch=Math.asin(Math.max(-.95,Math.min(.95,surfaceHeading.current.y)))}
+   const yawDelta=f.yaw-lastSurfaceYaw.current;if(Math.abs(yawDelta)>.00001){surfaceHeading.current.applyAxisAngle(normal,yawDelta).projectOnPlane(normal).normalize();lastSurfaceYaw.current=f.yaw}
+   forward.copy(surfaceHeading.current).projectOnPlane(normal).normalize();if(forward.lengthSq()<.001){forward.crossVectors(new Vector3(0,1,0),normal);if(forward.lengthSq()<.001)forward.crossVectors(new Vector3(1,0,0),normal);forward.normalize();surfaceHeading.current.copy(forward)}
    right.crossVectors(forward,normal).normalize();const move=new Vector3();if(i.forward)move.add(forward);if(i.back)move.sub(forward);if(i.right)move.add(right);if(i.left)move.sub(right);
-   if(move.lengthSq()>0){normal.addScaledVector(move.normalize(),(i.boost?2.1:1.05)*dt/Math.max(.35,body.radius)).normalize();f.position.copy(center).addScaledVector(normal,body.radius+.19)}
-   if(i.takeoff||i.up){f.groundedId=null;f.position.addScaledVector(normal,.9);i.takeoff=false}i.land=false;
+   if(move.lengthSq()>0){const tangent=move.normalize();const nextNormal=normal.clone().addScaledVector(tangent,(i.boost?.62:.36)*dt).normalize();surfaceHeading.current.copy(forward).projectOnPlane(nextNormal).normalize();f.position.copy(center).addScaledVector(nextNormal,body.radius+.22)}
+   if(i.takeoff||i.up){f.yaw=Math.atan2(surfaceHeading.current.x,-surfaceHeading.current.z);f.pitch=Math.asin(Math.max(-.95,Math.min(.95,surfaceHeading.current.y)));surfaceBodyId.current=null;f.groundedId=null;f.position.addScaledVector(normal,.9);i.takeoff=false}i.land=false;
   }else{
    forward.set(Math.sin(f.yaw)*Math.cos(f.pitch),Math.sin(f.pitch),-Math.cos(f.yaw)*Math.cos(f.pitch)).normalize();right.set(Math.cos(f.yaw),0,Math.sin(f.yaw)).normalize();
    const move=new Vector3();if(i.forward)move.add(forward);if(i.back)move.sub(forward);if(i.right)move.add(right);if(i.left)move.sub(right);if(i.up)move.y+=1;if(i.down)move.y-=1;
@@ -167,10 +175,9 @@ export function FlightScene({bodies,avatarId,flightRef,inputRef,targetId,onArriv
    if(i.land){const nearest=bodies.filter(b=>b.landable).map(b=>({body:b,d:f.position.distanceTo(new Vector3(...b.position))})).sort((a,b)=>a.d-b.d)[0];if(nearest){if(nearest.d<=nearest.body.radius+.55){const center=new Vector3(...nearest.body.position),normal=f.position.clone().sub(center).normalize();f.position.copy(center).addScaledVector(normal,nearest.body.radius+.24);f.groundedId=nearest.body.id;f.pitch=0;onArrive(nearest.body.id)}else{onLandRequest(nearest.body.id)}}i.land=false}
    i.takeoff=false;
   }
-  const landedBody=f.groundedId?bodies.find(b=>b.id===f.groundedId):undefined;if(landedBody)playerUp.copy(f.position).sub(new Vector3(...landedBody.position)).normalize();else playerUp.set(0,1,0);
-  forward.set(Math.sin(f.yaw)*Math.cos(f.pitch),Math.sin(f.pitch),-Math.cos(f.yaw)*Math.cos(f.pitch)).normalize();
-  smoothedCameraUp.current.lerp(playerUp,1-Math.exp(-4.8*dt)).normalize();desired.copy(forward).multiplyScalar(-5.3).addScaledVector(smoothedCameraUp.current,2.25);
-  camera.position.lerp(desired,1-Math.exp(-4.8*dt));camera.up.copy(smoothedCameraUp.current);look.copy(forward).multiplyScalar(2.3);camera.lookAt(look);
+  const landedBody=f.groundedId?bodies.find(b=>b.id===f.groundedId):undefined;if(landedBody){playerUp.copy(f.position).sub(new Vector3(...landedBody.position)).normalize();forward.copy(surfaceHeading.current).projectOnPlane(playerUp).normalize();if(forward.lengthSq()<.001){forward.crossVectors(new Vector3(0,1,0),playerUp);if(forward.lengthSq()<.001)forward.crossVectors(new Vector3(1,0,0),playerUp);forward.normalize();surfaceHeading.current.copy(forward)}}else{playerUp.set(0,1,0);forward.set(Math.sin(f.yaw)*Math.cos(f.pitch),Math.sin(f.pitch),-Math.cos(f.yaw)*Math.cos(f.pitch)).normalize()}
+  smoothedCameraUp.current.lerp(playerUp,1-Math.exp(-7*dt)).normalize();desired.copy(forward).multiplyScalar(landedBody?-6.3:-5.8).addScaledVector(smoothedCameraUp.current,landedBody?2.05:2.25);
+  camera.position.lerp(desired,1-Math.exp(-7*dt));camera.up.copy(smoothedCameraUp.current);look.copy(forward).multiplyScalar(landedBody?1.05:2.3).addScaledVector(smoothedCameraUp.current,landedBody?.28:0);camera.lookAt(look);
  });
  return <>
   <color attach="background" args={['#0a1a36']}/><ambientLight intensity={.38}/><hemisphereLight args={['#b8dcff','#55436f',.28]}/>

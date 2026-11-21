@@ -50,6 +50,8 @@ test('spaceflight now slows down, avoids planets and lands gently with visible w
  assert.match(scene,/PlanetLabel/);
  assert.ok(scene.includes("camera.lookAt"));
  assert.match(scene,/seated/);
+ assert.match(scene,/surfaceHeading/);
+ assert.match(scene,/nextNormal/);
  assert.ok(scene.includes("5.2:2.25"));
  assert.match(scene,/smoothedCameraUp/);
  assert.match(scene,/onLandRequest\(nearest\.body\.id\)/);
@@ -120,11 +122,33 @@ test('home-system direction marker uses the real Sun position and camera-space d
 test('angel remains at the floating origin and scales to the destination surface',async()=>{
  const scene=await read('apps/web/src/features/game/flight-scene.tsx');
  assert.match(scene,/ref\.current\.position\.set\(0,0,0\)/);
- assert.match(scene,/ref\.current\.scale\.setScalar\(body\?Math\.max\(\.28,Math\.min\(\.72,body\.radius\*\.42\)\):\.62\)/);
- assert.match(scene,/pose\.current\.rotation\.x\+=\(\(seated\?\-\.16:\-\.14\)/);
+ assert.match(scene,/ref\.current\.scale\.setScalar\(body\?Math\.max\(\.34,Math\.min\(\.62,body\.radius\*\.36\)\):\.56\)/);
+ assert.match(scene,/ref\.current\.visible=true/);
+ assert.match(scene,/pose\.current\.rotation\.x\+=\(\.19-pose\.current\.rotation\.x\)/);
+ assert.match(scene,/capsuleGeometry args=\{\[\.022,\.3,3,6\]\}/);
+ assert.doesNotMatch(scene,/Tóc dài búi trâm cổ phong|Cổ phục tiên gia/);
 });
 test('manual landing enters a short controlled approach instead of snapping from far away',async()=>{
  const scene=await read('apps/web/src/features/game/flight-scene.tsx');
  assert.match(scene,/nearest\.d<=nearest\.body\.radius\+\.55/);
  assert.match(scene,/brakingSpeed=Math\.sqrt\(2\*9\*remaining\)/);
+});
+
+test('newly landed camera looks along a stable surface tangent, not into the planet',async()=>{
+ const scene=await read('apps/web/src/features/game/flight-scene.tsx');
+ assert.match(scene,/surfaceBodyId\.current!==body\.id/);
+ assert.match(scene,/surfaceHeading\.current\.set\(0,0,-1\)\.projectOnPlane\(normal\)/);
+ assert.match(scene,/right\.crossVectors\(forward,normal\)/);
+ assert.match(scene,/look\.copy\(forward\)\.multiplyScalar\(landedBody\?1\.05:2\.3\)/);
+});
+test('surface movement uses a stable angular step independent of tiny planet radius',async()=>{
+ const scene=await read('apps/web/src/features/game/flight-scene.tsx');
+ assert.match(scene,/i\.boost\?\.62:\.36/);
+ assert.match(scene,/addScaledVector\(tangent,/);
+ assert.match(scene,/surfaceHeading\.current\.copy\(forward\)\.projectOnPlane\(nextNormal\)/);
+});
+test('solar system direction marker is slightly larger and labels remain legible',async()=>{
+ const scene=await read('apps/web/src/features/game/flight-scene.tsx');
+ assert.match(scene,/ref\.current\.scale\.setScalar\(\.8\)/);
+ assert.match(scene,/scale=\{\[\.58,\.145,1\]\}/);
 });
