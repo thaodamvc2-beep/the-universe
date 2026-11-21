@@ -143,7 +143,8 @@ test('game visibly composites the selected 2D guardian and keeps utility control
  assert.ok(css.includes('.universe-explorer .game-avatar-stage{position:absolute;z-index:6;left:50%;bottom:clamp'));
  assert.ok(css.includes('.universe-explorer .game-avatar-stage-art{width:100%;height:100%;overflow:hidden;mix-blend-mode:screen}'));
  const artwork=await read('apps/web/src/components/celestial-avatar-artwork.tsx');
- assert.ok(artwork.includes(`backgroundImage:"url('/the-universe/avatars/celestial-six.webp')"`));
+ assert.match(artwork,/SPRITE_URL = '\/the-universe\/avatars\/celestial-avatars\.webp'/);
+ assert.match(artwork,/backgroundImage:/);
  assert.match(artwork,/backgroundSize:'300% 200%'/);
  assert.match(artwork,/backgroundPosition:/);
   assert.match(scene,/t\.repeat\.set\(1\/3,\.5\);t\.offset\.set\(c\.x\/3,c\.y===0\?\.5:0\)/);
