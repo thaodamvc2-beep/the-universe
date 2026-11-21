@@ -89,7 +89,7 @@ test('player character is rendered as a lightweight flying angel rather than a s
  assert.match(scene,/rightWing/);
  assert.match(scene,/capsuleGeometry args=\{\[\.022,\.3,3,6\]\}/);
  assert.match(scene,/Short, natural hair silhouettes/);
- assert.doesNotMatch(scene,/thruster|leftWing|rightWing/);
+ assert.doesNotMatch(scene,/thruster|feather/);
 });
 
 test('keyboard camera look controls rotate the view independently of flight movement',async()=>{
@@ -123,7 +123,7 @@ test('angel remains at the floating origin and scales to the destination surface
  assert.match(scene,/ref\.current\.position\.set\(0,0,0\)/);
  assert.match(scene,/ref\.current\.scale\.setScalar\(body\?Math\.max\(\.34,Math\.min\(\.62,body\.radius\*\.36\)\):\.56\)/);
  assert.match(scene,/ref\.current\.visible=true/);
- assert.match(scene,/pose\.current\.rotation\.x\+=\(\.19-pose\.current\.rotation\.x\)/);
+ assert.match(scene,/pose\.current\.rotation\.x\+=\(\(seated\?\.08:\.19\)-pose\.current\.rotation\.x\)/);
  assert.match(scene,/capsuleGeometry args=\{\[\.022,\.3,3,6\]\}/);
  assert.doesNotMatch(scene,/Tóc dài búi trâm cổ phong|Cổ phục tiên gia/);
 });
