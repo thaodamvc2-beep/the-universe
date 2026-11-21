@@ -61,3 +61,5 @@ jobs:
       - name: Publish website
         id: deployment
         uses: actions/deploy-pages@v5
+
+# Current source layout: apps/web with static output in apps/web/out.
