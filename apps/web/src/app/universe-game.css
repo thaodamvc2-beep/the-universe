@@ -62,3 +62,26 @@
 /* Brighter, calmer deep-space palette */
 .universe-explorer .game-vignette{background:linear-gradient(180deg,rgba(8,17,39,.42),transparent 24%,transparent 68%,rgba(8,17,39,.48)),radial-gradient(ellipse at center,transparent 48%,rgba(12,22,48,.16) 100%)}
 .universe-explorer .game-identity h1{text-shadow:0 2px 22px rgba(6,14,34,.72)}
+
+/* 2026-11-21: show the selected 2D guardian and compact the game controls. */
+.universe-explorer .game-avatar-stage{position:absolute;z-index:2;left:50%;bottom:clamp(76px,10vh,118px);width:clamp(190px,24vw,310px);height:clamp(270px,48vh,470px);transform:translateX(-50%);pointer-events:none;filter:drop-shadow(0 0 22px rgba(167,203,255,.22))}
+.universe-explorer .game-avatar-stage-art{width:100%;height:100%;overflow:hidden;mix-blend-mode:screen}
+.universe-explorer .game-avatar-stage-art img{image-rendering:auto;filter:drop-shadow(0 0 10px rgba(220,232,255,.14))}
+.universe-explorer .cosmic-action-dock{right:clamp(12px,2vw,30px);bottom:20px;display:flex;flex-direction:row;align-items:flex-end;justify-content:flex-end;gap:clamp(4px,.8vw,10px);max-width:calc(100vw - 24px);flex-wrap:nowrap}
+.universe-explorer .cosmic-action-dock button{display:flex;min-width:42px;min-height:48px;flex-direction:column;align-items:center;justify-content:center;gap:2px;padding:4px 5px;border:1px solid rgba(170,195,244,.35);border-radius:13px;background:rgba(7,17,42,.56);color:#eef3ff;backdrop-filter:blur(12px)}
+.universe-explorer .cosmic-action-dock button span{font-size:17px;line-height:1.1;color:#e5ecff}
+.universe-explorer .cosmic-action-dock button small{font-size:8px;line-height:1.1;white-space:nowrap;color:#e0e8fa}
+.universe-explorer .cosmic-action-dock button:disabled{opacity:.42}
+.universe-explorer .cosmic-utility-rail{display:none}
+.universe-explorer .game-canvas canvas{image-rendering:auto}
+@media(max-width:760px){
+ .universe-explorer .game-avatar-stage{bottom:clamp(118px,17vh,160px);width:clamp(150px,38vw,230px);height:clamp(210px,36vh,320px)}
+ .universe-explorer .cosmic-action-dock{left:8px;right:8px;bottom:8px;justify-content:center;gap:3px;max-width:none}
+ .universe-explorer .cosmic-action-dock button{min-width:0;flex:1;min-height:43px;padding:3px 2px;border-radius:10px}
+ .universe-explorer .cosmic-action-dock button small{font-size:7px}
+ .universe-explorer .cosmic-action-dock button span{font-size:15px}
+}
+@media(max-width:420px){
+ .universe-explorer .game-avatar-stage{bottom:126px;width:42vw;height:30vh}
+ .universe-explorer .cosmic-action-dock button small{font-size:6.5px}
+}

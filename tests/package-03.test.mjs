@@ -127,3 +127,23 @@ test('real destination staging keeps Earth as home while distributing planets in
  assert.match(scene,/NebulaBackdrop/);
  assert.match(scene,/AdditiveBlending/);
 });
+
+test('game visibly composites the selected 2D guardian and keeps utility controls in one compact Vietnamese dock',async()=>{
+ const game=await read('apps/web/src/features/game/universe-game.tsx');
+ const css=await read('apps/web/src/app/universe-game.css');
+ const scene=await read('apps/web/src/features/game/flight-scene.tsx');
+ assert.match(game,/game-avatar-stage/);
+ assert.match(game,/CelestialAvatarArtwork avatarId=\{avatarId\} className="game-avatar-stage-art"/);
+ for(const label of ['Hạ cánh','Ngồi','Đi bộ','Bay','Âm thanh','Cài đặt','Góp ý']) assert.ok(game.includes(label),label);
+ assert.match(css,/cosmic-action-dock\{right:.*display:flex;flex-direction:row/);
+ assert.match(css,/game-avatar-stage-art/);
+ assert.match(scene,/alphaTest:\.008/);
+ assert.doesNotMatch(scene,/bgDistance = distance/);
+ assert.match(game,/dpr=\{\[1,1\.75\]\} gl=\{\{antialias:true/);
+});
+test('nebula uses smooth radial glow sprites instead of blocky square point particles',async()=>{
+ const scene=await read('apps/web/src/features/game/flight-scene.tsx');
+ assert.match(scene,/createRadialGradient/);
+ assert.match(scene,/spriteMaterial map=\{glow\}/);
+ assert.doesNotMatch(scene,/new Float32Array\(520\*3\)/);
+});
