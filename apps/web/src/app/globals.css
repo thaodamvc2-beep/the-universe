@@ -308,7 +308,7 @@
 @media(max-width:430px){.avatar-sanctuary-option{min-height:132px}.avatar-sanctuary-option .avatar-choice-illustration{height:84px}.avatar-phone-stage{border-radius:2.2rem}.avatar-artwork{min-height:310px}.avatar-stage-illustration{height:295px}}
 
 /* Cinematic celestial explorer HUD inspired by the approved reference */
-.universe-explorer{background:#050b1b}
+.universe-explorer{background:#080d2b}
 .universe-explorer .game-canvas{position:absolute;inset:0}
 .universe-explorer .game-vignette{background:radial-gradient(ellipse at 65% 45%,transparent 25%,rgba(2,5,17,.1) 62%,rgba(2,5,17,.62) 100%)}
 .universe-explorer .game-topbar{height:76px;padding:0 clamp(1rem,3vw,2.8rem);background:linear-gradient(180deg,rgba(3,7,22,.78),transparent);border-bottom:1px solid rgba(164,192,255,.13)}
@@ -413,7 +413,7 @@
 .universe-explorer .universe-expansion span,.universe-explorer .universe-expansion small{color:#aebcdb}
 .universe-explorer .universe-expansion button{margin-top:6px;padding:5px 8px;border:1px solid rgba(185,205,255,.35);border-radius:16px;background:rgba(16,35,73,.45);color:#eaf0ff;font-size:10px}
 .universe-explorer .multiplayer-indicator{display:none}
-.universe-explorer .destination-panel{z-index:15;top:90px;right:22px;max-height:calc(100svh - 120px)}
+.universe-explorer .destination-panel{z-index:18;top:90px;right:22px;max-height:calc(100svh - 120px)}
 .universe-explorer .cosmic-avatar-overlay{z-index:20;background:rgba(2,7,22,.62);backdrop-filter:blur(4px)}
 @media(max-width:760px){
  .universe-explorer{min-height:520px}
