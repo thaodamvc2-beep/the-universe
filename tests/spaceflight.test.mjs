@@ -105,7 +105,7 @@ test('in-game angel follows the six avatar-editor identities with simple natural
  for(const id of ['stardust','lunar','nebula','crystal','aurora','solar'])assert.ok(scene.includes(`${id}:`));
  assert.match(scene,/new Sprite/);
  assert.match(scene,/SpriteMaterial/);
- assert.match(scene,/celestial-six\\.webp/);
+ assert.match(scene,/celestial-six\.webp/);
  assert.match(scene,/sprite\\.position\\.y/);
  assert.doesNotMatch(scene,/Tóc dài búi trâm cổ phong|Cổ phục tiên gia|feather\(/);
 });

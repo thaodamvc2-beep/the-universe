@@ -357,3 +357,6 @@
 .game-player-avatar{mix-blend-mode:screen;border:0;border-radius:0;background:transparent;box-shadow:none}
 @media(max-width:900px){.cosmic-avatar-overlay{grid-template-columns:minmax(300px,44vw) 1fr}.cosmic-avatar-panel{max-width:520px}}
 @media(max-width:650px){.cosmic-avatar-overlay{grid-template-columns:1fr}.cosmic-avatar-stage{display:none}.cosmic-avatar-panel{max-height:calc(100svh - 110px);overflow:auto}}
+
+.celestial-avatar-artwork.avatar-portrait{border:0;border-radius:0;background:transparent;box-shadow:none;overflow:hidden}
+.celestial-avatar-artwork.avatar-portrait:before,.celestial-avatar-artwork.avatar-portrait:after{display:none;content:none}
