@@ -9,11 +9,11 @@ const positions: Record<AvatarId,{x:number;y:number}> = {
 export function CelestialAvatarArtwork({avatarId,className=''}:{avatarId:AvatarId;className?:string}) {
  const cell=positions[avatarId]??positions.stardust;
  const style:CSSProperties={
-  position:'absolute',width:'300%',height:'200%',maxWidth:'none',
-  left:`-${cell.x*100/3}%`,top:`-${cell.y*50}%`,
-  objectFit:'fill',mixBlendMode:'screen',pointerEvents:'none'
+  display:'block',position:'relative',overflow:'hidden',width:'100%',height:'100%',minWidth:0,
+  backgroundImage:"url('/the-universe/avatars/celestial-six.webp')",
+  backgroundRepeat:'no-repeat',backgroundSize:'300% 200%',
+  backgroundPosition:`${cell.x*50}% ${cell.y*100}%`,
+  mixBlendMode:'screen',pointerEvents:'none'
  };
- return <span className={'celestial-avatar-artwork '+className} role="img" aria-label={avatarId+' celestial angel'} style={{display:'block',position:'relative',overflow:'hidden',width:'100%',height:'100%',minWidth:0}}>
-  <img src="/the-universe/avatars/celestial-six.webp" alt="" aria-hidden="true" draggable={false} style={style}/>
- </span>;
+ return <span className={'celestial-avatar-artwork '+className} role="img" aria-label={avatarId+' celestial angel'} style={style}/>;
 }
