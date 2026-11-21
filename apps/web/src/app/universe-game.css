@@ -99,3 +99,24 @@
  .universe-explorer .cosmic-movement-rail button span{font-size:16px}
  .universe-explorer .cosmic-movement-rail button small{font-size:7px}
 }
+
+
+/* 2026-11-21: make avatar artwork visible as a real atlas image, not a CSS-only background. */
+.celestial-avatar-artwork{display:block;position:relative;overflow:hidden;isolation:auto}
+.celestial-avatar-artwork>img{position:absolute;display:block;max-width:none;object-fit:fill;visibility:visible;opacity:1;mix-blend-mode:screen}
+.celestial-avatar-fallback{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;border-radius:inherit;background:radial-gradient(circle at 50% 38%,rgba(130,176,255,.3),rgba(12,25,58,.9) 72%);color:#e8f1ff;text-shadow:0 0 16px #a8cfff}
+.celestial-avatar-fallback>span{font-size:1.25em}.celestial-avatar-fallback>b{font-size:2.3em;font-weight:400}
+.universe-explorer .game-avatar-stage-art{mix-blend-mode:normal}
+.destination-stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px;margin:10px 0 6px}
+.destination-stats>div{display:flex;min-width:0;flex-direction:column;gap:2px;padding:8px 7px;border:1px solid rgba(169,195,255,.18);border-radius:10px;background:rgba(111,145,218,.09)}
+.destination-stats strong{color:#fff;font-size:18px;font-variant-numeric:tabular-nums}
+.destination-stats span{color:#c4d0ea;font-size:9px;line-height:1.25}
+.destination-stat-note{margin:5px 2px 9px;color:#aebddc;font-size:9px;line-height:1.45}
+.destination-filters{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:8px}
+.destination-filters button{padding:6px 8px;border:1px solid rgba(172,198,255,.25);border-radius:20px;background:rgba(110,143,210,.08);color:#dce7ff;font-size:9px;cursor:pointer}
+.destination-filters button[aria-pressed=true]{border-color:rgba(191,218,255,.8);background:rgba(105,153,245,.25);color:#fff}
+.setting-control-row{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:9px 4px;color:#eef3ff;font-size:12px}
+.setting-control-row>div{display:flex;align-items:center;gap:8px}
+.setting-control-row button{width:30px;height:30px;padding:0!important;text-align:center!important;font-size:18px!important}
+.setting-control-row strong{min-width:42px;text-align:center;color:#fff;font-variant-numeric:tabular-nums}
+@media(max-width:760px){.destination-stats{gap:5px}.destination-stats>div{padding:6px 5px}.destination-stats strong{font-size:15px}.destination-stats span{font-size:8px}}
