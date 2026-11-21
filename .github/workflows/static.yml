@@ -61,3 +61,5 @@ jobs:
       - name: Publish website
         id: deployment
         uses: actions/deploy-pages@v5
+
+# Ensure CI runs against the restored integrated source tree.
