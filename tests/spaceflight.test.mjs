@@ -154,7 +154,7 @@ test('solar system direction marker is slightly larger and labels remain legible
 
 test('avatar chooser no longer blocks the live universe on initial entry and the fake top-right orbit map is removed',async()=>{
  const game=await read('apps/web/src/features/game/universe-game.tsx');
- assert.match(game,/showAvatarChooser\]=useState\(false\)/);
+ assert.match(game,/showAvatarChooser,setShowAvatarChooser\]=useState\(false\)/);
  assert.doesNotMatch(game,/cosmic-solar-widget/);
  assert.match(game,/CelestialAvatarArtwork avatarId=\{avatarId\}/);
 });
