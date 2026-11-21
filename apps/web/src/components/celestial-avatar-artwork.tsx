@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import Image from 'next/image';
 import type { CSSProperties } from 'react';
 import type { AvatarId } from '@/lib/identity/guest-identity.mjs';
 
@@ -24,6 +25,6 @@ export function CelestialAvatarArtwork({avatarId,className=''}:{avatarId:AvatarI
   width:'100%',height:'100%',minWidth:0,mixBlendMode:'normal',pointerEvents:'none'
  };
  return <span className={'celestial-avatar-artwork '+className} role="img" aria-label={avatarId+' celestial angel'} style={wrapperStyle}>
-  {!imageFailed ? <img src={SPRITE_URL} alt="" aria-hidden="true" draggable={false} loading="eager" decoding="async" onError={()=>setImageFailed(true)} style={imageStyle}/> : <span className="celestial-avatar-fallback" aria-hidden="true"><span>✧</span><b>🪽</b></span>}
+  {!imageFailed ? <Image src={SPRITE_URL} alt="" aria-hidden draggable={false} priority unoptimized width={256} height={170} onError={()=>setImageFailed(true)} style={imageStyle}/> : <span className="celestial-avatar-fallback" aria-hidden="true"><span>✧</span><b>🪽</b></span>}
  </span>;
 }
