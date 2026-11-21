@@ -151,7 +151,7 @@ test('game visibly composites the selected 2D guardian and keeps utility control
  assert.match(scene,/alphaTest:\.008/);
  assert.match(scene,/depthTest:false,alphaTest:\.008,blending:AdditiveBlending,toneMapped:false/);
  assert.doesNotMatch(scene,/bgDistance = distance/);
- assert.match(game,/dpr=\{\[1,1\.75\]\} gl=\{\{antialias:true/);
+ assert.ok(game.includes("dpr={graphicsQuality==='high'?[1,1.75]:[1,1.15]} gl={{antialias:true"));
  assert.ok(game.includes('onClick={()=>setAudioEnabled(v=>!v)}'));
  assert.match(game,/Điểm đến & thống kê 100 thiên thể/);
  assert.match(game,/Đăng nhập \/ khôi phục nickname/);
