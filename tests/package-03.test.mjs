@@ -139,7 +139,7 @@ test('game visibly composites the selected 2D guardian and keeps utility control
  assert.match(game,/cosmic-movement-rail/);
  assert.match(game,/role="group" aria-label="Điều khiển nhân vật"/);
  for(const label of ['Hạ cánh','Ngồi','Đi bộ','Bay']) assert.ok(game.slice(game.indexOf('cosmic-movement-rail'),game.indexOf('game-bottom-actions explorer-actions cosmic-action-dock')).includes(label),label);
- assert.match(css,/cosmic-movement-rail\{position:absolute;z-index:4;left:.*display:flex;flex-direction:column/);
+ assert.match(css,/cosmic-movement-rail\{position:absolute;z-index:7;right:.*left:auto;.*display:flex;flex-direction:column/);\n assert.match(css,/game-avatar-stage\{position:absolute;z-index:6;/);\n assert.match(css,/game-avatar-stage-art\{width:100%;height:100%;overflow:hidden;mix-blend-mode:normal/);
  assert.match(css,/game-avatar-stage-art/);
  const artwork=await read('apps/web/src/components/celestial-avatar-artwork.tsx');
  assert.match(artwork,/width:'300%',height:'200%'/);
