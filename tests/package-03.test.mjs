@@ -137,6 +137,11 @@ test('game visibly composites the selected 2D guardian and keeps utility control
  for(const label of ['Hạ cánh','Ngồi','Đi bộ','Bay','Âm thanh','Cài đặt','Góp ý']) assert.ok(game.includes(label),label);
  assert.match(css,/cosmic-action-dock\{right:.*display:flex;flex-direction:row/);
  assert.match(css,/game-avatar-stage-art/);
+ const artwork=await read('apps/web/src/components/celestial-avatar-artwork.tsx');
+ assert.match(artwork,/width:'300%',height:'200%'/);
+ assert.match(artwork,/cell\.x\*100\/3/);
+ assert.match(artwork,/cell\.y\*50/);
+ assert.match(scene,/t\.repeat\.set\(1\/3,\.5\);t\.offset\.set\(c\.x\/3,c\.y===0\?\.5:0\)/);
  assert.match(scene,/alphaTest:\.008/);
  assert.doesNotMatch(scene,/bgDistance = distance/);
  assert.match(game,/dpr=\{\[1,1\.75\]\} gl=\{\{antialias:true/);
