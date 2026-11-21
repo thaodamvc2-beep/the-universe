@@ -2,7 +2,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import type { MutableRefObject } from 'react';
 import { useFrame, useLoader, useThree } from '@react-three/fiber';
-import { BackSide, Camera, CanvasTexture, Group, Sprite, SpriteMaterial, SRGBColorSpace, TextureLoader, Vector3 } from 'three';
+import { AdditiveBlending, BackSide, Camera, CanvasTexture, Group, Sprite, SpriteMaterial, SRGBColorSpace, TextureLoader, Vector3 } from 'three';
 import { AVATAR_PALETTE, type AvatarId, type Body } from './universe-data';
 
 export type FlightState={position:Vector3;yaw:number;pitch:number;groundedId:string|null};
@@ -15,6 +15,13 @@ function Stars(){
  const positions=useRef<Float32Array|null>(null);
  if(!positions.current){const a=new Float32Array(2600*3);let seed=197903;const rand=()=>{seed=(seed*16807)%2147483647;return(seed-1)/2147483646};for(let i=0;i<2600;i++){const r=28+rand()*300,t=rand()*Math.PI*2,p=Math.acos(2*rand()-1);a[i*3]=r*Math.sin(p)*Math.cos(t);a[i*3+1]=r*Math.cos(p);a[i*3+2]=r*Math.sin(p)*Math.sin(t)}positions.current=a}
  return <group ref={ref}><points><bufferGeometry><bufferAttribute attach="attributes-position" args={[positions.current,3]}/></bufferGeometry><pointsMaterial color="#f1f5ff" size={.13} sizeAttenuation transparent opacity={.94}/></points></group>;
+}
+function NebulaBackdrop({flightRef}:{flightRef:MutableRefObject<FlightState>}){
+ const cloudRefs=[useRef<Group>(null),useRef<Group>(null),useRef<Group>(null)];
+ const clouds=useMemo(()=>[{color:'#547dff',center:[-34,16,-72],seed:71},{color:'#a66bdb',center:[42,-12,-88],seed:193},{color:'#38bfc9',center:[8,28,-112],seed:317},{color:'#f0a66e',center:[-68,-22,-96],seed:419}],[]);
+ const particles=useMemo(()=>clouds.map(cloud=>{let seed=cloud.seed;const rand=()=>{seed=(seed*16807)%2147483647;return(seed-1)/2147483646};const a=new Float32Array(520*3);for(let i=0;i<520;i++){const u=rand()*Math.PI*2,v=Math.acos(2*rand()-1),r=Math.pow(rand(),.55)*27;a[i*3]=Math.sin(v)*Math.cos(u)*r;a[i*3+1]=Math.cos(v)*r*.62;a[i*3+2]=Math.sin(v)*Math.sin(u)*r}return a}),[clouds]);
+ useFrame((_state,delta)=>{cloudRefs.forEach((ref,i)=>{if(ref.current){const c=clouds[i];ref.current.position.set(c.center[0]-flightRef.current.position.x,c.center[1]-flightRef.current.position.y,c.center[2]-flightRef.current.position.z);ref.current.rotation.y+=delta*(i%2?.0015:-.001)}})});
+ return <>{clouds.map((cloud,i)=><group key={cloud.seed} ref={cloudRefs[i]}><points><bufferGeometry><bufferAttribute attach="attributes-position" args={[particles[i],3]}/></bufferGeometry><pointsMaterial color={cloud.color} size={1.05} sizeAttenuation transparent opacity={.12} blending={AdditiveBlending} depthWrite={false}/></points></group>)}</>;
 }
 function PlanetLabel({body}:{body:Body}){
  const [texture,setTexture]=useState<CanvasTexture|null>(null);
@@ -135,6 +142,6 @@ export function FlightScene({bodies,avatarId,flightRef,inputRef,targetId,onArriv
  });
  return <>
   <color attach="background" args={['#0a1a36']}/><ambientLight intensity={.38}/><hemisphereLight args={['#b8dcff','#55436f',.28]}/>
-  <Stars/>{bodies.map(body=><Planet key={body.id} body={body} flightRef={flightRef}/>)}<HomeSystemBeacon flightRef={flightRef} camera={camera}/>{remotePlayers.map(player=><OtherAvatar key={player.id} player={player} flightRef={flightRef}/>)}<Avatar avatarId={avatarId} flightRef={flightRef} inputRef={inputRef} bodies={bodies}/>
+  <Stars/><NebulaBackdrop flightRef={flightRef}/>{bodies.map(body=><Planet key={body.id} body={body} flightRef={flightRef}/>)}<HomeSystemBeacon flightRef={flightRef} camera={camera}/>{remotePlayers.map(player=><OtherAvatar key={player.id} player={player} flightRef={flightRef}/>)}<Avatar avatarId={avatarId} flightRef={flightRef} inputRef={inputRef} bodies={bodies}/>
  </>;
 }

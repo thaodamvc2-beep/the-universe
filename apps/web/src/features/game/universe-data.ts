@@ -50,6 +50,18 @@ export const REAL_DESTINATIONS:Body[] = [
 ,{id:'halley',name:'Sao chổi Halley',kind:'Sao chổi',position:[65,-6,4],radius:.23,color:'#aaa49b',landable:true,real:true,description:'Sao chổi nổi tiếng được tàu vũ trụ quan sát cận cảnh năm 1986.',sourceUrl:'https://science.nasa.gov/solar-system/comets/1p-halley/'}
 ,{id:'tempel-1',name:'Sao chổi Tempel 1',kind:'Sao chổi',position:[68,6,-4],radius:.2,color:'#8d8781',landable:true,real:true,description:'Sao chổi được sứ mệnh Deep Impact và Stardust khảo sát.',sourceUrl:'https://science.nasa.gov/solar-system/comets/9p-tempel-1/'}
 ].map(body=>({...body,position:body.position.map(value=>value*.52) as [number,number,number],radius:body.id==='earth'?1.72:body.radius}));
+
+// Keep the existing compressed travel radii, but distribute major worlds around the Sun in a tilted orbital scene instead of a flat row. Earth remains the home origin; satellite offsets follow their parent body. These are stable scenic positions, not live ephemeris coordinates.
+const BASE_REAL_POSITIONS=new Map(REAL_DESTINATIONS.map(body=>[body.id,[...body.position] as [number,number,number]]));
+const ORBIT_PHASES:Record<string,number>={mercury:-1.05,venus:1.12,earth:0,mars:2.18,jupiter:-2.35,saturn:1.72,uranus:-.48,neptune:2.82,pluto:.58};
+const ORBIT_PARENTS:Record<string,string>={moon:'earth',phobos:'mars',deimos:'mars',io:'jupiter',europa:'jupiter',ganymede:'jupiter',callisto:'jupiter',titan:'saturn',enceladus:'saturn',mimas:'saturn',tethys:'saturn',dione:'saturn',rhea:'saturn',iapetus:'saturn',titania:'uranus',oberon:'uranus',ariel:'uranus',umbriel:'uranus',miranda:'uranus',triton:'neptune',proteus:'neptune',nereid:'neptune',charon:'pluto'};
+const SUN_SCENIC_X=BASE_REAL_POSITIONS.get('sun')?.[0]??-15.6;
+for(const body of REAL_DESTINATIONS){
+ const phase=ORBIT_PHASES[body.id];
+ if(phase!==undefined){if(body.id==='earth'){body.position=[0,0,0];continue;}const base=BASE_REAL_POSITIONS.get(body.id)!;const radius=Math.hypot(base[0]-SUN_SCENIC_X,base[2]);body.position=[SUN_SCENIC_X+Math.cos(phase)*radius,Math.sin(phase*1.7)*radius*.075,Math.sin(phase)*radius];continue;}
+ const parentId=ORBIT_PARENTS[body.id];if(parentId){const parent=REAL_DESTINATIONS.find(item=>item.id===parentId);const oldBody=BASE_REAL_POSITIONS.get(body.id),oldParent=BASE_REAL_POSITIONS.get(parentId);if(parent&&oldBody&&oldParent){const dx=oldBody[0]-oldParent[0],dy=oldBody[1]-oldParent[1],dz=oldBody[2]-oldParent[2],angle=ORBIT_PHASES[parentId]??0;body.position=[parent.position[0]+dx*Math.cos(angle)+dz*Math.sin(angle),parent.position[1]+dy,parent.position[2]-dx*Math.sin(angle)+dz*Math.cos(angle)];}}
+}
+
 const COLORS=['#8d7de0','#62b8b2','#d58c73','#8da9db','#b9a1c9','#8fbf91','#e0a9c8','#75a9d5','#c8a77a','#77b8a4'];
 const NAMES=['Asterion','Lumen Vale','Nacre','Veloria','Serein','Eidolon','Mira Sol','Orphia','Caligo','Auralis','Thalassa','Elaris'];
 export function makeProceduralRegion(cx:number,cy:number,cz:number):Body[] {

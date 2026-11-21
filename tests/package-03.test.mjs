@@ -117,3 +117,13 @@ test('player feedback is accessible in-game and only posts after explicit GitHub
  assert.match(css,/resolve control collisions and expose player feedback/);
  assert.match(css,/destination-panel\{top:224px/);
 });
+
+test('real destination staging keeps Earth as home while distributing planets in a tilted orbital scene',async()=>{
+ const data=await read('apps/web/src/features/game/universe-data.ts');
+ const scene=await read('apps/web/src/features/game/flight-scene.tsx');
+ assert.match(data,/ORBIT_PHASES/);
+ assert.match(data,/body\.id==='earth'\)\{body\.position=\[0,0,0\]/);
+ assert.match(data,/satellite offsets follow their parent body/);
+ assert.match(scene,/NebulaBackdrop/);
+ assert.match(scene,/AdditiveBlending/);
+});
