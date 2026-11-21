@@ -85,10 +85,10 @@ test('distant worlds show a directional miniature of the Solar System and Earth'
 test('player character is rendered as a lightweight flying angel rather than a spacesuit',async()=>{
  const scene=await read('apps/web/src/features/game/flight-scene.tsx');
  assert.match(scene,/function Avatar/);
- assert.match(scene,/leftSilk/);
- assert.match(scene,/rightSilk/);
- assert.match(scene,/coneGeometry args=\{\[\.16,\.92,12\]\}/);
- assert.match(scene,/Cổ phục tiên gia/);
+ assert.match(scene,/leftWing/);
+ assert.match(scene,/rightWing/);
+ assert.match(scene,/capsuleGeometry args=\{\[\.022,\.3,3,6\]\}/);
+ assert.match(scene,/Short, natural hair silhouettes/);
  assert.doesNotMatch(scene,/thruster|leftWing|rightWing/);
 });
 
@@ -100,15 +100,14 @@ test('keyboard camera look controls rotate the view independently of flight move
  assert.match(game,/lookKey==='k'/);
 });
 
-test('Asian immortal avatar uses flowing cổ phục, long hair and silk streamers rather than Western feather wings',async()=>{
+test('in-game angel follows the six avatar-editor identities with simple natural hair and subtle wings',async()=>{
  const scene=await read('apps/web/src/features/game/flight-scene.tsx');
- assert.match(scene,/Cổ phục tiên gia/);
- assert.match(scene,/Tóc dài búi trâm cổ phong/);
- assert.match(scene,/leftSilk/);
- assert.match(scene,/rightSilk/);
- assert.match(scene,/feminine=avatarId/);
- assert.match(scene,/trailingSilk/);
- assert.doesNotMatch(scene,/function feather|feather\(/);
+ for(const id of ['stardust','lunar','nebula','crystal','aurora','solar'])assert.ok(scene.includes(`${id}:`));
+ assert.match(scene,/Short, natural hair silhouettes/);
+ assert.match(scene,/leftWing/);
+ assert.match(scene,/rightWing/);
+ assert.match(scene,/trail/);
+ assert.doesNotMatch(scene,/Tóc dài búi trâm cổ phong|Cổ phục tiên gia|feather\(/);
 });
 test('home-system direction marker uses the real Sun position and camera-space direction at the screen edge',async()=>{
  const scene=await read('apps/web/src/features/game/flight-scene.tsx');

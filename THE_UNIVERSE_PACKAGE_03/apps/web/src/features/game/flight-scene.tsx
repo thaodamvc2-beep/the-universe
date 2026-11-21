@@ -44,14 +44,14 @@ function Avatar({avatarId,flightRef,inputRef,bodies}:{avatarId:AvatarId;flightRe
  const look=looks[avatarId]??looks.stardust;
  useFrame((state,delta)=>{
   if(!ref.current)return;
-  const f=flightRef.current,i=inputRef.current,body=f.groundedId?bodies.find(b=>b.id===f.groundedId):undefined;
+  const f=flightRef.current,i=inputRef.current,body=f.groundedId?bodies.find(b=>b.id===f.groundedId):undefined;const seated=!!body&&!i.forward&&!i.back&&!i.left&&!i.right;
   ref.current.visible=true;
   ref.current.position.set(0,0,0);
   ref.current.scale.setScalar(body?Math.max(.34,Math.min(.62,body.radius*.36)):.56);
   if(body){const normal=f.position.clone().sub(new Vector3(...body.position)).normalize();ref.current.quaternion.setFromUnitVectors(up,normal)}else ref.current.quaternion.identity();
   ref.current.rotateY(f.yaw);
   const wave=Math.sin(state.clock.elapsedTime*1.35);
-  if(pose.current){pose.current.rotation.x+=(.19-pose.current.rotation.x)*Math.min(1,delta*4.5);pose.current.rotation.z+=(wave*.018-pose.current.rotation.z)*Math.min(1,delta*3);pose.current.position.y=.015+wave*.018}
+  if(pose.current){pose.current.rotation.x+=((seated?.08:.19)-pose.current.rotation.x)*Math.min(1,delta*4.5);pose.current.rotation.z+=(wave*.018-pose.current.rotation.z)*Math.min(1,delta*3);pose.current.position.y=.015+wave*.018}
   if(leftWing.current){leftWing.current.rotation.z=-.12-wave*.035;leftWing.current.rotation.x=-.08+wave*.025}
   if(rightWing.current){rightWing.current.rotation.z=.12+wave*.035;rightWing.current.rotation.x=-.08-wave*.025}
   if(trail.current)trail.current.rotation.x=wave*.035;
@@ -162,7 +162,7 @@ export function FlightScene({bodies,avatarId,flightRef,inputRef,targetId,onArriv
   if(targetId){const target=bodies.find(b=>b.id===targetId);if(target){const center=new Vector3(...target.position),dir=center.clone().sub(f.position),distance=dir.length(),stop=target.radius+(target.landable ? 0.24 : 1.8);if(distance>stop){const remaining=distance-stop;dir.normalize();const maximumSpeed=Math.min(42,3.4+distance*.32)*(i.boost?1.25:1);const brakingSpeed=Math.sqrt(2*9*remaining);const desiredSpeed=Math.min(maximumSpeed,Math.max(.9,brakingSpeed));targetFlightSpeed.current+=(desiredSpeed-targetFlightSpeed.current)*(1-Math.exp(-2.6*dt));const amount=Math.min(targetFlightSpeed.current*dt,remaining);f.position.copy(moveAvoidingBodies(f.position,dir.clone().multiplyScalar(amount),bodies,target.id));const desiredYaw=Math.atan2(dir.x,-dir.z);const yawDelta=Math.atan2(Math.sin(desiredYaw-f.yaw),Math.cos(desiredYaw-f.yaw));f.yaw+=yawDelta*(1-Math.exp(-3.8*dt));const desiredPitch=Math.asin(Math.max(-.95,Math.min(.95,dir.y)));f.pitch+=(desiredPitch-f.pitch)*(1-Math.exp(-3.8*dt))}else if(previousTarget.current!==targetId){previousTarget.current=targetId;f.position.copy(center).addScaledVector(f.position.clone().sub(center).normalize(),stop);if(target.landable){f.groundedId=target.id;f.pitch=0}onArrive(targetId)}}}
   else if(body){
    const center=new Vector3(...body.position),normal=f.position.clone().sub(center).normalize();playerUp.copy(normal);
-   if(surfaceBodyId.current!==body.id){surfaceBodyId.current=body.id;surfaceHeading.current.set(Math.sin(f.yaw),0,-Math.cos(f.yaw)).projectOnPlane(normal);if(surfaceHeading.current.lengthSq()<.001)surfaceHeading.current.set(0,0,-1).projectOnPlane(normal);if(surfaceHeading.current.lengthSq()<.001)surfaceHeading.current.set(1,0,0).projectOnPlane(normal);surfaceHeading.current.normalize();lastSurfaceYaw.current=f.yaw;f.yaw=Math.atan2(surfaceHeading.current.x,-surfaceHeading.current.z);f.pitch=Math.asin(Math.max(-.95,Math.min(.95,surfaceHeading.current.y)))}
+   if(surfaceBodyId.current!==body.id){surfaceBodyId.current=body.id;surfaceHeading.current.set(Math.sin(f.yaw),0,-Math.cos(f.yaw)).projectOnPlane(normal);if(surfaceHeading.current.lengthSq()<.001)surfaceHeading.current.set(0,0,-1).projectOnPlane(normal);if(surfaceHeading.current.lengthSq()<.001)surfaceHeading.current.set(1,0,0).projectOnPlane(normal);surfaceHeading.current.normalize();f.yaw=Math.atan2(surfaceHeading.current.x,-surfaceHeading.current.z);f.pitch=Math.asin(Math.max(-.95,Math.min(.95,surfaceHeading.current.y)));lastSurfaceYaw.current=f.yaw}
    const yawDelta=f.yaw-lastSurfaceYaw.current;if(Math.abs(yawDelta)>.00001){surfaceHeading.current.applyAxisAngle(normal,yawDelta).projectOnPlane(normal).normalize();lastSurfaceYaw.current=f.yaw}
    forward.copy(surfaceHeading.current).projectOnPlane(normal).normalize();if(forward.lengthSq()<.001){forward.crossVectors(new Vector3(0,1,0),normal);if(forward.lengthSq()<.001)forward.crossVectors(new Vector3(1,0,0),normal);forward.normalize();surfaceHeading.current.copy(forward)}
    right.crossVectors(forward,normal).normalize();const move=new Vector3();if(i.forward)move.add(forward);if(i.back)move.sub(forward);if(i.right)move.add(right);if(i.left)move.sub(right);
