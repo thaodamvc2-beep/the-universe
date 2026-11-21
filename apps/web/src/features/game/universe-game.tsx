@@ -91,7 +91,7 @@ export function UniverseGame(){
 <button type="button" onClick={()=>{setShowDestinations(true);setShowMenu(false)}}>✦ {language==='vi'?'Chọn hành tinh / điểm đến':'Choose destination'}</button>
 <button type="button" onClick={()=>{setDraftAvatar(avatarId);setShowAvatarChooser(true);setShowMenu(false)}}>❀ {language==='vi'?'Đổi thiên thần':'Change angel'}</button>
 <button type="button" onClick={()=>{resetHome();setShowMenu(false)}}>⌂ {language==='vi'?'Trở về Trái Đất':'Return to Earth'}</button>
-<button type="button" onClick={()=>{newSector();setShowMenu(false)}}>✧ {language==='vi'?'Mở vùng vũ trụ mới':'Discover a new region'}</button>
+<button type="button" onClick={()=>{newSector();setShowMenu(false)}}>✧ {language==='vi'?'Mở vùng không gian mới':'Discover a new region'}</button>
 <Link href="/map">◉ {language==='vi'?'Bản đồ vũ trụ':'Universe map'}</Link><Link href="/worlds">☼ {language==='vi'?'Danh mục thiên thể':'Celestial catalogue'}</Link><Link href="/avatar">✧ {language==='vi'?'Chỉnh sửa avatar':'Avatar editor'}</Link>
 <button type="button" onClick={()=>setLanguage(language==='vi'?'en':'vi')}>文 {language==='vi'?'English':'Tiếng Việt'}</button>
 <small>{nickname} · {proceduralBodies.length} {language==='vi'?'thế giới hư cấu đã được tạo':'fictional worlds generated locally'}</small></aside>
