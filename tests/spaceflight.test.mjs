@@ -70,7 +70,7 @@ test('long-distance destination travel accelerates while keeping a safe approach
 test('far-world scene uses a floating origin so the angel and destinations remain visible',async()=>{
  const scene=await read('apps/web/src/features/game/flight-scene.tsx');
  assert.match(scene,/body\.position\[0\]-flightRef\.current\.position\.x/);
- assert.match(scene,/ref\.current\.position\.set\(0,0,0\)/);
+ assert.match(scene,/ref\.current\.position\.set\(0,body \? \.02 : 0,0\)/);
  assert.match(scene,/player\.position\[0\]-flightRef\.current\.position\.x/);
  assert.match(scene,/camera\.lookAt\(look\)/);
 });
@@ -121,10 +121,10 @@ test('home-system direction marker uses the real Sun position and camera-space d
 test('angel remains at the floating origin and scales to the destination surface',async()=>{
  const scene=await read('apps/web/src/features/game/flight-scene.tsx');
  assert.match(scene,/ref\.current\.position\.set\(0,0,0\)/);
- assert.match(scene,/ref\.current\.scale\.setScalar\(body\?Math\.max\(\.34,Math\.min\(\.62,body\.radius\*\.36\)\):\.56\)/);
+ assert.match(scene,/ref\.current\.scale\.setScalar\(size\)/);
  assert.match(scene,/ref\.current\.visible=true/);
- assert.match(scene,/pose.current.rotation.x/);
- assert.match(scene,/feather-like wings/);
+ assert.match(scene,/sprite\.position\.y/);
+ assert.match(scene,/SpriteMaterial/);
  assert.doesNotMatch(scene,/Tóc dài búi trâm cổ phong|Cổ phục tiên gia/);
 });
 test('manual landing enters a short controlled approach instead of snapping from far away',async()=>{

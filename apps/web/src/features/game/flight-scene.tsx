@@ -1,10 +1,9 @@
 'use client';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import type { MutableRefObject } from 'react';
-import { useFrame, useThree } from '@react-three/fiber';
+import { useFrame, useLoader, useThree } from '@react-three/fiber';
 import { BackSide, Camera, CanvasTexture, Group, Sprite, SpriteMaterial, SRGBColorSpace, TextureLoader, Vector3 } from 'three';
-import { useLoader } from '@react-three/fiber';
-import { useMemo } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { AVATAR_PALETTE, type AvatarId, type Body } from './universe-data';
 
 export type FlightState={position:Vector3;yaw:number;pitch:number;groundedId:string|null};
@@ -44,7 +43,7 @@ function Avatar({avatarId,flightRef,inputRef,bodies}:{avatarId:AvatarId;flightRe
  float bgDistance = distance(diffuseColor.rgb, vec3(0.035, 0.055, 0.12));
  diffuseColor.a *= smoothstep(0.018, 0.105, bgDistance);`)};material.needsUpdate=true;const s=new Sprite(material);s.center.set(.5,.025);s.scale.set(1.28,1.78,1);return s},[texture]);
  useEffect(()=>()=>{sprite.material.dispose();texture.dispose()},[sprite,texture]);
- useFrame((state,delta)=>{if(!ref.current)return;const f=flightRef.current,i=inputRef.current,body=f.groundedId?bodies.find(b=>b.id===f.groundedId):undefined;const wave=Math.sin(state.clock.elapsedTime*1.05);ref.current.visible=true;ref.current.position.set(0,body?.02:0,0);const size=body?Math.max(.78,Math.min(1.12,body.radius*.58)):1;ref.current.scale.setScalar(size);ref.current.rotation.set(0,0,Math.sin(state.clock.elapsedTime*.55)*.012);sprite.position.y=.025+wave*.018+(i.forward||i.back?.025:0)});
+ useFrame((state,delta)=>{if(!ref.current)return;const f=flightRef.current,i=inputRef.current,body=f.groundedId?bodies.find(b=>b.id===f.groundedId):undefined;const wave=Math.sin(state.clock.elapsedTime*1.05);ref.current.visible=true;ref.current.position.set(0,body ? .02 : 0,0);const size=body?Math.max(.78,Math.min(1.12,body.radius*.58)):1;ref.current.scale.setScalar(size);ref.current.rotation.set(0,0,Math.sin(state.clock.elapsedTime*.55)*.012);sprite.position.y=.025+wave*.018+((i.forward || i.back) ? .025 : 0)});
  return <group ref={ref}><primitive object={sprite}/><pointLight position={[0,.3,.18]} color="#b9d8ff" intensity={.22} distance={2.8}/></group>;
 }
 function OtherAvatar({player,flightRef}:{player:RemotePlayer;flightRef:MutableRefObject<FlightState>}){
