@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { useSite } from '@/components/site-provider';
+import { CelestialAvatarArtwork } from '@/components/celestial-avatar-artwork';
 
 export function SiteHeader() {
   const { language, setLanguage, t, guestIdentity } = useSite();
@@ -20,7 +21,7 @@ export function SiteHeader() {
         <Link className="header-link" href="/account">{t('navSignIn')}</Link>
         {guestIdentity ? (
           <Link className="header-identity" href="/avatar" aria-label={`${guestIdentity.nickname} — ${t('navAvatar')}`}>
-            <span className={`avatar-portrait avatar-${guestIdentity.avatarId} header-identity-portrait`} aria-hidden="true" />
+            <CelestialAvatarArtwork avatarId={guestIdentity.avatarId} className="avatar-portrait header-identity-portrait" />
             <span className="header-identity-name">{guestIdentity.nickname}</span>
           </Link>
         ) : null}
