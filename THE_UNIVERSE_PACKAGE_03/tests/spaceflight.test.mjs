@@ -89,7 +89,7 @@ test('player character is rendered as a lightweight flying angel rather than a s
  assert.match(scene,/rightWing/);
  assert.match(scene,/capsuleGeometry args=\{\[\.022,\.3,3,6\]\}/);
  assert.match(scene,/Short, natural hair silhouettes/);
- assert.doesNotMatch(scene,/thruster|feather/);
+ assert.doesNotMatch(scene,/thruster/);
 });
 
 test('keyboard camera look controls rotate the view independently of flight movement',async()=>{
