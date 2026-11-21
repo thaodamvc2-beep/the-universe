@@ -1,5 +1,6 @@
 'use client';
 
+import { useState } from 'react';
 import type { CSSProperties } from 'react';
 import type { AvatarId } from '@/lib/identity/guest-identity.mjs';
 
@@ -8,17 +9,21 @@ const positions: Record<AvatarId,{x:number;y:number}> = {
  crystal:{x:0,y:1}, aurora:{x:1,y:1}, solar:{x:2,y:1}
 };
 
-// The newer celestial-six.webp atlas is truncated by one byte; browsers reject it.
-// This complete six-portrait atlas keeps the same 3x2 layout.
+// celestial-six.webp is truncated by one byte. Use the verified complete six-avatar atlas.
 const SPRITE_URL = '/the-universe/avatars/celestial-avatars.webp';
 
 export function CelestialAvatarArtwork({avatarId,className=''}:{avatarId:AvatarId;className?:string}) {
+ const [imageFailed,setImageFailed]=useState(false);
  const cell=positions[avatarId]??positions.stardust;
- const style:CSSProperties={
-  display:'block',position:'relative',width:'100%',height:'100%',minWidth:0,
-  overflow:'hidden',backgroundImage:`url('${SPRITE_URL}')`,backgroundRepeat:'no-repeat',
-  backgroundSize:'300% 200%',backgroundPosition:`${cell.x*50}% ${cell.y*100}%`,
-  mixBlendMode:'screen',pointerEvents:'none'
+ const imageStyle:CSSProperties={
+  position:'absolute',display:'block',maxWidth:'none',width:'300%',height:'200%',
+  left:`-${cell.x*100}%`,top:`-${cell.y*100}%`,userSelect:'none',pointerEvents:'none',mixBlendMode:'screen'
  };
- return <span className={'celestial-avatar-artwork '+className} role="img" aria-label={avatarId+' celestial angel'} style={style}/>;
+ const wrapperStyle:CSSProperties={
+  display:'block',position:'relative',isolation:'auto',overflow:'hidden',
+  width:'100%',height:'100%',minWidth:0,mixBlendMode:'normal',pointerEvents:'none'
+ };
+ return <span className={'celestial-avatar-artwork '+className} role="img" aria-label={avatarId+' celestial angel'} style={wrapperStyle}>
+  {!imageFailed ? <img src={SPRITE_URL} alt="" aria-hidden="true" draggable={false} loading="eager" decoding="async" onError={()=>setImageFailed(true)} style={imageStyle}/> : <span className="celestial-avatar-fallback" aria-hidden="true"><span>✧</span><b>🪽</b></span>}
+ </span>;
 }
