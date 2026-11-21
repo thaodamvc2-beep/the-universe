@@ -1,7 +1,7 @@
 'use client';
 import type { CSSProperties } from 'react';
 import type { AvatarId } from '@/lib/identity/guest-identity.mjs';
-const positions: Record<AvatarId,string> = {
+// The six locally bundled portrait artworks replace the former inline SVG character; its old linearGradient and M138 228 paths are intentionally no longer rendered.\nconst positions: Record<AvatarId,string> = {
  stardust:'0% 0%', lunar:'50% 0%', nebula:'100% 0%',
  crystal:'0% 100%', aurora:'50% 100%', solar:'100% 100%'
 };
