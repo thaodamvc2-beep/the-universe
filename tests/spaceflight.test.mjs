@@ -22,6 +22,9 @@ test('real Solar System exploration catalog includes planets, dwarf planets and 
  const data=await read('apps/web/src/features/game/universe-data.ts');
  for(const name of ['mercury','venus','earth','moon','mars','jupiter','saturn','uranus','neptune','pluto','ceres','europa','ganymede','titan','triton','bennu','ryugu','comet-67p'])assert.match(data,new RegExp(`id:'${name}'`));
  assert.match(data,/landable:true/);
+ const catalogue=data.slice(data.indexOf('export const REAL_DESTINATIONS:Body[] = ['),data.indexOf('].map(body=>'));
+ assert.equal((catalogue.match(/\\{id:'/g)||[]).length,100,'the real Solar System destination catalogue must contain 100 objects');
+ for(const id of ['haumea','makemake','eris','amalthea','janus','puck','neso','nix','hydra','pallas','hygiea','psyche','comet-wild-2'])assert.ok(catalogue.includes(`id:'${id}'`),id);
  assert.match(data,/sourceUrl/);
 });
 
