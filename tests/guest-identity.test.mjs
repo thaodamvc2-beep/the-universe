@@ -62,8 +62,8 @@ test('generated character artwork is bundled locally and integrated into the hom
   assert.match(header, /CelestialAvatarArtwork/);
   assert.match(artworkSource, /celestial-avatars\.webp/);
   assert.match(artworkSource, /positions/);
-  assert.match(artworkSource, /backgroundImage:/);
-  assert.match(artworkSource, /backgroundSize:'300% 200%'/);
+  assert.ok(artworkSource.includes('src={SPRITE_URL}'));
+  assert.ok(artworkSource.includes("width:'300%',height:'200%'"));
   assert.match(artworkSource, /role="img"/);
   assert.match(styles, /celestial-avatars\.webp/);
   assert.match(styles, /avatar-stardust\{background-position:0 0\}/);
