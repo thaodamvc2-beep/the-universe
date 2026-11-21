@@ -2,7 +2,9 @@
 import { useEffect, useRef, useState } from 'react';
 import type { MutableRefObject } from 'react';
 import { useFrame, useThree } from '@react-three/fiber';
-import { BackSide, Camera, CanvasTexture, Group, Vector3 } from 'three';
+import { BackSide, Camera, CanvasTexture, Group, Sprite, SpriteMaterial, SRGBColorSpace, TextureLoader, Vector3 } from 'three';
+import { useLoader } from '@react-three/fiber';
+import { useMemo } from 'react';
 import { AVATAR_PALETTE, type AvatarId, type Body } from './universe-data';
 
 export type FlightState={position:Vector3;yaw:number;pitch:number;groundedId:string|null};
@@ -34,34 +36,16 @@ function Planet({body,flightRef}:{body:Body;flightRef:MutableRefObject<FlightSta
  </group>;
 }
 function Avatar({avatarId,flightRef,inputRef,bodies}:{avatarId:AvatarId;flightRef:MutableRefObject<FlightState>;inputRef:MutableRefObject<InputState>;bodies:Body[]}){
- const ref=useRef<Group>(null),pose=useRef<Group>(null),leftWing=useRef<Group>(null),rightWing=useRef<Group>(null),hairFlow=useRef<Group>(null),robeFlow=useRef<Group>(null),trail=useRef<Group>(null);
- const colors=AVATAR_PALETTE[avatarId]??AVATAR_PALETTE.stardust,up=new Vector3(0,1,0);
- const looks:Record<AvatarId,{hair:string;skin:string;cloth:string;wing:string;metal:string;male:boolean}>={
- stardust:{hair:'#b8c9df',skin:'#e9c9bb',cloth:'#d9e8f5',wing:'#d8efff',metal:'#d9c5a0',male:true},
- lunar:{hair:'#443d50',skin:'#eac9b9',cloth:'#333e68',wing:'#b9d9ff',metal:'#d7c4a7',male:true},
- nebula:{hair:'#9b6349',skin:'#efcdbb',cloth:'#f0dfbd',wing:'#ffe5b4',metal:'#e8c77f',male:true},
- crystal:{hair:'#e5b6a9',skin:'#f0c9bd',cloth:'#f4dce0',wing:'#f5d8f1',metal:'#e9c5a5',male:false},
- aurora:{hair:'#654c5c',skin:'#efcfbd',cloth:'#dfc8f0',wing:'#e5d7ff',metal:'#e7c9a8',male:false},
- solar:{hair:'#b8cbd7',skin:'#f1d2b9',cloth:'#d5e9f2',wing:'#d8efff',metal:'#e5c98d',male:false}};
- const look=looks[avatarId]??looks.stardust,male=look.male,female=!male;
- useFrame((state,delta)=>{if(!ref.current)return;const f=flightRef.current,i=inputRef.current,body=f.groundedId?bodies.find(b=>b.id===f.groundedId):undefined,wave=Math.sin(state.clock.elapsedTime*1.1),seated=!!body&&!i.forward&&!i.back&&!i.left&&!i.right;ref.current.visible=true;ref.current.position.set(0,0,0);ref.current.scale.setScalar(body?Math.max(.34,Math.min(.62,body.radius*.36)):.56);if(body){const normal=f.position.clone().sub(new Vector3(...body.position)).normalize();ref.current.quaternion.setFromUnitVectors(up,normal)}else ref.current.quaternion.identity();ref.current.rotateY(f.yaw);if(pose.current){pose.current.rotation.x+=((seated?.035:.08)-pose.current.rotation.x)*Math.min(1,delta*3.5);pose.current.position.y=.012+wave*.012}if(leftWing.current){leftWing.current.rotation.z=-.12-wave*.045;leftWing.current.rotation.x=-.07+wave*.04}if(rightWing.current){rightWing.current.rotation.z=.12+wave*.045;rightWing.current.rotation.x=-.07-wave*.04}if(hairFlow.current)hairFlow.current.rotation.z=wave*.018;if(robeFlow.current)robeFlow.current.rotation.z=wave*.022;if(trail.current)trail.current.rotation.x=wave*.02});
- const {skin,hair,cloth,wing,metal}=look;
- const wingPlume=(side:number,n:number)=><mesh key={n} position={[side*(.16+n*.052),.19+n*.064,-.11-n*.006]} rotation={[0,0,side*(.54+n*.055)]} scale={[.072,.255-n*.012,.022]}><sphereGeometry args={[1,16,12]}/><meshBasicMaterial color={wing} transparent opacity={.28+n*.045} depthWrite={false}/></mesh>;
- return <group ref={ref}><group ref={pose}>
- {/* Long flowing hair, adult masculine/feminine silhouettes, sculpted layered robes and broad feather-like wings. */}
- <mesh position={[0,-.045,0]}><capsuleGeometry args={[male?.105:.092,male?.32:.27,8,16]}/><meshStandardMaterial color={cloth} roughness={.7}/></mesh>
- <mesh position={[0,.025,.012]} scale={[male?1.2:1.05,.92,.72]}><sphereGeometry args={[.105,24,20]}/><meshStandardMaterial color={cloth}/></mesh>
- {male?<group><mesh position={[0,-.25,.01]}><coneGeometry args={[.2,.46,24]}/><meshStandardMaterial color={cloth}/></mesh><mesh position={[-.064,-.43,.045]}><capsuleGeometry args={[.045,.28,6,12]}/><meshStandardMaterial color={cloth}/></mesh><mesh position={[.064,-.43,.045]}><capsuleGeometry args={[.045,.28,6,12]}/><meshStandardMaterial color={cloth}/></mesh></group>:<mesh position={[0,-.265,.02]}><coneGeometry args={[.245,.5,28]}/><meshStandardMaterial color={cloth} side={BackSide}/></mesh>}
- <mesh position={[0,.12,.09]}><torusGeometry args={[.112,.012,8,32]}/><meshStandardMaterial color={metal} metalness={.55} roughness={.32}/></mesh>
- <mesh position={[0,.345,.035]} scale={[1,male?1.02:1.08,.92]}><sphereGeometry args={[.103,24,20]}/><meshStandardMaterial color={skin}/></mesh>
- <group ref={hairFlow}><mesh position={[0,.397,-.012]} scale={male?[1.08,.76,.9]:[1.12,.84,.92]}><sphereGeometry args={[.108,20,16]}/><meshStandardMaterial color={hair}/></mesh><mesh position={[-.082,.34,-.005]} scale={female?[.38,.92,.44]:[.42,.52,.44]}><sphereGeometry args={[.09,16,12]}/><meshStandardMaterial color={hair}/></mesh><mesh position={[.082,.34,-.005]} scale={female?[.38,.92,.44]:[.42,.52,.44]}><sphereGeometry args={[.09,16,12]}/><meshStandardMaterial color={hair}/></mesh><mesh position={[0,.415,.092]} scale={[.68,.2,.18]}><sphereGeometry args={[.09,16,12]}/><meshStandardMaterial color={hair}/></mesh>{female&&[-1,1].map(side=><mesh key={side} position={[side*.09,.08,-.03]}><capsuleGeometry args={[.027,.34,5,10]}/><meshStandardMaterial color={hair}/></mesh>)}</group>
- {[-1,1].map(side=><group key={side}><mesh position={[side*.155,.105,.005]} scale={[1.2,1,.9]}><sphereGeometry args={[male?.07:.055,18,14]}/><meshStandardMaterial color={skin}/></mesh><mesh position={[side*.17,.005,.015]} rotation={[0,0,side*.42]}><capsuleGeometry args={[.026,.245,6,12]}/><meshStandardMaterial color={skin}/></mesh><mesh position={[side*.07,-.49,.04]}><capsuleGeometry args={[.03,.245,6,12]}/><meshStandardMaterial color={skin}/></mesh></group>)}
- <mesh position={[0,.23,.08]} scale={[.12,.055,.035]}><sphereGeometry args={[1,18,12]}/><meshStandardMaterial color={metal} metalness={.72}/></mesh>
- <group ref={leftWing} position={[-.1,.18,-.12]}>{Array.from({length:8},(_,n)=>wingPlume(-1,n))}</group><group ref={rightWing} position={[.1,.18,-.12]}>{Array.from({length:8},(_,n)=>wingPlume(1,n))}</group>
- <group ref={robeFlow} position={[0,-.2,-.13]}><mesh position={[-.14,-.08,-.05]} rotation={[0,0,-.28]}><capsuleGeometry args={[.018,.5,5,10]}/><meshBasicMaterial color={cloth} transparent opacity={.58} depthWrite={false}/></mesh><mesh position={[.15,-.13,-.06]} rotation={[0,0,.3]}><capsuleGeometry args={[.014,.58,5,10]}/><meshBasicMaterial color="#fff4df" transparent opacity={.55} depthWrite={false}/></mesh></group>
- <group ref={trail} position={[0,-.25,-.2]}><mesh position={[0,-.2,-.08]}><capsuleGeometry args={[.012,.48,4,8]}/><meshBasicMaterial color={colors.glow} transparent opacity={.2} depthWrite={false}/></mesh></group>
- <mesh position={[0,.59,-.06]} rotation={[Math.PI/2,0,0]}><torusGeometry args={[.16,.008,6,40]}/><meshBasicMaterial color={metal} transparent opacity={.8}/></mesh>
- </group><pointLight position={[0,.28,.12]} color={colors.glow} intensity={.2} distance={1.9}/></group>;
+ const ref=useRef<Group>(null);
+ const atlas=useLoader(TextureLoader,'/the-universe/avatars/celestial-six.webp');
+ const cell:Record<AvatarId,{x:number;y:number}>={stardust:{x:0,y:0},lunar:{x:1,y:0},nebula:{x:2,y:0},crystal:{x:0,y:1},aurora:{x:1,y:1},solar:{x:2,y:1}};
+ const texture=useMemo(()=>{const t=atlas.clone();const c=cell[avatarId]??cell.stardust;t.repeat.set(1/3,.42);t.offset.set(c.x/3,c.y===0?.58:.08);t.colorSpace=SRGBColorSpace;t.needsUpdate=true;return t},[atlas,avatarId]);
+ const sprite=useMemo(()=>{const material=new SpriteMaterial({map:texture,transparent:true,depthWrite:false,alphaTest:.015});material.onBeforeCompile=(shader)=>{shader.fragmentShader=shader.fragmentShader.replace('#include <map_fragment>',`#include <map_fragment>
+ float bgDistance = distance(diffuseColor.rgb, vec3(0.035, 0.055, 0.12));
+ diffuseColor.a *= smoothstep(0.018, 0.105, bgDistance);`)};material.needsUpdate=true;const s=new Sprite(material);s.center.set(.5,.025);s.scale.set(1.28,1.78,1);return s},[texture]);
+ useEffect(()=>()=>{sprite.material.dispose();texture.dispose()},[sprite,texture]);
+ useFrame((state,delta)=>{if(!ref.current)return;const f=flightRef.current,i=inputRef.current,body=f.groundedId?bodies.find(b=>b.id===f.groundedId):undefined;const wave=Math.sin(state.clock.elapsedTime*1.05);ref.current.visible=true;ref.current.position.set(0,body?.02:0,0);const size=body?Math.max(.78,Math.min(1.12,body.radius*.58)):1;ref.current.scale.setScalar(size);ref.current.rotation.set(0,0,Math.sin(state.clock.elapsedTime*.55)*.012);sprite.position.y=.025+wave*.018+(i.forward||i.back?.025:0)});
+ return <group ref={ref}><primitive object={sprite}/><pointLight position={[0,.3,.18]} color="#b9d8ff" intensity={.22} distance={2.8}/></group>;
 }
 function OtherAvatar({player,flightRef}:{player:RemotePlayer;flightRef:MutableRefObject<FlightState>}){
  const ref=useRef<Group>(null);const c=AVATAR_PALETTE[player.avatarId]??AVATAR_PALETTE.stardust;

@@ -345,3 +345,15 @@
 .game-avatar-edit{border:0;background:transparent;color:#c6d9ff;font-size:1rem;cursor:pointer}
 @media(max-width:900px){.cosmic-avatar-overlay{grid-template-columns:minmax(330px,48vw) 1fr;gap:1rem;padding-inline:1rem}.cosmic-avatar-panel{padding:1rem .8rem}.cosmic-avatar-choice{min-height:150px}.cosmic-choice-art{height:105px}.cosmic-stage-art{width:min(43vw,350px)}.cosmic-solar-widget{transform:scale(.78);transform-origin:top right;right:1rem}}
 @media(max-width:650px){.cosmic-avatar-overlay{grid-template-columns:1fr;align-content:center;overflow:auto;padding:86px .8rem 90px;background:rgba(2,7,22,.52)}.cosmic-avatar-panel{width:min(100%,430px);margin:0 auto}.cosmic-avatar-grid{gap:.4rem}.cosmic-avatar-choice{min-height:125px}.cosmic-choice-art{height:82px}.cosmic-avatar-stage{display:none}.cosmic-solar-widget,.cosmic-compass{display:none}.cosmic-location-pill{top:82px;left:auto;right:.7rem;transform:none;padding:.35rem .65rem}.cosmic-location-pill strong{font-size:.65rem}.cosmic-location-pill small{font-size:.45rem}.universe-explorer .game-topbar{height:64px}.universe-explorer .game-nav{gap:.55rem}.universe-explorer .game-nav a,.universe-explorer .game-nav button{font-size:.6rem}}
+
+/* Avatar selection is opt-in: keep the actual 3D universe visible on entry. */
+.cosmic-avatar-overlay{background:rgba(2,7,22,.18)}
+.cosmic-avatar-choice{overflow:hidden}
+.celestial-avatar-artwork{isolation:isolate}
+.celestial-avatar-artwork img{display:block;user-select:none}
+.cosmic-choice-art{height:150px;flex:none}
+.avatar-stage-illustration{mix-blend-mode:screen}
+.avatar-choice-illustration{mix-blend-mode:screen}
+.game-player-avatar{mix-blend-mode:screen;border:0;border-radius:0;background:transparent;box-shadow:none}
+@media(max-width:900px){.cosmic-avatar-overlay{grid-template-columns:minmax(300px,44vw) 1fr}.cosmic-avatar-panel{max-width:520px}}
+@media(max-width:650px){.cosmic-avatar-overlay{grid-template-columns:1fr}.cosmic-avatar-stage{display:none}.cosmic-avatar-panel{max-height:calc(100svh - 110px);overflow:auto}}

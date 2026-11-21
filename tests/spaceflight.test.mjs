@@ -85,10 +85,10 @@ test('distant worlds show a directional miniature of the Solar System and Earth'
 test('player character is rendered as a lightweight flying angel rather than a spacesuit',async()=>{
  const scene=await read('apps/web/src/features/game/flight-scene.tsx');
  assert.match(scene,/function Avatar/);
- assert.match(scene,/leftWing/);
- assert.match(scene,/rightWing/);
- assert.match(scene,/feather-like wings/);
- assert.match(scene,/Long flowing hair/);
+ assert.match(scene,/SpriteMaterial/);
+ assert.match(scene,/celestial-six\\.webp/);
+ assert.match(scene,/bgDistance/);
+ assert.match(scene,/new Sprite/);
  assert.doesNotMatch(scene,/thruster/);
 });
 
@@ -103,10 +103,10 @@ test('keyboard camera look controls rotate the view independently of flight move
 test('in-game angel follows the six avatar-editor identities with simple natural hair and subtle wings',async()=>{
  const scene=await read('apps/web/src/features/game/flight-scene.tsx');
  for(const id of ['stardust','lunar','nebula','crystal','aurora','solar'])assert.ok(scene.includes(`${id}:`));
- assert.match(scene,/Long flowing hair/);
- assert.match(scene,/leftWing/);
- assert.match(scene,/rightWing/);
- assert.match(scene,/trail/);
+ assert.match(scene,/new Sprite/);
+ assert.match(scene,/SpriteMaterial/);
+ assert.match(scene,/celestial-six\\.webp/);
+ assert.match(scene,/sprite\\.position\\.y/);
  assert.doesNotMatch(scene,/Tóc dài búi trâm cổ phong|Cổ phục tiên gia|feather\(/);
 });
 test('home-system direction marker uses the real Sun position and camera-space direction at the screen edge',async()=>{
