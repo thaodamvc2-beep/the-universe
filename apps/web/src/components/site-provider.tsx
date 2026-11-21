@@ -18,7 +18,7 @@ type SiteContextValue = {
 const SiteContext = createContext<SiteContextValue | null>(null);
 
 export function SiteProvider({ children }: Readonly<{ children: ReactNode }>) {
-  const [language, setLanguage] = useState<Language>('en');
+  const [language, setLanguage] = useState<Language>('vi');
   const [guestIdentity, setGuestIdentity] = useState<GuestIdentity | null>(null);
 
   useEffect(() => {
