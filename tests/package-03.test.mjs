@@ -148,6 +148,7 @@ test('game visibly composites the selected 2D guardian and keeps utility control
  assert.match(artwork,/backgroundPosition:/);
   assert.match(scene,/t\.repeat\.set\(1\/3,\.5\);t\.offset\.set\(c\.x\/3,c\.y===0\?\.5:0\)/);
  assert.match(scene,/alphaTest:\.008/);
+ assert.match(scene,/depthTest:false,alphaTest:\.008,blending:AdditiveBlending,toneMapped:false/);
  assert.doesNotMatch(scene,/bgDistance = distance/);
  assert.match(game,/dpr=\{\[1,1\.75\]\} gl=\{\{antialias:true/);
 });
