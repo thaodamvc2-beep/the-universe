@@ -104,5 +104,5 @@ test('immersive game HUD follows the supplied celestial exploration layout witho
  assert.match(scene,/s\.scale\.set\(1\.72,2\.42,1\)/);
  assert.match(scene,/landedBody\?3\.35:2\.3/);
  assert.match(css,/Reference-matched immersive HUD/);
- assert.match(css,/game-dpad\{width:148px;height:148px/);
+ assert.match(css,/game-dpad\\{position:relative;display:grid;width:148px;height:148px/);
 });
