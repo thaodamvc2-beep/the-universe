@@ -44,7 +44,8 @@ test('generated character artwork is bundled locally and integrated into the hom
   assert.ok(artworkStats.size > 1000);
   const homePage = await readFile(resolve(root, 'apps/web/src/app/page.tsx'), 'utf8');
   const header = await readFile(resolve(root, 'apps/web/src/components/site-header.tsx'), 'utf8');
-  const artwork = await readFile(resolve(root, 'apps/web/src/components/celestial-avatar-artwork.tsx'), 'utf8');
+  const avatarPage = await readFile(resolve(root, 'apps/web/src/app/avatar/page.tsx'), 'utf8');
+  const artworkSource = await readFile(resolve(root, 'apps/web/src/components/celestial-avatar-artwork.tsx'), 'utf8');
   const styles = await readFile(resolve(root, 'apps/web/src/app/globals.css'), 'utf8');
   assert.match(homePage, /UniverseGame/);
   const game = await readFile(resolve(root, 'apps/web/src/features/game/universe-game.tsx'), 'utf8');
@@ -57,8 +58,8 @@ test('generated character artwork is bundled locally and integrated into the hom
   assert.match(header, /header-identity/);
   assert.match(avatarPage, /CelestialAvatarArtwork/);
   assert.match(header, /CelestialAvatarArtwork/);
-  assert.match(artwork, /linearGradient/);
-  assert.match(artwork, /M138 228/);
+  assert.match(artworkSource, /linearGradient/);
+  assert.match(artworkSource, /M138 228/);
   assert.match(styles, /celestial-avatars\.webp/);
   assert.match(styles, /avatar-stardust\{background-position:0 0\}/);
 });

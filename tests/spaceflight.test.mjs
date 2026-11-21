@@ -103,7 +103,7 @@ test('keyboard camera look controls rotate the view independently of flight move
 test('in-game angel follows the six avatar-editor identities with simple natural hair and subtle wings',async()=>{
  const scene=await read('apps/web/src/features/game/flight-scene.tsx');
  for(const id of ['stardust','lunar','nebula','crystal','aurora','solar'])assert.ok(scene.includes(`${id}:`));
- assert.match(scene,/Short, natural hair silhouettes/);
+ assert.match(scene,/Long flowing hair/);
  assert.match(scene,/leftWing/);
  assert.match(scene,/rightWing/);
  assert.match(scene,/trail/);
