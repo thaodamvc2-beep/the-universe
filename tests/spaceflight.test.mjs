@@ -70,7 +70,7 @@ test('long-distance destination travel accelerates while keeping a safe approach
 test('far-world scene uses a floating origin so the angel and destinations remain visible',async()=>{
  const scene=await read('apps/web/src/features/game/flight-scene.tsx');
  assert.match(scene,/body\.position\[0\]-flightRef\.current\.position\.x/);
- assert.match(scene,/ref\.current\.position\.set\(0,body \? \.02 : 0,0\)/);
+ assert.match(scene,/ref\.current\.position\.set\(0,0,0\)/);
  assert.match(scene,/player\.position\[0\]-flightRef\.current\.position\.x/);
  assert.match(scene,/camera\.lookAt\(look\)/);
 });
@@ -86,7 +86,7 @@ test('player character is rendered as a lightweight flying angel rather than a s
  const scene=await read('apps/web/src/features/game/flight-scene.tsx');
  assert.match(scene,/function Avatar/);
  assert.match(scene,/SpriteMaterial/);
- assert.match(scene,/celestial-six\\.webp/);
+ assert.match(scene,/celestial-six\.webp/);
  assert.match(scene,/bgDistance/);
  assert.match(scene,/new Sprite/);
  assert.doesNotMatch(scene,/thruster/);

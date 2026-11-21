@@ -58,7 +58,7 @@ test('generated character artwork is bundled locally and integrated into the hom
   assert.match(header, /header-identity/);
   assert.match(avatarPage, /CelestialAvatarArtwork/);
   assert.match(header, /CelestialAvatarArtwork/);
-  assert.match(artworkSource, /celestial-six\\.webp/);
+  assert.match(artworkSource, /celestial-six\.webp/);
   assert.match(artworkSource, /positions/);
   assert.match(styles, /celestial-avatars\.webp/);
   assert.match(styles, /avatar-stardust\{background-position:0 0\}/);
