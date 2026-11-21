@@ -106,7 +106,7 @@ test('in-game angel follows the six avatar-editor identities with simple natural
  assert.match(scene,/new Sprite/);
  assert.match(scene,/SpriteMaterial/);
  assert.match(scene,/celestial-six\.webp/);
- assert.match(scene,/sprite\\.position\\.y/);
+ assert.match(scene,/sprite\.position\.y/);
  assert.doesNotMatch(scene,/Tóc dài búi trâm cổ phong|Cổ phục tiên gia|feather\(/);
 });
 test('home-system direction marker uses the real Sun position and camera-space direction at the screen edge',async()=>{
