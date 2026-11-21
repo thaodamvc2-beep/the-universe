@@ -28,7 +28,7 @@ export function UniverseGame(){
  const flightRef=useRef<FlightState>({position:new Vector3(0,0,1.91),yaw:Math.PI/2,pitch:0,groundedId:'earth'});
  const drag=useRef({active:false,x:0,y:0});
  const avatarId=(guestIdentity?.avatarId??'stardust') as AvatarId;
- useEffect(()=>{if(guestIdentity)setDraftAvatar(guestIdentity.avatarId as AvatarId)},[guestIdentity?.avatarId]);
+ useEffect(()=>{if(guestIdentity)setDraftAvatar(guestIdentity.avatarId as AvatarId)},[guestIdentity]);
  const confirmAvatar=()=>{if(guestIdentity)updateGuestIdentity({avatarId:draftAvatar,nickname:guestIdentity.nickname});setShowAvatarChooser(false)};
  const nickname=guestIdentity?.nickname??(language==='vi'?'Người du hành':'Traveler');
  const bodies=useMemo(()=>[...REAL_DESTINATIONS,...proceduralBodies],[proceduralBodies]);
