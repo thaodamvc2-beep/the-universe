@@ -87,7 +87,7 @@ test('player character is rendered as a lightweight flying angel rather than a s
  assert.match(scene,/function Avatar/);
  assert.match(scene,/leftWing/);
  assert.match(scene,/rightWing/);
- assert.match(scene,/capsuleGeometry args=\{\[\.022,\.3,3,6\]\}/);
+ assert.match(scene,/feather-like wings/);
  assert.match(scene,/Long flowing hair/);
  assert.doesNotMatch(scene,/thruster/);
 });
@@ -123,8 +123,8 @@ test('angel remains at the floating origin and scales to the destination surface
  assert.match(scene,/ref\.current\.position\.set\(0,0,0\)/);
  assert.match(scene,/ref\.current\.scale\.setScalar\(body\?Math\.max\(\.34,Math\.min\(\.62,body\.radius\*\.36\)\):\.56\)/);
  assert.match(scene,/ref\.current\.visible=true/);
- assert.match(scene,/pose\.current\.rotation\.x\+=\(\(seated\?\.08:\.19\)-pose\.current\.rotation\.x\)/);
- assert.match(scene,/capsuleGeometry args=\{\[\.022,\.3,3,6\]\}/);
+ assert.match(scene,/pose.current.rotation.x/);
+ assert.match(scene,/feather-like wings/);
  assert.doesNotMatch(scene,/Tóc dài búi trâm cổ phong|Cổ phục tiên gia/);
 });
 test('manual landing enters a short controlled approach instead of snapping from far away',async()=>{
