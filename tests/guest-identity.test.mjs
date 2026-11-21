@@ -37,11 +37,13 @@ test('generated character artwork is bundled locally and integrated into the hom
   const { readFile, stat } = await import('node:fs/promises');
   const { resolve } = await import('node:path');
   const root = resolve(import.meta.dirname, '..');
-  const artworkPath = resolve(root, 'apps/web/public/avatars/celestial-six.webp');
+  const artworkPath = resolve(root, 'apps/web/public/avatars/celestial-avatars.webp');
   const artwork = await readFile(artworkPath);
   const artworkStats = await stat(artworkPath);
   assert.equal(artwork.subarray(0, 4).toString(), 'RIFF');
   assert.ok(artworkStats.size > 1000);
+  assert.equal(artwork.readUInt32LE(4) + 8, artwork.length, 'avatar atlas must be a complete RIFF image');
+  assert.equal(artwork.subarray(8, 12).toString(), 'WEBP');
   const homePage = await readFile(resolve(root, 'apps/web/src/app/page.tsx'), 'utf8');
   const header = await readFile(resolve(root, 'apps/web/src/components/site-header.tsx'), 'utf8');
   const avatarPage = await readFile(resolve(root, 'apps/web/src/app/avatar/page.tsx'), 'utf8');
