@@ -37,7 +37,7 @@ test('generated character artwork is bundled locally and integrated into the hom
   const { readFile, stat } = await import('node:fs/promises');
   const { resolve } = await import('node:path');
   const root = resolve(import.meta.dirname, '..');
-  const artworkPath = resolve(root, 'apps/web/public/avatars/celestial-avatars.webp');
+  const artworkPath = resolve(root, 'apps/web/public/avatars/celestial-six.webp');
   const artwork = await readFile(artworkPath);
   const artworkStats = await stat(artworkPath);
   assert.equal(artwork.subarray(0, 4).toString(), 'RIFF');
@@ -60,6 +60,7 @@ test('generated character artwork is bundled locally and integrated into the hom
   assert.match(header, /CelestialAvatarArtwork/);
   assert.match(artworkSource, /celestial-six\.webp/);
   assert.match(artworkSource, /positions/);
+  assert.match(artworkSource, /<img src=/);
   assert.match(styles, /celestial-avatars\.webp/);
   assert.match(styles, /avatar-stardust\{background-position:0 0\}/);
 });

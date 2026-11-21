@@ -360,3 +360,7 @@
 
 .celestial-avatar-artwork.avatar-portrait{border:0;border-radius:0;background:transparent;box-shadow:none;overflow:hidden}
 .celestial-avatar-artwork.avatar-portrait:before,.celestial-avatar-artwork.avatar-portrait:after{display:none;content:none}
+
+/* Show the whole portrait, not a circular crop or the atlas labels. */
+.celestial-avatar-artwork.avatar-portrait{border:0;border-radius:0;background:transparent;box-shadow:none;overflow:hidden}
+.celestial-avatar-artwork.avatar-portrait:before,.celestial-avatar-artwork.avatar-portrait:after{display:none;content:none}

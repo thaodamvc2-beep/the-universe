@@ -9,8 +9,8 @@ const positions: Record<AvatarId,{x:number;y:number}> = {
 export function CelestialAvatarArtwork({avatarId,className=''}:{avatarId:AvatarId;className?:string}) {
  const cell=positions[avatarId]??positions.stardust;
  const style:CSSProperties={
-  position:'absolute',width:'300%',height:'200%',maxWidth:'none',
-  left:`-${cell.x*100}%`,top:`-${cell.y*100}%`,
+  position:'absolute',width:'300%',height:'180%',maxWidth:'none',
+  left:`-${cell.x*100}%`,top:`-${cell.y*90}%`,
   objectFit:'fill',mixBlendMode:'screen',pointerEvents:'none'
  };
  return <span className={'celestial-avatar-artwork '+className} role="img" aria-label={avatarId+' celestial angel'} style={{display:'block',position:'relative',overflow:'hidden',width:'100%',height:'100%',minWidth:0}}>
