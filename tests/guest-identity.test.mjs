@@ -33,40 +33,13 @@ test('avatar catalogue contains six stable human character portraits', () => {
   assert.equal(new Set(AVATAR_OPTIONS.map((item) => item.id)).size, 6);
 });
 
-test('generated character artwork is bundled locally and integrated into the homepage', async () => {
-  const { readFile, stat } = await import('node:fs/promises');
-  const { resolve } = await import('node:path');
-  const root = resolve(import.meta.dirname, '..');
-  const artworkPath = resolve(root, 'apps/web/public/avatars/celestial-avatars.webp');
-  const artwork = await readFile(artworkPath);
-  const artworkStats = await stat(artworkPath);
-  assert.equal(artwork.subarray(0, 4).toString(), 'RIFF');
-  assert.ok(artworkStats.size > 1000);
-  assert.equal(artwork.readUInt32LE(4) + 8, artwork.length, 'avatar atlas must be a complete RIFF image');
-  assert.equal(artwork.subarray(8, 12).toString(), 'WEBP');
-  const homePage = await readFile(resolve(root, 'apps/web/src/app/page.tsx'), 'utf8');
-  const header = await readFile(resolve(root, 'apps/web/src/components/site-header.tsx'), 'utf8');
-  const avatarPage = await readFile(resolve(root, 'apps/web/src/app/avatar/page.tsx'), 'utf8');
-  const artworkSource = await readFile(resolve(root, 'apps/web/src/components/celestial-avatar-artwork.tsx'), 'utf8');
-  const styles = await readFile(resolve(root, 'apps/web/src/app/globals.css'), 'utf8');
-  assert.match(homePage, /UniverseGame/);
-  const game = await readFile(resolve(root, 'apps/web/src/features/game/universe-game.tsx'), 'utf8');
-  assert.match(game, /guestIdentity\?\.avatarId/);
-  assert.match(game, /FlightScene/);
-  const scene = await readFile(resolve(root, 'apps/web/src/features/game/flight-scene.tsx'), 'utf8');
-  assert.match(scene, /avatarId/);
-  const map = await readFile(resolve(root, 'apps/web/src/components/cosmic-map.tsx'), 'utf8');
-  assert.match(map, /guestIdentity\.avatarId/);
-  assert.match(header, /header-identity/);
-  assert.match(avatarPage, /CelestialAvatarArtwork/);
-  assert.match(header, /CelestialAvatarArtwork/);
-  assert.match(artworkSource, /celestial-avatars\.webp/);
-  assert.match(artworkSource, /positions/);
-  assert.ok(artworkSource.includes('src={SPRITE_URL}'));
-  assert.ok(artworkSource.includes("width:'300%',height:'200%'"));
-  assert.match(artworkSource, /role="img"/);
-  assert.match(styles, /celestial-avatars\.webp/);
-  assert.match(styles, /avatar-stardust\{background-position:0 0\}/);
+test('six standalone transparent PNG angels are the only avatar artwork source', async () => {
+ const {readFile,stat}=await import('node:fs/promises');const {resolve}=await import('node:path');const root=resolve(import.meta.dirname,'..');
+ const ids=['solar','aurora','crystal','nebula','lunar','stardust'];
+ for(const id of ids){const file=resolve(root,`apps/web/public/avatars/${id}.png`);const image=await readFile(file);const info=await stat(file);assert.deepEqual(image.subarray(0,8),Buffer.from([137,80,78,71,13,10,26,10]));assert.ok(info.size>1000);assert.equal(image.subarray(12,16).toString(),'IHDR');assert.ok(image.includes(Buffer.from('tRNS'),),`${id} PNG must preserve transparent pixels`);}
+ const home=await readFile(resolve(root,'apps/web/src/app/page.tsx'),'utf8');const header=await readFile(resolve(root,'apps/web/src/components/site-header.tsx'),'utf8');const page=await readFile(resolve(root,'apps/web/src/app/avatar/page.tsx'),'utf8');const art=await readFile(resolve(root,'apps/web/src/components/celestial-avatar-artwork.tsx'),'utf8');const css=await readFile(resolve(root,'apps/web/src/app/globals.css'),'utf8');const game=await readFile(resolve(root,'apps/web/src/features/game/universe-game.tsx'),'utf8');const scene=await readFile(resolve(root,'apps/web/src/features/game/flight-scene.tsx'),'utf8');const map=await readFile(resolve(root,'apps/web/src/components/cosmic-map.tsx'),'utf8');
+ assert.match(home,/UniverseGame/);assert.match(game,/guestIdentity\?\.avatarId/);assert.match(game,/FlightScene/);assert.match(scene,/\/the-universe\/avatars\/\$\{avatarId\}\.png/);assert.match(scene,/player\.avatarId/);assert.match(map,/guestIdentity\.avatarId/);assert.match(header,/header-identity/);assert.match(page,/CelestialAvatarArtwork/);assert.match(header,/CelestialAvatarArtwork/);assert.match(art,/AVATAR_FILES/);for(const id of ids)assert.match(art,new RegExp(`${id}\\.png`));assert.match(art,/fill/);assert.match(css,/celestial-avatar-artwork/);
+ assert.doesNotMatch([art,scene,game,css].join('\n'),/celestial-avatars\.webp|celestial-six\.webp|AVATAR_CELLS|game-avatar-stage/);
 });
 
 test('nickname validation trims whitespace and enforces Unicode-safe rules', () => {

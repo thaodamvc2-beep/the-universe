@@ -2,13 +2,12 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import type { MutableRefObject } from 'react';
 import { useFrame, useLoader, useThree } from '@react-three/fiber';
-import { AdditiveBlending, BackSide, Camera, CanvasTexture, Group, Sprite, SpriteMaterial, SRGBColorSpace, TextureLoader, Vector3 } from 'three';
-import { AVATAR_PALETTE, type AvatarId, type Body } from './universe-data';
+import { AdditiveBlending, BackSide, Camera, CanvasTexture, Group, NormalBlending, Sprite, SpriteMaterial, SRGBColorSpace, TextureLoader, Vector3 } from 'three';
+import type { AvatarId, Body } from './universe-data';
 
 export type FlightState={position:Vector3;yaw:number;pitch:number;groundedId:string|null};
 export type InputState=Record<'forward'|'back'|'left'|'right'|'up'|'down',boolean>&{land:boolean;takeoff:boolean;boost:boolean;resting:boolean};
 export type RemotePlayer={id:string;nickname:string;avatarId:AvatarId;position:[number,number,number]};
-const AVATAR_CELLS:Record<AvatarId,{x:number;y:number}>={stardust:{x:0,y:0},lunar:{x:1,y:0},nebula:{x:2,y:0},crystal:{x:0,y:1},aurora:{x:1,y:1},solar:{x:2,y:1}};
 
 function Stars(){
  const ref=useRef<Group>(null);
@@ -45,17 +44,21 @@ function Planet({body,flightRef}:{body:Body;flightRef:MutableRefObject<FlightSta
 }
 function Avatar({avatarId,flightRef,inputRef,bodies}:{avatarId:AvatarId;flightRef:MutableRefObject<FlightState>;inputRef:MutableRefObject<InputState>;bodies:Body[]}){
  const ref=useRef<Group>(null);
- const atlas=useLoader(TextureLoader,'/the-universe/avatars/celestial-avatars.webp');
- const texture=useMemo(()=>{const t=atlas.clone();const c=AVATAR_CELLS[avatarId]??AVATAR_CELLS.stardust;t.repeat.set(1/3,.5);t.offset.set(c.x/3,c.y===0?.5:0);t.colorSpace=SRGBColorSpace;t.needsUpdate=true;return t},[atlas,avatarId]);
- const sprite=useMemo(()=>{const material=new SpriteMaterial({map:texture,transparent:true,depthWrite:false,depthTest:false,alphaTest:.008,blending:AdditiveBlending,toneMapped:false});const s=new Sprite(material);s.center.set(.5,.02);s.scale.set(2.5,3.8,1);s.renderOrder=10;return s},[texture]);
+ const loadedTexture=useLoader(TextureLoader,`/the-universe/avatars/${avatarId}.png`);
+ const texture=useMemo(()=>{const t=loadedTexture.clone();t.colorSpace=SRGBColorSpace;t.needsUpdate=true;return t},[loadedTexture]);
+ const sprite=useMemo(()=>{const material=new SpriteMaterial({map:texture,transparent:true,depthWrite:false,depthTest:true,alphaTest:.02,blending:NormalBlending,toneMapped:false});const s=new Sprite(material);s.center.set(.5,.02);s.scale.set(2.5,3.8,1);return s},[texture]);
  useEffect(()=>()=>{sprite.material.dispose();texture.dispose()},[sprite,texture]);
  useFrame((state)=>{if(!ref.current)return;const f=flightRef.current,i=inputRef.current,body=f.groundedId?bodies.find(b=>b.id===f.groundedId):undefined;const wave=Math.sin(state.clock.elapsedTime*1.05);ref.current.visible=true;ref.current.position.set(0,0,0);if(body)ref.current.position.y=.02;const seated=!!body&&i.resting;const size=body?Math.max(1.05,Math.min(1.25,body.radius*.72)):1.12;ref.current.scale.setScalar(size);ref.current.rotation.set(0,0,Math.sin(state.clock.elapsedTime*.55)*.012);sprite.position.y=.025+wave*.018+(seated?-.085:((i.forward || i.back) ? .025 : 0))});
  return <group ref={ref}><primitive object={sprite}/><pointLight position={[0,.3,.18]} color="#b9d8ff" intensity={.22} distance={2.8}/></group>;
 }
 function OtherAvatar({player,flightRef}:{player:RemotePlayer;flightRef:MutableRefObject<FlightState>}){
- const ref=useRef<Group>(null);const c=AVATAR_PALETTE[player.avatarId]??AVATAR_PALETTE.stardust;
+ const ref=useRef<Group>(null);
+ const loadedTexture=useLoader(TextureLoader,`/the-universe/avatars/${player.avatarId}.png`);
+ const texture=useMemo(()=>{const t=loadedTexture.clone();t.colorSpace=SRGBColorSpace;t.needsUpdate=true;return t},[loadedTexture]);
+ const sprite=useMemo(()=>{const material=new SpriteMaterial({map:texture,transparent:true,depthWrite:false,depthTest:true,alphaTest:.02,blending:NormalBlending,toneMapped:false});const s=new Sprite(material);s.center.set(.5,.02);s.scale.set(1.8,2.75,1);return s},[texture]);
+ useEffect(()=>()=>{sprite.material.dispose();texture.dispose()},[sprite,texture]);
  useFrame(()=>{if(ref.current)ref.current.position.set(player.position[0]-flightRef.current.position.x,player.position[1]-flightRef.current.position.y,player.position[2]-flightRef.current.position.z)});
- return <group ref={ref}><mesh position={[0,.2,0]}><capsuleGeometry args={[.11,.2,4,8]}/><meshStandardMaterial color={c.suit}/></mesh><mesh position={[0,.4,0]}><sphereGeometry args={[.11,14,12]}/><meshStandardMaterial color="#efd8c9"/></mesh><pointLight color={c.glow} intensity={.2} distance={1}/></group>;
+ return <group ref={ref}><primitive object={sprite}/></group>;
 }
 function BeaconName({name,position}:{name:string;position:[number,number,number]}) {
  const [texture,setTexture]=useState<CanvasTexture|null>(null);
