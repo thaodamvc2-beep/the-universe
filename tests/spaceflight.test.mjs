@@ -166,3 +166,16 @@ test('reference HUD removes player counts and obstructive panels while keeping n
 test('in-world angel PNG preserves its natural image aspect ratio, normal blending and sit state',async()=>{const scene=await read('apps/web/src/features/game/flight-scene.tsx');assert.match(scene,/\/the-universe\/avatars\/\$\{avatarId\}\.png/);assert.match(scene,/s\.scale\.set\(\.76\*aspect,\.76,1\)/);assert.match(scene,/s\.scale\.set\(\.55\*aspect,\.55,1\)/);assert.match(scene,/s\.scale\.set\(\.55\*aspect,\.55,1\)/);assert.match(scene,/multiplyScalar\(landedBody\?-5\.35:-5\.55\)/);assert.match(scene,/i\.resting/);});
 
 test('touch altitude controls remain available in the compact reference HUD',async()=>{const css=await read('apps/web/src/app/globals.css');assert.match(css,/flight-vertical\{display:flex/);assert.match(css,/cosmic-action-dock button\{width:40px;height:40px\}/)});
+
+
+test('3D scene remains visible while avatar textures load and render errors produce a recovery screen',async()=>{
+ const game=await read('apps/web/src/features/game/universe-game.tsx');
+ const scene=await read('apps/web/src/features/game/flight-scene.tsx');
+ const boundary=await read('apps/web/src/features/game/scene-error-boundary.tsx');
+ assert.match(game,/SceneErrorBoundary/);
+ assert.doesNotMatch(game,/<Suspense fallback=\{null\}><FlightScene/);
+ assert.match(scene,/<Suspense fallback=\{null\}><Avatar/);
+ assert.match(scene,/<Suspense key=\{player\.id\} fallback=\{null\}><OtherAvatar/);
+ assert.match(boundary,/getDerivedStateFromError/);
+ assert.match(boundary,/componentDidCatch/);
+});
