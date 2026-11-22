@@ -1,5 +1,5 @@
 'use client';
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { Suspense, useEffect, useMemo, useRef, useState } from 'react';
 import type { MutableRefObject } from 'react';
 import { useFrame, useLoader, useThree } from '@react-three/fiber';
 import { AdditiveBlending, BackSide, Camera, CanvasTexture, Group, NormalBlending, Sprite, SpriteMaterial, SRGBColorSpace, TextureLoader, Vector3 } from 'three';
@@ -145,6 +145,6 @@ export function FlightScene({bodies,avatarId,flightRef,inputRef,targetId,onArriv
  });
  return <>
   <color attach="background" args={['#080d2b']}/><ambientLight intensity={.5}/><hemisphereLight args={['#c8eaff','#7a3d8f',.42]}/>
-  <Stars/><NebulaBackdrop flightRef={flightRef}/>{bodies.map(body=><Planet key={body.id} body={body} flightRef={flightRef}/>)}<HomeSystemBeacon flightRef={flightRef} camera={camera}/>{remotePlayers.map(player=><OtherAvatar key={player.id} player={player} flightRef={flightRef}/>)}<Avatar avatarId={avatarId} flightRef={flightRef} inputRef={inputRef} bodies={bodies}/>
+  <Stars/><NebulaBackdrop flightRef={flightRef}/>{bodies.map(body=><Planet key={body.id} body={body} flightRef={flightRef}/>)}<HomeSystemBeacon flightRef={flightRef} camera={camera}/>{remotePlayers.map(player=><Suspense key={player.id} fallback={null}><OtherAvatar player={player} flightRef={flightRef}/></Suspense>)}<Suspense fallback={null}><Avatar avatarId={avatarId} flightRef={flightRef} inputRef={inputRef} bodies={bodies}/></Suspense>
  </>;
 }
