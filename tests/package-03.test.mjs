@@ -138,7 +138,7 @@ test('game renders one selected PNG angel and keeps utility controls in one comp
  assert.match(scene,/blending:NormalBlending/);
  assert.match(scene,/depthTest:true/);
  assert.doesNotMatch(scene,/celestial-avatars\.webp|celestial-six\.webp|AVATAR_CELLS/);
- for(const label of ['Hạ cánh','Ngồi','Đi bộ','Bay','Âm thanh','Cài đặt','Góp ý']) assert.ok(game.includes(label),label);
+ for(const label of ['Hạ cánh','Ngồi','Đi bộ','Bay','Âm thanh',,'Góp ý']) assert.ok(game.includes(label),label);
  assert.match(css,/cosmic-action-dock\{right:.*display:flex;flex-direction:row/);
  assert.match(game,/cosmic-movement-rail/);
  assert.match(game,/role="group" aria-label="Điều khiển nhân vật"/);
@@ -151,15 +151,15 @@ test('game renders one selected PNG angel and keeps utility controls in one comp
  assert.match(scene,/alphaTest:\.02/);
  assert.doesNotMatch(scene,/depthTest:false,alphaTest:\.008,blending:AdditiveBlending,toneMapped:false/);
  assert.doesNotMatch(scene,/bgDistance = distance/);
- assert.ok(game.includes("dpr={graphicsQuality==='high'?[1,1.75]:[1,1.15]} gl={{antialias:true"));
+ assert.ok(game.includes('dpr={[1,1.5]} gl={{antialias:true'));
  assert.ok(game.includes('onClick={()=>setAudioEnabled(v=>!v)}'));
- assert.match(game,/Điểm đến & thống kê 100 thiên thể/);
+ assert.match(game,/Danh mục hành tinh và chòm sao/);
  assert.match(game,/Đăng nhập \/ khôi phục nickname/);
  assert.match(game,/Nickname và nhân vật tự lưu trên trình duyệt này/);
- const settings=game.slice(game.indexOf('cosmic-settings-panel'));
- assert.doesNotMatch(settings,/setAudioEnabled|Âm thanh/);
- assert.match(settings,/Độ nhạy xoay góc nhìn/);
- assert.match(settings,/Chất lượng đồ họa/);
+ assert.doesNotMatch(game,/cosmic-settings-panel|showSettings|setShowSettings/);
+ assert.match(game,/exoplanetarchive\.ipac\.caltech\.edu/);
+ assert.match(game,/CONSTELLATIONS\.map/);
+ assert.match(scene,/s\.scale\.set\(\.76\*aspect,\.76,1\)/);
 });
 test('nebula uses smooth radial glow sprites instead of blocky square point particles',async()=>{
  const scene=await read('apps/web/src/features/game/flight-scene.tsx');

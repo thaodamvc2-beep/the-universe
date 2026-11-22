@@ -46,7 +46,7 @@ function Avatar({avatarId,flightRef,inputRef,bodies}:{avatarId:AvatarId;flightRe
  const ref=useRef<Group>(null);
  const loadedTexture=useLoader(TextureLoader,`/the-universe/avatars/${avatarId}.png`);
  const texture=useMemo(()=>{const t=loadedTexture.clone();t.colorSpace=SRGBColorSpace;t.needsUpdate=true;return t},[loadedTexture]);
- const sprite=useMemo(()=>{const material=new SpriteMaterial({map:texture,transparent:true,depthWrite:false,depthTest:true,alphaTest:.02,blending:NormalBlending,toneMapped:false});const s=new Sprite(material);s.center.set(.5,.02);const aspect=texture.image.width/texture.image.height||1;s.scale.set(3.8*aspect,3.8,1);return s},[texture]);
+ const sprite=useMemo(()=>{const material=new SpriteMaterial({map:texture,transparent:true,depthWrite:false,depthTest:true,alphaTest:.02,blending:NormalBlending,toneMapped:false});const s=new Sprite(material);s.center.set(.5,.02);const aspect=texture.image.width/texture.image.height||1;s.scale.set(.76*aspect,.76,1);return s},[texture]);
  useEffect(()=>()=>{sprite.material.dispose();texture.dispose()},[sprite,texture]);
  useFrame((state)=>{if(!ref.current)return;const f=flightRef.current,i=inputRef.current,body=f.groundedId?bodies.find(b=>b.id===f.groundedId):undefined;const wave=Math.sin(state.clock.elapsedTime*1.05);ref.current.visible=true;ref.current.position.set(0,0,0);if(body)ref.current.position.y=.02;const seated=!!body&&i.resting;const size=body?Math.max(1.05,Math.min(1.25,body.radius*.72)):1.12;ref.current.scale.setScalar(size);ref.current.rotation.set(0,0,Math.sin(state.clock.elapsedTime*.55)*.012);sprite.position.y=.025+wave*.018+(seated?-.085:((i.forward || i.back) ? .025 : 0))});
  return <group ref={ref}><primitive object={sprite}/><pointLight position={[0,.3,.18]} color="#b9d8ff" intensity={.22} distance={2.8}/></group>;
@@ -55,7 +55,7 @@ function OtherAvatar({player,flightRef}:{player:RemotePlayer;flightRef:MutableRe
  const ref=useRef<Group>(null);
  const loadedTexture=useLoader(TextureLoader,`/the-universe/avatars/${player.avatarId}.png`);
  const texture=useMemo(()=>{const t=loadedTexture.clone();t.colorSpace=SRGBColorSpace;t.needsUpdate=true;return t},[loadedTexture]);
- const sprite=useMemo(()=>{const material=new SpriteMaterial({map:texture,transparent:true,depthWrite:false,depthTest:true,alphaTest:.02,blending:NormalBlending,toneMapped:false});const s=new Sprite(material);s.center.set(.5,.02);const aspect=texture.image.width/texture.image.height||1;s.scale.set(2.75*aspect,2.75,1);return s},[texture]);
+ const sprite=useMemo(()=>{const material=new SpriteMaterial({map:texture,transparent:true,depthWrite:false,depthTest:true,alphaTest:.02,blending:NormalBlending,toneMapped:false});const s=new Sprite(material);s.center.set(.5,.02);const aspect=texture.image.width/texture.image.height||1;s.scale.set(.55*aspect,.55,1);return s},[texture]);
  useEffect(()=>()=>{sprite.material.dispose();texture.dispose()},[sprite,texture]);
  useFrame(()=>{if(ref.current)ref.current.position.set(player.position[0]-flightRef.current.position.x,player.position[1]-flightRef.current.position.y,player.position[2]-flightRef.current.position.z)});
  return <group ref={ref}><primitive object={sprite}/></group>;

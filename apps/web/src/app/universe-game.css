@@ -22,7 +22,7 @@
 .destination-panel{position:absolute;z-index:5;top:82px;right:clamp(14px,4vw,58px);width:min(360px,calc(100vw - 28px));max-height:calc(100svh - 110px);display:flex;flex-direction:column;border:1px solid rgba(196,196,236,.25);background:rgba(5,9,25,.92);backdrop-filter:blur(18px);box-shadow:0 20px 70px rgba(0,0,0,.35)}
 .destination-panel-head{display:flex;align-items:center;justify-content:space-between;padding:13px 16px;border-bottom:1px solid rgba(196,196,236,.15);color:#f3efff;font-size:13px}
 .destination-panel-head button{border:0;background:none;color:#fff;font-size:22px;cursor:pointer}
-.destination-list{overflow:auto;max-height:42vh;padding:6px}
+.destination-list{overflow:auto;max-height:42vh;padding:6px;min-height:90px;overscroll-behavior:contain}
 .destination-list>button{display:flex;width:100%;align-items:center;gap:10px;padding:8px 10px;border:1px solid transparent;background:transparent;text-align:left;color:#eeeafc;cursor:pointer}
 .destination-list>button:hover,.destination-list>button.destination-selected{border-color:rgba(180,167,255,.38);background:rgba(126,112,194,.16)}
 .destination-list>button span{display:flex;flex-direction:column;gap:3px}.destination-list strong{font-size:11px;font-weight:600}.destination-list small{font-size:9px;color:#a4aac3}
@@ -115,3 +115,5 @@
 
 /* Bright, playful nebula treatment for the game view. */
 .universe-explorer .game-vignette{background:radial-gradient(ellipse at 55% 42%,transparent 38%,rgba(23,10,58,.12) 72%,rgba(8,6,34,.42) 100%)}
+
+.constellation-catalogue{padding:8px 12px;border-top:1px solid rgba(196,196,236,.15);color:#e9e5fa}.constellation-catalogue>strong{display:block;font-size:11px;margin-bottom:7px}.constellation-catalogue>div{display:flex;flex-wrap:wrap;gap:4px;max-height:90px;overflow:auto}.constellation-catalogue span{padding:3px 6px;border:1px solid rgba(169,195,255,.18);border-radius:6px;color:#c4d0ea;font-size:9px}
