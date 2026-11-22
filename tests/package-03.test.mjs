@@ -138,7 +138,7 @@ test('game renders one selected PNG angel and keeps utility controls in one comp
  assert.match(scene,/blending:NormalBlending/);
  assert.match(scene,/depthTest:true/);
  assert.doesNotMatch(scene,/celestial-avatars\.webp|celestial-six\.webp|AVATAR_CELLS/);
- for(const label of ['Hạ cánh','Ngồi','Đi bộ','Bay','Âm thanh',,'Góp ý']) assert.ok(game.includes(label),label);
+ for(const label of ['Hạ cánh','Ngồi','Đi bộ','Bay','Âm thanh','Góp ý']) assert.ok(game.includes(label),label);
  assert.match(css,/cosmic-action-dock\{right:.*display:flex;flex-direction:row/);
  assert.match(game,/cosmic-movement-rail/);
  assert.match(game,/role="group" aria-label="Điều khiển nhân vật"/);
