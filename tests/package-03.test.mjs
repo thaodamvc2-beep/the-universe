@@ -101,7 +101,7 @@ test('immersive game HUD follows the supplied celestial exploration layout witho
  assert.match(game,/cosmic-action-dock/);
  assert.match(game,/game-fullscreen/);
  assert.doesNotMatch(game,/cosmic-utility-rail/);
- assert.match(scene,/s\.scale\.set\(2\.5,3\.8,1\)/);
+ assert.match(scene,/const aspect=texture\.image\.width\/texture\.image\.height\|\|1;s\.scale\.set\(3\.8\*aspect,3\.8,1\)/);
  assert.match(scene,/landedBody\?2\.6:2\.6/);
  assert.match(css,/Reference-matched immersive HUD/);
  assert.match(css,/game-dpad\{position:relative;display:grid;width:148px;height:148px/);
