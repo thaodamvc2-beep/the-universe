@@ -1,5 +1,6 @@
 'use client';
-import { Suspense, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { SceneErrorBoundary } from './scene-error-boundary';
 import type { PointerEvent as ReactPointerEvent } from 'react';
 import Link from 'next/link';
 import { Canvas } from '@react-three/fiber';
@@ -90,7 +91,7 @@ export function UniverseGame(){
 
  return <main id="main-content" className="universe-game universe-explorer" data-hud-frame={hudTick}>
   <div className="game-canvas" aria-label="Vũ trụ 3D có thể bay và khám phá" onPointerDown={onPointerDown} onPointerMove={onPointerMove} onPointerUp={onPointerUp} onPointerCancel={onPointerUp}>
-   {!contextLost?<Canvas camera={{position:[0,2.6,8],fov:48}} dpr={[1,1.5]} gl={{antialias:true,alpha:false,powerPreference:'high-performance'}} onCreated={({gl})=>gl.domElement.addEventListener('webglcontextlost',()=>setContextLost(true),{once:true})} fallback={<div className="game-fallback">Thiết bị chưa hỗ trợ cảnh 3D.</div>}><Suspense fallback={null}><FlightScene bodies={sceneBodies} avatarId={avatarId} flightRef={flightRef} inputRef={input} targetId={targetId} onArrive={onArrive} onLandRequest={setTargetId} remotePlayers={remotePlayers}/></Suspense></Canvas>:<div className="game-fallback">Cảnh 3D tạm dừng do thiết bị thiếu bộ nhớ đồ họa.</div>}
+   {!contextLost?<SceneErrorBoundary fallback={<div className="game-fallback" role="alert"><div><strong>Không thể khởi tạo cảnh vũ trụ 3D.</strong><p>Phần hiển thị gặp lỗi khi tải. Hãy thử khởi tạo lại trang.</p><button type="button" onClick={()=>window.location.reload()}>Khởi tạo lại</button></div></div>}><Canvas camera={{position:[0,2.6,8],fov:48}} dpr={[1,1.5]} gl={{antialias:true,alpha:false,powerPreference:'high-performance'}} onCreated={({gl})=>gl.domElement.addEventListener('webglcontextlost',()=>setContextLost(true),{once:true})} fallback={<div className="game-fallback">Thiết bị chưa hỗ trợ cảnh 3D.</div>}><FlightScene bodies={sceneBodies} avatarId={avatarId} flightRef={flightRef} inputRef={input} targetId={targetId} onArrive={onArrive} onLandRequest={setTargetId} remotePlayers={remotePlayers}/></Canvas></SceneErrorBoundary>:<div className="game-fallback">Cảnh 3D tạm dừng do thiết bị thiếu bộ nhớ đồ họa.</div>}
   </div>
   <div className="game-vignette" aria-hidden="true"/>
   <header className="game-topbar"><Link className="game-brand" href="/">✦ THE UNIVERSE</Link><button className="game-fullscreen" type="button" aria-label={language==='vi'?'Toàn màn hình':'Toggle fullscreen'} onClick={()=>{if(document.fullscreenElement)void document.exitFullscreen();else void document.documentElement.requestFullscreen()}}>⛶</button><nav className="game-nav"><button type="button" onClick={()=>{setDestinationFilter('real');setShowDestinations(v=>!v)}}>Điểm đến</button><Link href="/map">Bản đồ</Link><Link href="/worlds">Thiên thể</Link><Link href="/avatar">{language==='vi'?'Nhân vật':'Avatar'}</Link><button className="game-language" type="button" onClick={()=>setLanguage(language==='vi'?'en':'vi')}>{language.toUpperCase()}</button></nav></header>
