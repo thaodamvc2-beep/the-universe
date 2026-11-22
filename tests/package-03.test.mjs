@@ -128,29 +128,28 @@ test('real destination staging keeps Earth as home while distributing planets in
  assert.match(scene,/AdditiveBlending/);
 });
 
-test('game visibly composites the selected 2D guardian and keeps utility controls in one compact Vietnamese dock',async()=>{
+test('game renders one selected PNG angel and keeps utility controls in one compact Vietnamese dock',async()=>{
  const game=await read('apps/web/src/features/game/universe-game.tsx');
  const css=await read('apps/web/src/app/universe-game.css');
  const scene=await read('apps/web/src/features/game/flight-scene.tsx');
- assert.match(game,/game-avatar-stage/);
- assert.match(game,/CelestialAvatarArtwork avatarId=\{avatarId\} className="game-avatar-stage-art"/);
+ assert.doesNotMatch(game,/game-avatar-stage/);
+ assert.doesNotMatch(css,/game-avatar-stage/);
+ assert.match(scene,/\/the-universe\/avatars\/\$\{avatarId\}\.png/);
+ assert.match(scene,/blending:NormalBlending/);
+ assert.match(scene,/depthTest:true/);
+ assert.doesNotMatch(scene,/celestial-avatars\.webp|celestial-six\.webp|AVATAR_CELLS/);
  for(const label of ['Hạ cánh','Ngồi','Đi bộ','Bay','Âm thanh','Cài đặt','Góp ý']) assert.ok(game.includes(label),label);
  assert.match(css,/cosmic-action-dock\{right:.*display:flex;flex-direction:row/);
  assert.match(game,/cosmic-movement-rail/);
  assert.match(game,/role="group" aria-label="Điều khiển nhân vật"/);
  for(const label of ['Hạ cánh','Ngồi','Đi bộ','Bay']) assert.ok(game.slice(game.indexOf('cosmic-movement-rail'),game.indexOf('game-bottom-actions explorer-actions cosmic-action-dock')).includes(label),label);
  assert.ok(css.includes('.universe-explorer .cosmic-movement-rail{position:absolute;z-index:7;right:') && css.includes('left:auto;top:50%;transform:translateY(-50%);display:flex;flex-direction:column'));
- assert.ok(css.includes('.universe-explorer .game-avatar-stage{position:absolute;z-index:6;left:50%;bottom:clamp'));
- assert.ok(css.includes('.universe-explorer .game-avatar-stage-art{width:100%;height:100%;overflow:hidden;mix-blend-mode:screen}'));
  const artwork=await read('apps/web/src/components/celestial-avatar-artwork.tsx');
- assert.match(artwork,/SPRITE_URL = '\/the-universe\/avatars\/celestial-avatars\.webp'/);
- assert.ok(artwork.includes('src={SPRITE_URL}'));
- assert.ok(artwork.includes("width:'300%',height:'200%'"));
- assert.match(artwork,/left:/);
- assert.match(artwork,/top:/);
-  assert.match(scene,/t\.repeat\.set\(1\/3,\.5\);t\.offset\.set\(c\.x\/3,c\.y===0\?\.5:0\)/);
- assert.match(scene,/alphaTest:\.008/);
- assert.match(scene,/depthTest:false,alphaTest:\.008,blending:AdditiveBlending,toneMapped:false/);
+ assert.match(artwork,/AVATAR_FILES/);
+ for(const id of ['solar','aurora','crystal','nebula','lunar','stardust'])assert.ok(artwork.includes(id+'.png'));
+ assert.doesNotMatch(artwork,/SPRITE_URL|300%|200%/);
+ assert.match(scene,/alphaTest:\.02/);
+ assert.doesNotMatch(scene,/depthTest:false,alphaTest:\.008,blending:AdditiveBlending,toneMapped:false/);
  assert.doesNotMatch(scene,/bgDistance = distance/);
  assert.ok(game.includes("dpr={graphicsQuality==='high'?[1,1.75]:[1,1.15]} gl={{antialias:true"));
  assert.ok(game.includes('onClick={()=>setAudioEnabled(v=>!v)}'));
