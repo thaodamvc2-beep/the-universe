@@ -155,7 +155,11 @@ test('game renders one selected PNG angel and keeps utility controls in one comp
  assert.ok(game.includes('onClick={()=>setAudioEnabled(v=>!v)}'));
  assert.match(game,/Danh mục hành tinh và chòm sao/);
  assert.match(game,/TAP\/sync\?query=/);
- assert.doesNotMatch(game,/88 chòm sao được IAU công nhận|Thiên thể có dữ liệu|Hành tinh lùn|Tiểu hành tinh/);\n assert.match(game,/destinationBodies/);\n assert.match(game,/Bay tới đây/);
+ assert.doesNotMatch(game,/88 chòm sao được IAU công nhận|Thiên thể có dữ liệu|Hành tinh lùn|Tiểu hành tinh/);
+ assert.match(game,/destinationBodies/);
+ assert.match(game,/Bay tới đây/);
+ assert.match(game,/cosmic-utility-rail/);
+ assert.match(game,/activeExoplanetId/);
  assert.match(game,/destinationBodies/);
  assert.match(game,/sceneBodies/);
  assert.match(game,/Đăng nhập \/ khôi phục nickname/);
