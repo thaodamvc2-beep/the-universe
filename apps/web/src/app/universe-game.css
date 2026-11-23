@@ -169,3 +169,11 @@
  .universe-explorer .cosmic-utility-rail button span{font-size:15px;}
  .universe-explorer .cosmic-utility-rail button small{font-size:6.5px;}
 }
+
+
+/* Final compact utility placement: keep secondary controls clear of the movement rail on phones. */
+@media(max-width:760px){
+ .universe-explorer .cosmic-movement-rail{top:30%;right:8px;left:auto;transform:none;gap:5px;}
+ .universe-explorer .cosmic-utility-rail{top:auto;right:8px;bottom:12px;left:auto;transform:none;gap:4px;}
+ .universe-explorer .cosmic-utility-rail button{width:48px;min-height:43px;padding:2px;border-radius:10px;}
+}
