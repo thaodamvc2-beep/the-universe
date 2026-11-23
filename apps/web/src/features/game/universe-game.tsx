@@ -41,7 +41,7 @@ export function UniverseGame(){
   const keys:Record<string,keyof Pick<InputState,'forward'|'back'|'left'|'right'|'up'|'down'>>={w:'forward',ArrowUp:'forward',s:'back',ArrowDown:'back',a:'left',ArrowLeft:'left',d:'right',ArrowRight:'right',' ':'up',Spacebar:'up',c:'down',Control:'down'};
   const down=(e:KeyboardEvent)=>{const el=e.target as HTMLElement|null;if(el&&['INPUT','TEXTAREA','SELECT'].includes(el.tagName))return;const key=keys[e.key];if(key){e.preventDefault();input.current[key]=true}if(e.key.toLowerCase()==='e'){e.preventDefault();input.current.land=true}const lookKey=e.key.toLowerCase();if(lookKey==='j')flightRef.current.yaw+=.075;if(lookKey==='l')flightRef.current.yaw-=.075;if(lookKey==='i')flightRef.current.pitch=Math.min(1.25,flightRef.current.pitch+.055);if(lookKey==='k')flightRef.current.pitch=Math.max(-1.25,flightRef.current.pitch-.055);if(['j','l','i','k'].includes(lookKey))e.preventDefault();if(e.key==='Shift')input.current.boost=true};
   const up=(e:KeyboardEvent)=>{const key=keys[e.key];if(key){e.preventDefault();input.current[key]=false}if(e.key==='Shift')input.current.boost=false};
-  const clear=()=>{input.current={forward:false,back:false,left:false,right:false,up:false,down:false,land:false,takeoff:false,boost:false,resting:false}};
+  const clear=()=>{input.current={forward:false,back:false,left:false,right:false,up:false,down:false,land:false,takeoff:false,boost:false,resting:false,autoFlight:false}};
   window.addEventListener('keydown',down);window.addEventListener('keyup',up);window.addEventListener('blur',clear);
   return()=>{window.removeEventListener('keydown',down);window.removeEventListener('keyup',up);window.removeEventListener('blur',clear)};
  },[]);
