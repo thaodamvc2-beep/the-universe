@@ -11,17 +11,6 @@ import { FlightScene, type FlightState, type InputState, type RemotePlayer } fro
 import { makeProceduralRegion, REAL_DESTINATIONS, type AvatarId, type Body } from './universe-data';
 import { AVATAR_OPTIONS } from '@/lib/identity/guest-identity.mjs';
 
-const MAJOR_PLANET_IDS = new Set(['mercury','venus','earth','mars','jupiter','saturn','uranus','neptune']);
-const REAL_DESTINATION_STATS = {
- total: REAL_DESTINATIONS.length,
- planets: REAL_DESTINATIONS.filter(body=>MAJOR_PLANET_IDS.has(body.id)).length,
- moons: REAL_DESTINATIONS.filter(body=>body.kind.startsWith('Vệ tinh')).length,
- dwarfPlanets: REAL_DESTINATIONS.filter(body=>body.kind==='Hành tinh lùn').length,
- asteroids: REAL_DESTINATIONS.filter(body=>body.kind==='Tiểu hành tinh').length,
- comets: REAL_DESTINATIONS.filter(body=>body.kind==='Sao chổi').length,
- stars: REAL_DESTINATIONS.filter(body=>body.kind==='Ngôi sao').length
-};
-
 const CONSTELLATIONS=["Andromeda","Antlia","Apus","Aquarius","Aquila","Ara","Aries","Auriga","Boötes","Caelum","Camelopardalis","Cancer","Canes Venatici","Canis Major","Canis Minor","Capricornus","Carina","Cassiopeia","Centaurus","Cepheus","Cetus","Chamaeleon","Circinus","Columba","Coma Berenices","Corona Australis","Corona Borealis","Corvus","Crater","Crux","Cygnus","Delphinus","Dorado","Draco","Equuleus","Eridanus","Fornax","Gemini","Grus","Hercules","Horologium","Hydra","Hydrus","Indus","Lacerta","Leo","Leo Minor","Lepus","Libra","Lupus","Lynx","Lyra","Mensa","Microscopium","Monoceros","Musca","Norma","Octans","Ophiuchus","Orion","Pavo","Pegasus","Perseus","Phoenix","Pictor","Pisces","Piscis Austrinus","Puppis","Pyxis","Reticulum","Sagitta","Sagittarius","Scorpius","Sculptor","Scutum","Serpens","Sextans","Taurus","Telescopium","Triangulum","Triangulum Australe","Tucana","Ursa Major","Ursa Minor","Vela","Virgo","Volans","Vulpecula"];
 export function UniverseGame(){
  const {language,setLanguage,guestIdentity,updateGuestIdentity}=useSite();
