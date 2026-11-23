@@ -191,7 +191,7 @@ test('free-flight toggle, manual steering and surface spawn/landing remain wired
 
 test('desktop planet destination menu remains available independently of the removed scene beacon',async()=>{
  const game=await read('apps/web/src/features/game/universe-game.tsx');
- const css=await read('apps/web/src/app/globals.css');
+ const css=await read('apps/web/src/app/universe-game.css');
  assert.match(game,/Hành tinh &amp; điểm đến/);
  assert.match(game,/destinationBodies\.map/);
  assert.match(game,/aria-expanded=\{showDestinations\}/);
@@ -209,7 +209,7 @@ test('manual movement immediately cancels destination autopilot and landing appr
 test('distance from Earth is shown as an explicitly simulated light-year value and the nebula background is brighter',async()=>{
  const game=await read('apps/web/src/features/game/universe-game.tsx');
  const scene=await read('apps/web/src/features/game/flight-scene.tsx');
- const css=await read('apps/web/src/app/globals.css');
+ const css=await read('apps/web/src/app/universe-game.css');
  assert.match(game,/distanceFromEarthLy=livePosition\.length\(\)/);
  assert.match(game,/năm ánh sáng mô phỏng/);
  assert.match(scene,/args=\{\['#111a3a'\]\}/);
