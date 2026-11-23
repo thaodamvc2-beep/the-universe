@@ -293,9 +293,20 @@ test('desktop free-flight control uses a scalable vector angel-wings icon instea
 test('destination arrival rebases the camera outside the landed planet and levels its surface view',async()=>{
  const scene=await read('apps/web/src/features/game/flight-scene.tsx');
  assert.match(scene,/cameraBodyId=useRef<string\|null>\(null\)/);
- assert.match(scene,/const landedNow=!!landedBody&&cameraBodyId\.current!==landedBody\.id/);
+ assert.match(scene,/const landedNow=!!landedBody&&\(cameraBodyId\.current!==landedBody\.id\|\|cameraGroundingRevision\.current!==f\.groundingRevision\)/);
  assert.match(scene,/surfaceHeading\.current\.copy\(forward\);f\.yaw=Math\.atan2\(forward\.x,-forward\.z\);f\.pitch=0/);
  assert.match(scene,/if\(landedNow\)camera\.position\.copy\(desired\)/);
  assert.match(scene,/cameraBodyId\.current=landedBody\?\.id\?\?null/);
  assert.match(scene,/target\.radius\*1\.3\+\(target\.landable \? 0\.08 : 1\.8\)/);
+});
+
+
+test('re-landing on the same planet forces a fresh surface and camera rebase even when no airborne frame was rendered',async()=>{
+ const scene=await read('apps/web/src/features/game/flight-scene.tsx');
+ const game=await read('apps/web/src/features/game/universe-game.tsx');
+ assert.match(scene,/groundingRevision:number/);
+ assert.match(scene,/cameraGroundingRevision\.current!==f\.groundingRevision/);
+ assert.match(scene,/surfaceGroundingRevision\.current!==f\.groundingRevision/);
+ assert.match(game,/groundingRevision:0/);
+ assert.match(game,/groundingRevision\+=1/);
 });
