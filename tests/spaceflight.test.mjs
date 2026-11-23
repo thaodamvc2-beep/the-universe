@@ -218,3 +218,26 @@ test('distance from Earth is measured from the home-world surface and the nebula
  assert.match(scene,/opacity=\{\.68\} blending=\{AdditiveBlending\}/);
  assert.match(css,/rgba\(12,22,48,\.10\)/);
 });
+
+
+test('flight controls use explicit mutually-exclusive modes and dedicated transitions',async()=>{
+ const controller=await read('apps/web/src/features/game/flight-controller.mjs');
+ const scene=await read('apps/web/src/features/game/flight-scene.tsx');
+ const game=await read('apps/web/src/features/game/universe-game.tsx');
+ for(const mode of ['grounded','walking','sitting','flying','landing','approaching'])assert.ok(controller.includes("'"+mode+"'"),mode);
+ for(const action of ['WALK_START','SIT','TOGGLE_FLIGHT','LAND','BEGIN_APPROACH','MANUAL_OVERRIDE','ARRIVED_LANDED','RESET_HOME'])assert.ok(controller.includes("'"+action+"'"),action);
+ assert.match(scene,/i.mode==='flying'&&i.autoFlight/);
+ assert.match(scene,/i.mode==='walking'/);
+ assert.match(game,/transitionFlightControl(input.current,'SIT')/);
+ assert.match(game,/transitionFlightControl(input.current,'LAND')/);
+ assert.match(game,/transitionFlightControl(input.current,'BEGIN_APPROACH')/);
+});
+
+test('flight controller prevents stale movement and illegal sitting/flying overlap',async()=>{
+ const controller=await read('apps/web/src/features/game/flight-controller.mjs');
+ assert.match(controller,/clearMovement(input)/);
+ assert.match(controller,/input.mode = FLIGHT_MODES.SITTING/);
+ assert.match(controller,/input.mode = FLIGHT_MODES.LANDING/);
+ assert.match(controller,/input.mode = FLIGHT_MODES.FLYING/);
+ assert.match(controller,/case 'RELEASE_ALL'/);
+});
