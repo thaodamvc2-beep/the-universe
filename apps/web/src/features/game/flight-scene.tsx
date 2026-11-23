@@ -27,16 +27,17 @@ function NebulaBackdrop({flightRef}:{flightRef:MutableRefObject<FlightState>}){
 }
 function PlanetLabel({body}:{body:Body}){
  const [texture,setTexture]=useState<CanvasTexture|null>(null);
- useEffect(()=>{const canvas=document.createElement('canvas');canvas.width=512;canvas.height=96;const ctx=canvas.getContext('2d');if(!ctx)return;ctx.fillStyle='rgba(4,10,24,.82)';ctx.beginPath();ctx.roundRect(8,8,496,80,18);ctx.fill();ctx.strokeStyle=body.real?'rgba(158,218,245,.72)':'rgba(205,177,255,.72)';ctx.lineWidth=3;ctx.stroke();ctx.font='600 42px Arial,sans-serif';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillStyle='#f4f5ff';ctx.fillText(body.name,256,48,468);const map=new CanvasTexture(canvas);map.needsUpdate=true;setTexture(map);return()=>map.dispose()},[body.name,body.real]);
+ useEffect(()=>{const canvas=document.createElement('canvas');canvas.width=512;canvas.height=96;const ctx=canvas.getContext('2d');if(!ctx)return;ctx.fillStyle='rgba(4,10,24,.9)';ctx.beginPath();ctx.roundRect(8,8,496,80,18);ctx.fill();ctx.strokeStyle=body.real?'rgba(158,218,245,.82)':'rgba(205,177,255,.82)';ctx.lineWidth=3;ctx.stroke();ctx.font='600 38px Arial,sans-serif';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillStyle='#ffffff';ctx.fillText(body.name,256,48,456);const map=new CanvasTexture(canvas);map.needsUpdate=true;setTexture(map);return()=>map.dispose()},[body.name,body.real]);
  if(!texture)return null;
- const width=Math.max(body.radius*.8,Math.min(body.radius*1.9,body.name.length*.075));
- return <sprite position={[0,-body.radius-width*.16,0]} scale={[width,width*.2,1]}><spriteMaterial map={texture} transparent depthWrite={false} /></sprite>;
+ // Keep every nameplate narrower than its planet and directly below the visible sphere.
+ const width=Math.max(body.radius*.82,Math.min(body.radius*1.55,body.name.length*.024));
+ return <sprite position={[0,-body.radius*1.3-width*.18,0]} scale={[width,width*.19,1]}><spriteMaterial map={texture} transparent depthWrite={false} /></sprite>;
 }
 function Planet({body,flightRef}:{body:Body;flightRef:MutableRefObject<FlightState>}){
  const ref=useRef<Group>(null);
- useFrame((_state,d)=>{if(ref.current){ref.current.position.set(body.position[0]-flightRef.current.position.x,body.position[1]-flightRef.current.position.y,body.position[2]-flightRef.current.position.z);ref.current.rotation.y+=d*(body.id === 'earth' ? 0.012 : 0.004)}});
+ useFrame((_state,d)=>{if(ref.current){ref.current.position.set(body.position[0]-flightRef.current.position.x,body.position[1]-flightRef.current.position.y,body.position[2]-flightRef.current.position.z);const distance=ref.current.position.length();const distanceScale=Math.max(1.04,Math.min(1.8,1+0.8*Math.exp(-distance/35)));ref.current.scale.setScalar(distanceScale);ref.current.rotation.y+=d*(body.id === 'earth' ? 0.012 : 0.004)}});
  return <group ref={ref}>
-  <mesh><sphereGeometry args={[body.radius*1.3,body.real?28:20,body.real?22:16]}/><meshStandardMaterial color={body.color} roughness={.82} emissive={body.color} emissiveIntensity={body.id==='sun'?2.1:.18}/></mesh>{body.id==='sun'&&<pointLight intensity={470} distance={260} decay={2} color="#fff1d2"/>}
+  <mesh><sphereGeometry args={[body.radius*1.3,body.real?28:20,body.real?22:16]}/><meshStandardMaterial color={body.color} roughness={.82} emissive={body.color} emissiveIntensity={body.id==='sun'?2.1:.38}/></mesh>{body.id==='sun'&&<pointLight intensity={470} distance={260} decay={2} color="#fff1d2"/>}
   {body.id==='earth'&&<mesh scale={1.035}><sphereGeometry args={[body.radius,28,20]}/><meshBasicMaterial color="#73c8ff" transparent opacity={.12} side={BackSide}/></mesh>}
   {body.id==='saturn'&&<mesh rotation={[Math.PI/2.25,0,0]}><torusGeometry args={[body.radius*1.3*1.55,body.radius*1.3*.22,5,64]}/><meshStandardMaterial color="#cdbb9c" transparent opacity={.78}/></mesh>}
   {!body.real&&<><mesh scale={1.1}><sphereGeometry args={[body.radius*1.3,16,12]}/><meshBasicMaterial color="#d6c6ff" wireframe transparent opacity={.12}/></mesh><mesh rotation={[Math.PI/2.2,0,0]}><torusGeometry args={[body.radius*1.3*1.38,.045,4,36]}/><meshBasicMaterial color="#c3a7ff" transparent opacity={.55}/></mesh></>}
