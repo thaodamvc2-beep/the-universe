@@ -35,7 +35,7 @@ function PlanetLabel({body}:{body:Body}){
 }
 function Planet({body,flightRef}:{body:Body;flightRef:MutableRefObject<FlightState>}){
  const ref=useRef<Group>(null);
- useFrame((_state,d)=>{if(ref.current){ref.current.position.set(body.position[0]-flightRef.current.position.x,body.position[1]-flightRef.current.position.y,body.position[2]-flightRef.current.position.z);const distance=ref.current.position.length();const distanceScale=Math.max(1.04,Math.min(1.8,1+0.8*Math.exp(-distance/35)));ref.current.scale.setScalar(distanceScale);ref.current.rotation.y+=d*(body.id === 'earth' ? 0.012 : 0.004)}});
+ useFrame((_state,d)=>{if(ref.current){ref.current.position.set(body.position[0]-flightRef.current.position.x,body.position[1]-flightRef.current.position.y,body.position[2]-flightRef.current.position.z);ref.current.scale.setScalar(1);ref.current.rotation.y+=d*(body.id === 'earth' ? 0.012 : 0.004)}});
  return <group ref={ref}>
   <mesh><sphereGeometry args={[body.radius*1.3,body.real?28:20,body.real?22:16]}/><meshStandardMaterial color={body.color} roughness={.82} emissive={body.color} emissiveIntensity={body.id==='sun'?2.1:.38}/></mesh>{body.id==='sun'&&<pointLight intensity={470} distance={260} decay={2} color="#fff1d2"/>}
   {body.id==='earth'&&<mesh scale={1.035}><sphereGeometry args={[body.radius,28,20]}/><meshBasicMaterial color="#73c8ff" transparent opacity={.12} side={BackSide}/></mesh>}
@@ -149,7 +149,7 @@ export function FlightScene({bodies,avatarId,flightRef,inputRef,targetId,onArriv
    i.takeoff=false;
   }
   const landedBody=f.groundedId?bodies.find(b=>b.id===f.groundedId):undefined;if(landedBody){playerUp.copy(f.position).sub(new Vector3(...landedBody.position)).normalize();forward.copy(surfaceHeading.current).projectOnPlane(playerUp).normalize();if(forward.lengthSq()<.001){forward.crossVectors(new Vector3(0,1,0),playerUp);if(forward.lengthSq()<.001)forward.crossVectors(new Vector3(1,0,0),playerUp);forward.normalize();surfaceHeading.current.copy(forward)}}else{playerUp.set(0,1,0);forward.set(Math.sin(f.yaw)*Math.cos(f.pitch),Math.sin(f.pitch),-Math.cos(f.yaw)*Math.cos(f.pitch)).normalize()}
-  smoothedCameraUp.current.lerp(playerUp,1-Math.exp(-7*dt)).normalize();if(landedBody){const surfacePitch=Math.max(-.95,Math.min(.95,f.pitch));cameraForward.copy(forward).multiplyScalar(Math.cos(surfacePitch)).addScaledVector(smoothedCameraUp.current,Math.sin(surfacePitch)).normalize()}else cameraForward.copy(forward);desired.copy(cameraForward).multiplyScalar(landedBody?-5.35:-5.55).addScaledVector(smoothedCameraUp.current,landedBody?2.05:1.98);
+  smoothedCameraUp.current.lerp(playerUp,1-Math.exp(-7*dt)).normalize();if(landedBody){const surfacePitch=Math.max(-.95,Math.min(.95,f.pitch));cameraForward.copy(forward).multiplyScalar(Math.cos(surfacePitch)).addScaledVector(smoothedCameraUp.current,Math.sin(surfacePitch)).normalize()}else cameraForward.copy(forward);const surfaceCameraDistance=landedBody?Math.max(5.5,landedBody.radius*3.8):5.55;const surfaceCameraHeight=landedBody?Math.max(2.2,landedBody.radius*1.45):1.98;desired.copy(cameraForward).multiplyScalar(-surfaceCameraDistance).addScaledVector(smoothedCameraUp.current,surfaceCameraHeight);
   camera.position.lerp(desired,1-Math.exp(-7*dt));camera.up.copy(smoothedCameraUp.current);look.copy(cameraForward).multiplyScalar(2.6).addScaledVector(smoothedCameraUp.current,landedBody?.18:0);camera.lookAt(look);
  });
  return <>
