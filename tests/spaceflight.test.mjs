@@ -228,14 +228,14 @@ test('flight controls use explicit mutually-exclusive modes and dedicated transi
  for(const action of ['WALK_START','SIT','TOGGLE_FLIGHT','LAND','BEGIN_APPROACH','MANUAL_OVERRIDE','ARRIVED_LANDED','RESET_HOME'])assert.ok(controller.includes("'"+action+"'"),action);
  assert.match(scene,/i.mode==='flying'&&i.autoFlight/);
  assert.match(scene,/i.mode==='walking'/);
- assert.match(game,/transitionFlightControl(input.current,'SIT')/);
- assert.match(game,/transitionFlightControl(input.current,'LAND')/);
- assert.match(game,/transitionFlightControl(input.current,'BEGIN_APPROACH')/);
+ assert.ok(game.includes("transitionFlightControl(input.current,'SIT')"));
+ assert.ok(game.includes("transitionFlightControl(input.current,'LAND')"));
+ assert.ok(game.includes("transitionFlightControl(input.current,'BEGIN_APPROACH')"));
 });
 
 test('flight controller prevents stale movement and illegal sitting/flying overlap',async()=>{
  const controller=await read('apps/web/src/features/game/flight-controller.mjs');
- assert.match(controller,/clearMovement(input)/);
+ assert.ok(controller.includes('clearMovement(input)'));
  assert.match(controller,/input.mode = FLIGHT_MODES.SITTING/);
  assert.match(controller,/input.mode = FLIGHT_MODES.LANDING/);
  assert.match(controller,/input.mode = FLIGHT_MODES.FLYING/);
