@@ -55,7 +55,8 @@ test('spaceflight now slows down, avoids planets and lands gently with visible w
  assert.match(scene,/seated/);
  assert.match(scene,/surfaceHeading/);
  assert.match(scene,/nextNormal/);
- assert.match(scene,/const cruise=\(i\.boost\?8\.5:5\.2\),step=cruise\*dt/);\n assert.match(scene,/i\.boost\?\.62:\.36/);
+ assert.match(scene,/const cruise=\(i\.boost\?8\.5:5\.2\),step=cruise\*dt/);
+ assert.match(scene,/i\.boost\?\.62:\.36/);
  assert.match(scene,/smoothedCameraUp/);
  assert.match(scene,/onLandRequest\(nearest\.body\.id\)/);
 });
