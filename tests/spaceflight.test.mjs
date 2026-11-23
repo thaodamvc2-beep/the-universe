@@ -206,7 +206,9 @@ test('manual movement immediately cancels destination autopilot and landing appr
  assert.match(scene,/nearest\.d<=nearest\.body\.radius\*1\.3\+\.16/);
 });
 
-test('landing command also aligns an already-grounded avatar and sitting preserves surface contact',async()=>{const scene=await read('apps/web/src/features/game/flight-scene.tsx');assert.match(scene,/if\(i\.land\)\{f\.position\.copy\(center\)\.addScaledVector\(normal,body\.radius\*1\.3\+\.08\)/);assert.match(scene,/sprite\.position\.y=body\?0:/);});\n\ntest('distance from Earth is measured from the home-world surface and the nebula is brighter',async()=>{
+test('landing command also aligns an already-grounded avatar and sitting preserves surface contact',async()=>{const scene=await read('apps/web/src/features/game/flight-scene.tsx');assert.match(scene,/if\(i\.land\)\{f\.position\.copy\(center\)\.addScaledVector\(normal,body\.radius\*1\.3\+\.08\)/);assert.match(scene,/sprite\.position\.y=body\?0:/);});
+
+test('distance from Earth is measured from the home-world surface and the nebula is brighter',async()=>{
  const game=await read('apps/web/src/features/game/universe-game.tsx');
  const scene=await read('apps/web/src/features/game/flight-scene.tsx');
  const css=await read('apps/web/src/app/universe-game.css');
