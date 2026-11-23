@@ -9,6 +9,14 @@ on:
       - "package.json"
       - "package-lock.json"
       - ".github/workflows/static.yml"
+  pull_request:
+    branches: ["main"]
+    paths:
+      - "apps/web/**"
+      - "tests/**"
+      - "package.json"
+      - "package-lock.json"
+      - ".github/workflows/static.yml"
   workflow_dispatch:
 
 permissions:
@@ -33,7 +41,7 @@ jobs:
       - name: Install dependencies
         run: npm install --no-audit --no-fund
       - name: Run package regression tests
-        run: node --test tests/package-03.test.mjs tests/celestial-catalog.test.mjs tests/guest-identity.test.mjs tests/cosmic-map.test.mjs tests/spaceflight.test.mjs
+        run: npm test
       - name: Run lint
         run: npm run lint
       - name: Run typecheck
@@ -48,6 +56,7 @@ jobs:
         with:
           path: apps/web/out
   deploy:
+    if: github.event_name != 'pull_request'
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
