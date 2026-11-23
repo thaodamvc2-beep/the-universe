@@ -167,7 +167,7 @@ test('game renders one selected PNG angel and keeps movement controls and separa
  assert.match(game,/Nickname và nhân vật tự lưu trên trình duyệt này/);
  assert.doesNotMatch(game,/cosmic-settings-panel|showSettings|setShowSettings/);
  assert.match(game,/exoplanetarchive\.ipac\.caltech\.edu/);
- assert.match(game,/CONSTELLATIONS\.map/);
+ assert.doesNotMatch(game,/CONSTELLATIONS|constellation-catalogue|88 chòm sao được IAU công nhận/);
  assert.match(scene,/s\.scale\.set\(\.76\*aspect,\.76,1\)/);
 });
 test('nebula uses smooth radial glow sprites instead of blocky square point particles',async()=>{
