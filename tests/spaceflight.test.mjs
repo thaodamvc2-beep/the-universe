@@ -77,10 +77,10 @@ test('far-world scene uses a floating origin so the angel and destinations remai
  assert.match(scene,/player\.position\[0\]-flightRef\.current\.position\.x/);
  assert.match(scene,/camera\.lookAt\(look\)/);
 });
-test('distant worlds show a directional miniature of the Solar System and Earth',async()=>{
+test('solar-system guide is hidden in deep space and only shown near home while flying',async()=>{
  const scene=await read('apps/web/src/features/game/flight-scene.tsx');
  assert.match(scene,/function HomeSystemBeacon/);
- assert.match(scene,/distance>75/);
+ assert.match(scene,/nearHomeSystem=p\.length\(\)<75&&!flightRef\.current\.groundedId/);
  assert.match(scene,/function BeaconName/);
  for(const name of ['Mercury','Venus','Earth','Mars','Jupiter','Saturn','Uranus','Neptune'])assert.ok(scene.includes(`name:'${name}'`));
  assert.match(scene,/cameraOffset/);
@@ -110,6 +110,8 @@ test('in-game angel follows all six identities using their individual transparen
  assert.match(scene,/SpriteMaterial/);
  assert.match(scene,/\/the-universe\/avatars\/\$\{avatarId\}\.png/);
  assert.match(scene,/sprite\.position\.y/);
+ assert.match(scene,/function SurfaceLabel/);
+ assert.match(scene,/SurfaceLabel name=\{surfaceBody\?\.name\?\?null\}/);
  assert.doesNotMatch(scene,/Tóc dài búi trâm cổ phong|Cổ phục tiên gia|feather\(/);
 });
 test('home-system direction marker uses the real Sun position and camera-space direction at the screen edge',async()=>{
@@ -118,7 +120,7 @@ test('home-system direction marker uses the real Sun position and camera-space d
  assert.match(scene,/camera\.quaternion\.clone\(\)\.invert\(\)/);
  assert.match(scene,/camera\.position\)\.add\(cameraOffset\)/);
  assert.match(scene,/camera\.quaternion\)/);
- assert.match(scene,/distance>75/);
+ assert.match(scene,/nearHomeSystem=p\.length\(\)<75&&!flightRef\.current\.groundedId/);
 });
 
 test('angel remains at the floating origin and scales to the destination surface',async()=>{
@@ -141,7 +143,8 @@ test('newly landed camera looks along a stable surface tangent, not into the pla
  assert.match(scene,/surfaceBodyId\.current!==body\.id/);
  assert.match(scene,/surfaceHeading\.current\.set\(0,0,-1\)\.projectOnPlane\(normal\)/);
  assert.match(scene,/right\.crossVectors\(forward,normal\)/);
- assert.match(scene,/look\.copy\(forward\)\.multiplyScalar\(landedBody\?2\.6:2\.6\)/);
+ assert.match(scene,/cameraForward\.copy\(forward\)\.multiplyScalar\(Math\.cos\(surfacePitch\)\)/);
+ assert.match(scene,/look\.copy\(cameraForward\)/);
 });
 test('surface movement uses a stable angular step independent of tiny planet radius',async()=>{
  const scene=await read('apps/web/src/features/game/flight-scene.tsx');
