@@ -325,8 +325,8 @@ test('landing camera anchors the planet in world space while the avatar visibly 
  const {createLandingCameraAnchor,getLandingCameraLocalFrame}=await import('../apps/web/src/features/game/landing-camera.mjs');
  const anchor=createLandingCameraAnchor([0,0,20],[0,0,0],10,[0,0,5]);
  const positions=[[0,0,20],[0,0,16],[0,0,10]];
- const planetViews=positions.map(player=>{const frame=getLandingCameraLocalFrame(player,anchor);return [0,0,0].map((v,i)=>v-frame.cameraPosition[i])});
- const avatarViews=positions.map(player=>player.map((v,i)=>v-getLandingCameraLocalFrame(player,anchor).cameraPosition[i]));
+ const planetViews=positions.map(player=>{const frame=getLandingCameraLocalFrame(player,anchor),planetLocal=[0,0,0].map((v,i)=>v-player[i]);return planetLocal.map((v,i)=>v-frame.cameraPosition[i])});
+ const avatarViews=positions.map(player=>{const frame=getLandingCameraLocalFrame(player,anchor);return [0,0,0].map((v,i)=>v-frame.cameraPosition[i])});
  assert.deepEqual(planetViews,[[0,0,-25],[0,0,-25],[0,0,-25]],'planet must remain fixed relative to the anchored camera');
  assert.deepEqual(avatarViews,[[0,0,-5],[0,0,-9],[0,0,-15]],'avatar must move toward the landing point in camera space');
  const landingView=getLandingCameraLocalFrame(positions[2],anchor);
