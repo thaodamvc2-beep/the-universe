@@ -115,7 +115,9 @@ export function FlightScene({bodies,avatarId,flightRef,inputRef,targetId,onArriv
    if(landingCameraAnchor.current?.targetId!==landingTarget.id){
     const center=new Vector3(...landingTarget.position),normal=f.position.clone().sub(center).normalize();
     if(normal.lengthSq()<1e-8)normal.set(0,0,1);
-    const cameraWorldPosition=f.position.clone().add(cameraForward.copy(forward).multiplyScalar(-5.55));
+    const approachDirection=center.clone().sub(f.position).normalize();
+    if(approachDirection.lengthSq()<1e-8)approachDirection.set(0,0,-1);
+    const cameraWorldPosition=f.position.clone().addScaledVector(approachDirection,-5.55);
     const landingFrame=createLandingCameraAnchor(f.position.toArray(),center.toArray(),landingTarget.radius*1.3+.08,cameraWorldPosition.toArray().map((value,index)=>value-f.position.toArray()[index]));
     landingCameraAnchor.current={targetId:landingTarget.id,cameraWorldPosition:new Vector3(...landingFrame.cameraWorldPosition),lookAtWorldPosition:new Vector3(...landingFrame.lookAtWorldPosition)};
    }
