@@ -16,7 +16,7 @@ export function UniverseGame(){
  const [exoplanetBodies,setExoplanetBodies]=useState<Body[]>([]),[exoplanetStatus,setExoplanetStatus]=useState('Đang tải dữ liệu NASA…');
  const [contextLost,setContextLost]=useState(false),[showAvatarChooser,setShowAvatarChooser]=useState(false),[showMenu,setShowMenu]=useState(false),[resting,setResting]=useState(false),[hudTick,setHudTick]=useState(0),[draftAvatar,setDraftAvatar]=useState<AvatarId>((guestIdentity?.avatarId??'stardust') as AvatarId),[sector,setSector]=useState(0),[proceduralBodies,setProceduralBodies]=useState<Body[]>(()=>makeProceduralRegion(0,0,0)),[selectedId,setSelectedId]=useState('mars'),[targetId,setTargetId]=useState<string|null>(null),[currentBodyId,setCurrentBodyId]=useState<string|null>('earth'),[audioEnabled,setAudioEnabled]=useState(false),[ ,setNetworkStatus]=useState('Chưa kết nối máy chủ nhiều người chơi'),[remotePlayers,setRemotePlayers]=useState<RemotePlayer[]>([]),[showDestinations,setShowDestinations]=useState(false),[showFeedback,setShowFeedback]=useState(false),[feedbackText,setFeedbackText]=useState(''),[destinationFilter,setDestinationFilter]=useState<'real'|'imagined'|'all'>('real');
  const input=useRef<InputState>({forward:false,back:false,left:false,right:false,up:false,down:false,land:false,takeoff:false,boost:false,resting:false});
- const flightRef=useRef<FlightState>({position:new Vector3(0,0,1.91),yaw:Math.PI/2,pitch:0,groundedId:'earth'});
+ const flightRef=useRef<FlightState>({position:new Vector3(0,0,3.1),yaw:Math.PI/2,pitch:0,groundedId:'earth'});
  const drag=useRef({active:false,x:0,y:0});
  const avatarId=(guestIdentity?.avatarId??'stardust') as AvatarId;
  useEffect(()=>{if(guestIdentity)setDraftAvatar(guestIdentity.avatarId as AvatarId)},[guestIdentity]);
@@ -68,7 +68,7 @@ export function UniverseGame(){
   }catch{setNetworkStatus('Không thể khởi tạo kết nối nhiều người chơi')}
  },[avatarId,guestIdentity?.guestId,nickname]);
 
- const resetHome=()=>{flightRef.current.position.set(0,0,1.91);flightRef.current.yaw=Math.PI/2;flightRef.current.pitch=0;flightRef.current.groundedId='earth';setCurrentBodyId('earth');setTargetId(null);setResting(false);input.current={forward:false,back:false,left:false,right:false,up:false,down:false,land:false,takeoff:false,boost:false,resting:false}};
+ const resetHome=()=>{flightRef.current.position.set(0,0,3.1);flightRef.current.yaw=Math.PI/2;flightRef.current.pitch=0;flightRef.current.groundedId='earth';setCurrentBodyId('earth');setTargetId(null);setResting(false);input.current={forward:false,back:false,left:false,right:false,up:false,down:false,land:false,takeoff:false,boost:false,resting:false}};
  const takeoff=()=>{setResting(false);input.current.resting=false;if(flightRef.current.groundedId){const b=bodies.find(x=>x.id===flightRef.current.groundedId);if(b){const n=flightRef.current.position.clone().sub(new Vector3(...b.position)).normalize();flightRef.current.position.addScaledVector(n,.9)}flightRef.current.groundedId=null;setCurrentBodyId(null)}input.current.takeoff=true};
  const setDirection=(key:keyof Pick<InputState,'forward'|'back'|'left'|'right'|'up'|'down'>,active:boolean)=>{if(active){setResting(false);input.current.resting=false}input.current[key]=active};
  const onPointerDown=(e:ReactPointerEvent<HTMLDivElement>)=>{drag.current={active:true,x:e.clientX,y:e.clientY};e.currentTarget.setPointerCapture(e.pointerId)};
