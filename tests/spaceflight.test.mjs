@@ -299,3 +299,14 @@ test('destination arrival rebases the camera outside the landed planet and level
  assert.match(scene,/cameraBodyId\.current=landedBody\?\.id\?\?null/);
  assert.match(scene,/target\.radius\*1\.3\+\(target\.landable \? 0\.08 : 1\.8\)/);
 });
+
+
+test('re-landing on the same planet forces a fresh surface and camera rebase even when no airborne frame was rendered',async()=>{
+ const scene=await read('apps/web/src/features/game/flight-scene.tsx');
+ const game=await read('apps/web/src/features/game/universe-game.tsx');
+ assert.match(scene,/groundingRevision:number/);
+ assert.match(scene,/cameraGroundingRevision\.current!==f\.groundingRevision/);
+ assert.match(scene,/surfaceGroundingRevision\.current!==f\.groundingRevision/);
+ assert.match(game,/groundingRevision:0/);
+ assert.match(game,/groundingRevision\+=1/);
+});
