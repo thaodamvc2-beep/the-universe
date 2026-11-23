@@ -132,7 +132,7 @@ test('angel remains at the floating origin and scales to the destination surface
 });
 test('manual landing enters a short controlled approach instead of snapping from far away',async()=>{
  const scene=await read('apps/web/src/features/game/flight-scene.tsx');
- assert.match(scene,/nearest\.d<=nearest\.body\.radius\+\.55/);
+ assert.match(scene,/nearest\.d<=nearest\.body\.radius\*1\.3\+\.55/);
  assert.match(scene,/brakingSpeed=Math\.sqrt\(2\*9\*remaining\)/);
 });
 
