@@ -293,7 +293,7 @@ test('desktop free-flight control uses a scalable vector angel-wings icon instea
 test('destination arrival rebases the camera outside the landed planet and levels its surface view',async()=>{
  const scene=await read('apps/web/src/features/game/flight-scene.tsx');
  assert.match(scene,/cameraBodyId=useRef<string\|null>\(null\)/);
- assert.match(scene,/const landedNow=!!landedBody&&cameraBodyId\.current!==landedBody\.id/);
+ assert.match(scene,/const landedNow=!!landedBody&&\(cameraBodyId\.current!==landedBody\.id\|\|cameraGroundingRevision\.current!==f\.groundingRevision\)/);
  assert.match(scene,/surfaceHeading\.current\.copy\(forward\);f\.yaw=Math\.atan2\(forward\.x,-forward\.z\);f\.pitch=0/);
  assert.match(scene,/if\(landedNow\)camera\.position\.copy\(desired\)/);
  assert.match(scene,/cameraBodyId\.current=landedBody\?\.id\?\?null/);
