@@ -30,7 +30,7 @@ export function UniverseGame(){
  const selected=destinationBodies.find(b=>b.id===selectedId)??REAL_DESTINATIONS[3];
  const current=destinationBodies.find(b=>b.id===currentBodyId)??bodies.find(b=>b.id===currentBodyId);
  const livePosition=flightRef.current.position;
- const distanceFromEarthLy=livePosition.length();
+ const earthSurfaceRadius=(bodies.find(b=>b.id==='earth')?.radius??0)*1.3+.08;\n const distanceFromEarthLy=Math.max(0,livePosition.length()-earthSurfaceRadius);
  const activeExoplanetId=targetId??currentBodyId;const sceneBodies=useMemo(()=>activeExoplanetId&&exoplanetBodies.some(b=>b.id===activeExoplanetId)?[...bodies,exoplanetBodies.find(b=>b.id===activeExoplanetId)!]:bodies,[bodies,exoplanetBodies,activeExoplanetId]);
  const onArrive=useCallback((id:string)=>{input.current.autoFlight=false;input.current.land=false;setCurrentBodyId(id);setTargetId(null)},[]);
 
