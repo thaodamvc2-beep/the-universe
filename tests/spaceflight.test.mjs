@@ -55,7 +55,7 @@ test('spaceflight now slows down, avoids planets and lands gently with visible w
  assert.match(scene,/seated/);
  assert.match(scene,/surfaceHeading/);
  assert.match(scene,/nextNormal/);
- assert.ok(scene.includes("5.2:2.25"));
+ assert.match(scene,/const cruise=\(i\.boost\?8\.5:5\.2\),step=cruise\*dt/);\n assert.match(scene,/i\.boost\?\.62:\.36/);
  assert.match(scene,/smoothedCameraUp/);
  assert.match(scene,/onLandRequest\(nearest\.body\.id\)/);
 });
@@ -165,7 +165,7 @@ test('avatar chooser no longer blocks the live universe on initial entry and the
  assert.doesNotMatch(game,/game-avatar-stage/);
 });
 
-test('reference HUD removes player counts and obstructive panels while keeping navigation accessible',async()=>{const game=await read('apps/web/src/features/game/universe-game.tsx');const css=await read('apps/web/src/app/globals.css');assert.match(game,/cosmic-location-pill/);assert.match(game,/cosmic-compass/);assert.match(game,/cosmic-action-dock/);assert.match(game,/cosmic-joystick/);assert.match(game,/cosmic-menu-panel/);assert.doesNotMatch(game,/cosmic-settings-panel|Cài đặt/);assert.doesNotMatch(game,/Online:\s*\$\{|<div className="game-live-status"/);assert.doesNotMatch(game,/cosmic-level-card|multiplayer-indicator/);assert.match(css,/\.game-live-status\{display:none!important\}/);});
+test('reference HUD removes player counts and obstructive panels while keeping navigation accessible',async()=>{const game=await read('apps/web/src/features/game/universe-game.tsx');const css=await read('apps/web/src/app/globals.css');assert.match(game,/cosmic-location-pill/);assert.match(game,/cosmic-compass/);assert.match(game,/cosmic-movement-rail/);assert.match(game,/cosmic-joystick/);assert.match(game,/cosmic-menu-panel/);assert.doesNotMatch(game,/cosmic-settings-panel|Cài đặt/);assert.doesNotMatch(game,/Online:\s*\$\{|<div className="game-live-status"/);assert.doesNotMatch(game,/cosmic-level-card|multiplayer-indicator/);assert.match(css,/\.game-live-status\{display:none!important\}/);});
 test('in-world angel PNG preserves its natural image aspect ratio, normal blending and sit state',async()=>{const scene=await read('apps/web/src/features/game/flight-scene.tsx');assert.match(scene,/\/the-universe\/avatars\/\$\{avatarId\}\.png/);assert.match(scene,/s\.scale\.set\(\.76\*aspect,\.76,1\)/);assert.match(scene,/s\.scale\.set\(\.55\*aspect,\.55,1\)/);assert.match(scene,/s\.scale\.set\(\.55\*aspect,\.55,1\)/);assert.match(scene,/multiplyScalar\(landedBody\?-5\.35:-5\.55\)/);assert.match(scene,/i\.resting/);});
 
 test('touch altitude controls remain available in the compact reference HUD',async()=>{const css=await read('apps/web/src/app/globals.css');assert.match(css,/flight-vertical\{display:flex/);assert.match(css,/cosmic-action-dock button\{width:40px;height:40px\}/)});
