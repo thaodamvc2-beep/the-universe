@@ -141,3 +141,11 @@
 .destination-detail>strong{display:block;margin-bottom:8px;font-size:13px;}
 .destination-detail button{width:100%;min-height:42px;margin-top:0;font-size:13px;font-weight:600;}
 @media(max-width:680px){.destination-panel{top:70px;max-height:min(70svh,620px);}.destination-list{max-height:none;}}
+
+
+/* Utility buttons sit directly below the flight/action rail, not in the bottom dock. */
+.universe-explorer .cosmic-utility-rail{position:absolute;z-index:7;right:clamp(12px,2vw,30px);left:auto;top:calc(50% + 150px);display:flex;flex-direction:column;align-items:center;gap:7px;}
+.universe-explorer .cosmic-utility-rail button{display:flex;width:58px;min-height:52px;flex-direction:column;align-items:center;justify-content:center;gap:3px;padding:4px 3px;border:1px solid rgba(170,195,244,.4);border-radius:13px;background:rgba(7,17,42,.68);color:#eef3ff;backdrop-filter:blur(12px);cursor:pointer;touch-action:manipulation;}
+.universe-explorer .cosmic-utility-rail button span{font-size:18px;line-height:1.1;}
+.universe-explorer .cosmic-utility-rail button small{font-size:7px;line-height:1.1;white-space:nowrap;color:#e0e8fa;}
+@media(max-width:760px){.universe-explorer .cosmic-utility-rail{right:8px;top:calc(46% + 145px);gap:5px}.universe-explorer .cosmic-utility-rail button{width:48px;min-height:45px;border-radius:11px}}
