@@ -81,7 +81,6 @@ function HomeSystemBeacon({flightRef,camera}:{flightRef:MutableRefObject<FlightS
   if(!ref.current)return;
   const p=flightRef.current.position;
   const toHome=new Vector3(-15.6-p.x,-p.y,-p.z);
-  const distance=toHome.length();
   const nearHomeSystem=p.length()<75&&!flightRef.current.groundedId;
   ref.current.visible=nearHomeSystem;
   if(!nearHomeSystem)return;
