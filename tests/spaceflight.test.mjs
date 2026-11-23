@@ -177,7 +177,7 @@ test('3D scene remains visible while avatar textures load and render errors prod
 test('free-flight toggle, manual steering and surface spawn/landing remain wired',async()=>{
  const scene=await read('apps/web/src/features/game/flight-scene.tsx');
  const game=await read('apps/web/src/features/game/universe-game.tsx');
- const controller=await read('apps/web/src/features/game/flight-controller.d.ts');assert.match(controller,/autoFlight: boolean/);
+ const controller=await read('apps/web/src/features/game/flight-controller.d.mts');assert.match(controller,/autoFlight: boolean/);
  assert.match(scene,/i\.mode==='flying'&&i\.autoFlight/);
  assert.match(scene,/body\?0:wave/);
  assert.doesNotMatch(scene,/HomeSystemBeacon|BeaconName|name:'Mercury'/);
