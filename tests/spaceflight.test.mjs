@@ -133,16 +133,16 @@ test('manual landing enters a short controlled approach instead of snapping from
 test('newly landed camera looks along a stable surface tangent, not into the planet',async()=>{
  const scene=await read('apps/web/src/features/game/flight-scene.tsx');
  assert.match(scene,/surfaceBodyId\.current!==body\.id/);
- assert.match(scene,/surfaceHeading\.current\.set\(0,0,-1\)\.projectOnPlane\(normal\)/);
+ assert.match(scene,/function stableSurfaceTangent\(direction:Vector3,normal:Vector3\)/);
  assert.match(scene,/right\.crossVectors\(forward,normal\)/);
- assert.match(scene,/cameraForward\.copy\(forward\)\.multiplyScalar\(Math\.cos\(surfacePitch\)\)/);
+ assert.match(scene,/cameraForward\.copy\(cameraTangent\)\.multiplyScalar\(Math\.cos\(surfacePitch\)\)/);
  assert.match(scene,/look\.copy\(cameraForward\)/);
 });
 test('surface movement uses a stable angular step independent of tiny planet radius',async()=>{
  const scene=await read('apps/web/src/features/game/flight-scene.tsx');
  assert.match(scene,/i\.boost\?\.62:\.36/);
  assert.match(scene,/addScaledVector\(tangent,/);
- assert.match(scene,/surfaceHeading\.current\.copy\(forward\)\.projectOnPlane\(nextNormal\)/);
+ assert.match(scene,/surfaceHeading\.current\.copy\(stableSurfaceTangent\(forward,nextNormal\)\)/);
 });
 test('removed Solar System guide does not leave its marker labels in the game scene',async()=>{
  const scene=await read('apps/web/src/features/game/flight-scene.tsx');
@@ -309,4 +309,14 @@ test('re-landing on the same planet forces a fresh surface and camera rebase eve
  assert.match(scene,/surfaceGroundingRevision\.current!==f\.groundingRevision/);
  assert.match(game,/groundingRevision:0/);
  assert.match(game,/groundingRevision\+=1/);
+});
+
+test('landing camera keeps a stable tangent frame and cannot stall when surface up flips',async()=>{
+ const scene=await read('apps/web/src/features/game/flight-scene.tsx');
+ assert.match(scene,/direction\.clone\(\)\.addScaledVector\(normal,-direction\.dot\(normal\)\)/);
+ assert.match(scene,/Math\.abs\(normal\.y\)<\.9\?new Vector3\(0,1,0\):new Vector3\(1,0,0\)/);
+ assert.match(scene,/stableSurfaceTangent\(forward,cameraUp\)/);
+ assert.match(scene,/smoothedCameraUp\.current\.dot\(playerUp\)<0\)smoothedCameraUp\.current\.copy\(playerUp\)/);
+ assert.match(scene,/f\.pitch=0;lastSurfaceYaw\.current=f\.yaw/);
+ assert.match(scene,/f\.groundingRevision\+=1;f\.position\.addScaledVector\(normal,\.9\)/);
 });
