@@ -149,3 +149,23 @@
 .universe-explorer .cosmic-utility-rail button span{font-size:18px;line-height:1.1;}
 .universe-explorer .cosmic-utility-rail button small{font-size:7px;line-height:1.1;white-space:nowrap;color:#e0e8fa;}
 @media(max-width:760px){.universe-explorer .cosmic-utility-rail{right:8px;top:calc(46% + 145px);gap:5px}.universe-explorer .cosmic-utility-rail button{width:48px;min-height:45px;border-radius:11px}}
+
+
+/* Requested control layout: Explore directly above Flight; compact utilities stay in the right rail. */
+.universe-explorer .cosmic-action-dock{display:none!important;}
+.universe-explorer .cosmic-movement-rail{gap:7px;}
+.universe-explorer .cosmic-utility-rail{top:calc(50% + 177px);right:clamp(12px,2vw,30px);left:auto;gap:6px;}
+.universe-explorer .cosmic-utility-rail button{width:58px;min-height:48px;padding:3px 2px;border-radius:12px;}
+.universe-explorer .cosmic-utility-rail button span{font-size:17px;}
+.universe-explorer .cosmic-utility-rail button small{font-size:7px;}
+.universe-explorer .cosmic-movement-rail button:disabled{opacity:.38;cursor:not-allowed;}
+@media(max-width:760px){
+ .universe-explorer .cosmic-movement-rail{right:8px;left:auto;top:46%;gap:5px;}
+ .universe-explorer .cosmic-movement-rail button{width:48px;min-height:47px;padding:3px 2px;border-radius:11px;}
+ .universe-explorer .cosmic-movement-rail button span{font-size:15px;}
+ .universe-explorer .cosmic-movement-rail button small{font-size:6.5px;}
+ .universe-explorer .cosmic-utility-rail{right:8px;left:auto;top:calc(46% + 138px);gap:4px;}
+ .universe-explorer .cosmic-utility-rail button{width:48px;min-height:43px;padding:2px;border-radius:10px;}
+ .universe-explorer .cosmic-utility-rail button span{font-size:15px;}
+ .universe-explorer .cosmic-utility-rail button small{font-size:6.5px;}
+}
