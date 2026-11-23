@@ -2,7 +2,7 @@ name: Deploy THE UNIVERSE to GitHub Pages
 
 on:
   push:
-    branches: ["main", "fix/mobile-desktop-flight-landing-ui", "fix/landing-destination-menu-distance-nebula"]
+    branches: ["main", "fix/mobile-desktop-flight-ui", "fix/landing-destination-menu-distance-nebula", "fix/desktop-nav-nebula-css-order"]
     paths:
       - "apps/web/**"
       - "tests/**"
