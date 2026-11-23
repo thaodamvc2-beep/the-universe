@@ -20,10 +20,10 @@ function NebulaBackdrop({flightRef}:{flightRef:MutableRefObject<FlightState>}){
  const [glow,setGlow]=useState<CanvasTexture|null>(null);
  const refs=[useRef<Sprite>(null),useRef<Sprite>(null),useRef<Sprite>(null),useRef<Sprite>(null)];
  const clouds=useMemo(()=>[{color:'#765bff',center:[-34,16,-72],size:[88,62]},{color:'#ff55ad',center:[42,-12,-88],size:[92,66]},{color:'#26e5d0',center:[8,28,-112],size:[78,56]},{color:'#ffb34f',center:[-68,-22,-96],size:[82,58]}] as const,[]);
- useEffect(()=>{const canvas=document.createElement('canvas');canvas.width=512;canvas.height=512;const ctx=canvas.getContext('2d');if(!ctx)return;const gradient=ctx.createRadialGradient(256,256,8,256,256,250);gradient.addColorStop(0,'rgba(255,255,255,.8)');gradient.addColorStop(.22,'rgba(255,255,255,.38)');gradient.addColorStop(.58,'rgba(255,255,255,.1)');gradient.addColorStop(1,'rgba(255,255,255,0)');ctx.fillStyle=gradient;ctx.fillRect(0,0,512,512);const texture=new CanvasTexture(canvas);texture.needsUpdate=true;setGlow(texture);return()=>texture.dispose()},[]);
+ useEffect(()=>{const canvas=document.createElement('canvas');canvas.width=512;canvas.height=512;const ctx=canvas.getContext('2d');if(!ctx)return;const gradient=ctx.createRadialGradient(256,256,8,256,256,250);gradient.addColorStop(0,'rgba(255,255,255,.96)');gradient.addColorStop(.22,'rgba(255,255,255,.58)');gradient.addColorStop(.58,'rgba(255,255,255,.2)');gradient.addColorStop(1,'rgba(255,255,255,0)');ctx.fillStyle=gradient;ctx.fillRect(0,0,512,512);const texture=new CanvasTexture(canvas);texture.needsUpdate=true;setGlow(texture);return()=>texture.dispose()},[]);
  useFrame(()=>{refs.forEach((ref,i)=>{if(ref.current){const c=clouds[i];ref.current.position.set(c.center[0]-flightRef.current.position.x,c.center[1]-flightRef.current.position.y,c.center[2]-flightRef.current.position.z)}})});
  if(!glow)return null;
- return <>{clouds.map((cloud,i)=><sprite key={i} ref={refs[i]} scale={[cloud.size[0],cloud.size[1],1]}><spriteMaterial map={glow} color={cloud.color} transparent opacity={.48} blending={AdditiveBlending} depthWrite={false} /></sprite>)}</>;
+ return <>{clouds.map((cloud,i)=><sprite key={i} ref={refs[i]} scale={[cloud.size[0],cloud.size[1],1]}><spriteMaterial map={glow} color={cloud.color} transparent opacity={.68} blending={AdditiveBlending} depthWrite={false} /></sprite>)}</>;
 }
 function PlanetLabel({body}:{body:Body}){
  const [texture,setTexture]=useState<CanvasTexture|null>(null);
@@ -57,7 +57,7 @@ function Avatar({avatarId,flightRef,inputRef,bodies}:{avatarId:AvatarId;flightRe
  const texture=useMemo(()=>{const t=loadedTexture.clone();t.colorSpace=SRGBColorSpace;t.needsUpdate=true;return t},[loadedTexture]);
  const sprite=useMemo(()=>{const material=new SpriteMaterial({map:texture,transparent:true,depthWrite:false,depthTest:true,alphaTest:.02,blending:NormalBlending,toneMapped:false});const s=new Sprite(material);s.center.set(.5,.02);const aspect=texture.image.width/texture.image.height||1;s.scale.set(.76*aspect,.76,1);return s},[texture]);
  useEffect(()=>()=>{sprite.material.dispose();texture.dispose()},[sprite,texture]);
- useFrame((state)=>{if(!ref.current)return;const f=flightRef.current,i=inputRef.current,body=f.groundedId?bodies.find(b=>b.id===f.groundedId):undefined;const wave=Math.sin(state.clock.elapsedTime*1.05);ref.current.visible=true;ref.current.position.set(0,0,0);if(body){const normal=f.position.clone().sub(new Vector3(...body.position)).normalize();ref.current.quaternion.setFromUnitVectors(worldUp,normal)}else{ref.current.quaternion.identity()}const seated=!!body&&i.resting;const size=body?Math.max(1.05,Math.min(1.25,body.radius*.72*1.3)):1.12;ref.current.scale.setScalar(size);ref.current.rotateY(Math.sin(state.clock.elapsedTime*.55)*.012);sprite.position.y=seated?-.085:body?0:wave*.018+((i.forward || i.back) ? .025 : 0)});
+ useFrame((state)=>{if(!ref.current)return;const f=flightRef.current,i=inputRef.current,body=f.groundedId?bodies.find(b=>b.id===f.groundedId):undefined;const wave=Math.sin(state.clock.elapsedTime*1.05);ref.current.visible=true;ref.current.position.set(0,0,0);if(body){const normal=f.position.clone().sub(new Vector3(...body.position)).normalize();ref.current.quaternion.setFromUnitVectors(worldUp,normal)}else{ref.current.quaternion.identity()}const seated=!!body&&i.resting;const size=body?Math.max(1.05,Math.min(1.25,body.radius*.72*1.3)):1.12;ref.current.scale.setScalar(size);ref.current.rotateY(Math.sin(state.clock.elapsedTime*.55)*.012);sprite.position.y=body?0:wave*.018+((i.forward || i.back) ? .025 : 0)});
  return <group ref={ref}><primitive object={sprite}/><SurfaceLabel name={surfaceBody?.name??null}/><pointLight position={[0,.3,.18]} color="#b9d8ff" intensity={.22} distance={2.8}/></group>;
 }
 function OtherAvatar({player,flightRef}:{player:RemotePlayer;flightRef:MutableRefObject<FlightState>}){
@@ -93,7 +93,7 @@ export function FlightScene({bodies,avatarId,flightRef,inputRef,targetId,onArriv
    forward.copy(surfaceHeading.current).projectOnPlane(normal).normalize();if(forward.lengthSq()<.001){forward.crossVectors(new Vector3(0,1,0),normal);if(forward.lengthSq()<.001)forward.crossVectors(new Vector3(1,0,0),normal);forward.normalize();surfaceHeading.current.copy(forward)}
    right.crossVectors(forward,normal).normalize();const move=new Vector3();if(i.forward)move.add(forward);if(i.back)move.sub(forward);if(i.right)move.add(right);if(i.left)move.sub(right);
    if(move.lengthSq()>0){i.resting=false;const tangent=move.normalize();const nextNormal=normal.clone().addScaledVector(tangent,(i.boost?.62:.36)*dt).normalize();surfaceHeading.current.copy(forward).projectOnPlane(nextNormal).normalize();f.position.copy(center).addScaledVector(nextNormal,body.radius*1.3+.08)}
-   if(i.takeoff||i.up){f.yaw=Math.atan2(surfaceHeading.current.x,-surfaceHeading.current.z);f.pitch=Math.asin(Math.max(-.95,Math.min(.95,surfaceHeading.current.y)));surfaceBodyId.current=null;f.groundedId=null;f.position.addScaledVector(normal,.9);i.takeoff=false}i.land=false;
+   if(i.land){f.position.copy(center).addScaledVector(normal,body.radius*1.3+.08);f.pitch=0;i.resting=false;}\n   if(i.takeoff||i.up){f.yaw=Math.atan2(surfaceHeading.current.x,-surfaceHeading.current.z);f.pitch=Math.asin(Math.max(-.95,Math.min(.95,surfaceHeading.current.y)));surfaceBodyId.current=null;f.groundedId=null;f.position.addScaledVector(normal,.9);i.takeoff=false}i.land=false;
   }else{
    forward.set(Math.sin(f.yaw)*Math.cos(f.pitch),Math.sin(f.pitch),-Math.cos(f.yaw)*Math.cos(f.pitch)).normalize();right.set(Math.cos(f.yaw),0,Math.sin(f.yaw)).normalize();
    const move=new Vector3();if(i.forward)move.add(forward);if(i.back)move.sub(forward);if(i.right)move.add(right);if(i.left)move.sub(right);if(i.up)move.y+=1;if(i.down)move.y-=1;if(i.autoFlight)move.add(forward);
@@ -106,7 +106,7 @@ export function FlightScene({bodies,avatarId,flightRef,inputRef,targetId,onArriv
   camera.position.lerp(desired,1-Math.exp(-4.5*dt));camera.up.copy(smoothedCameraUp.current);look.copy(cameraForward).multiplyScalar(2.6);camera.lookAt(look);
  });
  return <>
-  <color attach="background" args={['#111a3a']}/><ambientLight intensity={.5}/><hemisphereLight args={['#c8eaff','#7a3d8f',.42]}/>
+  <color attach="background" args={['#17234a']}/><ambientLight intensity={.58}/><hemisphereLight args={['#d9edff','#9656b8',.56]}/>
   <Stars/><NebulaBackdrop flightRef={flightRef}/>{bodies.map(body=><Planet key={body.id} body={body} flightRef={flightRef}/>)}{remotePlayers.map(player=><Suspense key={player.id} fallback={null}><OtherAvatar player={player} flightRef={flightRef}/></Suspense>)}<Suspense fallback={null}><Avatar avatarId={avatarId} flightRef={flightRef} inputRef={inputRef} bodies={bodies}/></Suspense>
  </>;
 }
