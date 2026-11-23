@@ -11,7 +11,6 @@ import { FlightScene, type FlightState, type InputState, type RemotePlayer } fro
 import { makeProceduralRegion, REAL_DESTINATIONS, type AvatarId, type Body } from './universe-data';
 import { AVATAR_OPTIONS } from '@/lib/identity/guest-identity.mjs';
 
-const CONSTELLATIONS=["Andromeda","Antlia","Apus","Aquarius","Aquila","Ara","Aries","Auriga","Boötes","Caelum","Camelopardalis","Cancer","Canes Venatici","Canis Major","Canis Minor","Capricornus","Carina","Cassiopeia","Centaurus","Cepheus","Cetus","Chamaeleon","Circinus","Columba","Coma Berenices","Corona Australis","Corona Borealis","Corvus","Crater","Crux","Cygnus","Delphinus","Dorado","Draco","Equuleus","Eridanus","Fornax","Gemini","Grus","Hercules","Horologium","Hydra","Hydrus","Indus","Lacerta","Leo","Leo Minor","Lepus","Libra","Lupus","Lynx","Lyra","Mensa","Microscopium","Monoceros","Musca","Norma","Octans","Ophiuchus","Orion","Pavo","Pegasus","Perseus","Phoenix","Pictor","Pisces","Piscis Austrinus","Puppis","Pyxis","Reticulum","Sagitta","Sagittarius","Scorpius","Sculptor","Scutum","Serpens","Sextans","Taurus","Telescopium","Triangulum","Triangulum Australe","Tucana","Ursa Major","Ursa Minor","Vela","Virgo","Volans","Vulpecula"];
 export function UniverseGame(){
  const {language,setLanguage,guestIdentity,updateGuestIdentity}=useSite();
  const [exoplanetBodies,setExoplanetBodies]=useState<Body[]>([]),[exoplanetStatus,setExoplanetStatus]=useState('Đang tải dữ liệu NASA…');
