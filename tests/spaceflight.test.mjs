@@ -209,7 +209,7 @@ test('manual movement immediately cancels destination autopilot and landing appr
 test('distance from Earth is shown as an explicitly simulated light-year value and the nebula background is brighter',async()=>{
  const game=await read('apps/web/src/features/game/universe-game.tsx');
  const scene=await read('apps/web/src/features/game/flight-scene.tsx');
- const css=await read('apps/web/src/app/globals.css');
+ const css=await read('apps/web/src/app/universe-game.css');
  assert.match(game,/distanceFromEarthLy=livePosition\.length\(\)/);
  assert.match(game,/năm ánh sáng mô phỏng/);
  assert.match(scene,/args=\{\['#111a3a'\]\}/);
