@@ -100,9 +100,9 @@ test('immersive game HUD follows the supplied celestial exploration layout witho
  const css=await read('apps/web/src/app/globals.css');
  assert.match(game,/cosmic-action-dock/);
  assert.match(game,/game-fullscreen/);
- assert.doesNotMatch(game,/cosmic-utility-rail/);
+ assert.match(game,/cosmic-utility-rail/);
  assert.match(scene,/s\.scale\.set\(\.76\*aspect,\.76,1\)/);assert.match(scene,/s\.scale\.set\(\.55\*aspect,\.55,1\)/);
- assert.match(scene,/landedBody\?2\.6:2\.6/);
+ assert.match(scene,/look\.copy\(cameraForward\)/);
  assert.match(css,/Reference-matched immersive HUD/);
  assert.match(css,/game-dpad\{position:relative;display:grid;width:148px;height:148px/);
 });
@@ -128,7 +128,7 @@ test('real destination staging keeps Earth as home while distributing planets in
  assert.match(scene,/AdditiveBlending/);
 });
 
-test('game renders one selected PNG angel and keeps utility controls in one compact Vietnamese dock',async()=>{
+test('game renders one selected PNG angel and keeps movement controls and separate vertical utility rail',async()=>{
  const game=await read('apps/web/src/features/game/universe-game.tsx');
  const css=await read('apps/web/src/app/universe-game.css');
  const scene=await read('apps/web/src/features/game/flight-scene.tsx');
@@ -140,6 +140,7 @@ test('game renders one selected PNG angel and keeps utility controls in one comp
  assert.doesNotMatch(scene,/celestial-avatars\.webp|celestial-six\.webp|AVATAR_CELLS/);
  for(const label of ['Hạ cánh','Ngồi','Đi bộ','Bay','Âm thanh','Góp ý']) assert.ok(game.includes(label),label);
  assert.match(css,/cosmic-action-dock\{right:.*display:flex;flex-direction:row/);
+ assert.match(css,/cosmic-utility-rail\{position:absolute;z-index:7;right:.*display:flex;flex-direction:column/);
  assert.match(game,/cosmic-movement-rail/);
  assert.match(game,/role="group" aria-label="Điều khiển nhân vật"/);
  for(const label of ['Hạ cánh','Ngồi','Đi bộ','Bay']) assert.ok(game.slice(game.indexOf('cosmic-movement-rail'),game.indexOf('game-bottom-actions explorer-actions cosmic-action-dock')).includes(label),label);
