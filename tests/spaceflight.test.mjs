@@ -183,3 +183,18 @@ test('3D scene remains visible while avatar textures load and render errors prod
  assert.match(boundary,/getDerivedStateFromError/);
  assert.match(boundary,/componentDidCatch/);
 });
+
+
+test('free-flight toggle, manual steering and surface spawn/landing remain wired',async()=>{
+ const scene=await read('apps/web/src/features/game/flight-scene.tsx');
+ const game=await read('apps/web/src/features/game/universe-game.tsx');
+ assert.match(scene,/autoFlight:boolean/);
+ assert.match(scene,/if\(i\.autoFlight\)move\.add\(forward\)/);
+ assert.match(scene,/body\?0:wave/);
+ assert.doesNotMatch(scene,/HomeSystemBeacon|BeaconName|name:'Mercury'/);
+ assert.match(game,/const toggleFlight=/);
+ assert.match(game,/aria-pressed=\{input\.current\.autoFlight\}/);
+ assert.match(game,/cosmic-flight-toggle/);
+ assert.match(game,/position:new Vector3\(0,0,2\.94\)/);
+ assert.match(game,/cosmic-menu-close/);
+});
