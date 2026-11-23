@@ -475,16 +475,3 @@
  .universe-explorer .game-dpad{width:94px;height:94px}
  .universe-explorer .cosmic-feedback-panel{right:52px;bottom:140px;width:calc(100vw - 64px)}
 }
-
-
-/* Desktop destination navigation and persistent simulated light-year readout. */
-@media(min-width:761px){
- .universe-explorer .game-nav{display:flex;align-items:center;gap:clamp(12px,2vw,28px);pointer-events:auto}
- .universe-explorer .game-nav button,.universe-explorer .game-nav a{pointer-events:auto;color:#edf2ff;font-size:12px;text-shadow:0 1px 8px rgba(0,0,0,.8)}
- .universe-explorer .game-nav button{padding:9px 13px;border:1px solid rgba(190,210,255,.4);border-radius:20px;background:rgba(8,18,43,.62)}
- .universe-explorer .game-nav button:hover{background:rgba(86,112,177,.62)}
-}
-.universe-explorer .cosmic-location-pill{z-index:9;}
-.universe-explorer .cosmic-distance-line{display:block;margin-top:4px;color:#e4edff!important;font-size:11px!important;letter-spacing:0!important;line-height:1.35}
-@media(max-width:760px){.universe-explorer .cosmic-distance-line{font-size:8px!important}}
-.universe-explorer .game-vignette{background:linear-gradient(180deg,rgba(8,17,39,.16),transparent 24%,transparent 68%,rgba(8,17,39,.18)),radial-gradient(ellipse at center,transparent 48%,rgba(12,22,48,.10) 100%)}
