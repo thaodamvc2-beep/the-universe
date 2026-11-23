@@ -98,7 +98,7 @@ test('immersive game HUD follows the supplied celestial exploration layout witho
  const game=await read('apps/web/src/features/game/universe-game.tsx');
  const scene=await read('apps/web/src/features/game/flight-scene.tsx');
  const css=await read('apps/web/src/app/globals.css');
- assert.match(game,/cosmic-action-dock/);
+ assert.match(game,/cosmic-movement-rail/);
  assert.match(game,/game-fullscreen/);
  assert.match(game,/cosmic-utility-rail/);
  assert.match(scene,/s\.scale\.set\(\.76\*aspect,\.76,1\)/);assert.match(scene,/s\.scale\.set\(\.55\*aspect,\.55,1\)/);
