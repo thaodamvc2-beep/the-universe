@@ -2,6 +2,14 @@ name: Deploy THE UNIVERSE to GitHub Pages
 
 on:
   push:
+    branches: ["main", "fix/mobile-desktop-flight-landing-ui"]
+    paths:
+      - "apps/web/**"
+      - "tests/**"
+      - "package.json"
+      - "package-lock.json"
+      - ".github/workflows/static.yml"
+  pull_request:
     branches: ["main"]
     paths:
       - "apps/web/**"
@@ -17,7 +25,7 @@ permissions:
   id-token: write
 
 concurrency:
-  group: pages
+  group: pages-${{ github.workflow }}-${{ github.event_name }}-${{ github.ref }}
   cancel-in-progress: false
 
 jobs:
@@ -48,6 +56,7 @@ jobs:
         with:
           path: apps/web/out
   deploy:
+    if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}

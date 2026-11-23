@@ -78,13 +78,9 @@ test('far-world scene uses a floating origin so the angel and destinations remai
  assert.match(scene,/player\.position\[0\]-flightRef\.current\.position\.x/);
  assert.match(scene,/camera\.lookAt\(look\)/);
 });
-test('solar-system guide is hidden in deep space and only shown near home while flying',async()=>{
+test('floating Solar System guide and planetary name strips are removed from the game scene',async()=>{
  const scene=await read('apps/web/src/features/game/flight-scene.tsx');
- assert.match(scene,/function HomeSystemBeacon/);
- assert.match(scene,/nearHomeSystem=p\.length\(\)<75&&!flightRef\.current\.groundedId/);
- assert.match(scene,/function BeaconName/);
- for(const name of ['Mercury','Venus','Earth','Mars','Jupiter','Saturn','Uranus','Neptune'])assert.ok(scene.includes(`name:'${name}'`));
- assert.match(scene,/cameraOffset/);
+ assert.doesNotMatch(scene,/HomeSystemBeacon|BeaconName|name:'Mercury'|name:'Venus'|name:'Earth'/);
 });
 test('player character is rendered as a lightweight flying angel rather than a spacesuit',async()=>{
  const scene=await read('apps/web/src/features/game/flight-scene.tsx');
@@ -115,15 +111,10 @@ test('in-game angel follows all six identities using their individual transparen
  assert.match(scene,/SurfaceLabel name=\{surfaceBody\?\.name\?\?null\}/);
  assert.doesNotMatch(scene,/Tóc dài búi trâm cổ phong|Cổ phục tiên gia|feather\(/);
 });
-test('home-system direction marker uses the real Sun position and camera-space direction at the screen edge',async()=>{
+test('game scene no longer renders the floating home-system direction marker',async()=>{
  const scene=await read('apps/web/src/features/game/flight-scene.tsx');
- assert.match(scene,/new Vector3\(-15\.6-p\.x,-p\.y,-p\.z\)/);
- assert.match(scene,/camera\.quaternion\.clone\(\)\.invert\(\)/);
- assert.match(scene,/camera\.position\)\.add\(cameraOffset\)/);
- assert.match(scene,/camera\.quaternion\)/);
- assert.match(scene,/nearHomeSystem=p\.length\(\)<75&&!flightRef\.current\.groundedId/);
+ assert.doesNotMatch(scene,/HomeSystemBeacon|BeaconName|cameraOffset/);
 });
-
 test('angel remains at the floating origin and scales to the destination surface',async()=>{
  const scene=await read('apps/web/src/features/game/flight-scene.tsx');
  assert.match(scene,/ref\.current\.position\.set\(0,0,0\)/);
@@ -153,12 +144,10 @@ test('surface movement uses a stable angular step independent of tiny planet rad
  assert.match(scene,/addScaledVector\(tangent,/);
  assert.match(scene,/surfaceHeading\.current\.copy\(forward\)\.projectOnPlane\(nextNormal\)/);
 });
-test('solar system direction marker is slightly larger and labels remain legible',async()=>{
+test('removed Solar System guide does not leave its marker labels in the game scene',async()=>{
  const scene=await read('apps/web/src/features/game/flight-scene.tsx');
- assert.match(scene,/ref\.current\.scale\.setScalar\(\.8\)/);
- assert.match(scene,/scale=\{\[\.58,\.145,1\]\}/);
+ assert.doesNotMatch(scene,/BeaconName|HomeSystemBeacon|scale=\{\[\.58,\.145,1\]\}/);
 });
-
 test('avatar chooser no longer blocks the live universe on initial entry and the fake top-right orbit map is removed',async()=>{
  const game=await read('apps/web/src/features/game/universe-game.tsx');
  assert.match(game,/showAvatarChooser,setShowAvatarChooser\]=useState\(false\)/);
@@ -182,4 +171,19 @@ test('3D scene remains visible while avatar textures load and render errors prod
  assert.match(scene,/<Suspense key=\{player\.id\} fallback=\{null\}><OtherAvatar/);
  assert.match(boundary,/getDerivedStateFromError/);
  assert.match(boundary,/componentDidCatch/);
+});
+
+
+test('free-flight toggle, manual steering and surface spawn/landing remain wired',async()=>{
+ const scene=await read('apps/web/src/features/game/flight-scene.tsx');
+ const game=await read('apps/web/src/features/game/universe-game.tsx');
+ assert.match(scene,/autoFlight:boolean/);
+ assert.match(scene,/if\(i\.autoFlight\)move\.add\(forward\)/);
+ assert.match(scene,/body\?0:wave/);
+ assert.doesNotMatch(scene,/HomeSystemBeacon|BeaconName|name:'Mercury'/);
+ assert.match(game,/const toggleFlight=/);
+ assert.match(game,/aria-pressed=\{input\.current\.autoFlight\}/);
+ assert.match(game,/cosmic-flight-toggle/);
+ assert.match(game,/position:new Vector3\(0,0,2\.94\)/);
+ assert.match(game,/cosmic-menu-close/);
 });

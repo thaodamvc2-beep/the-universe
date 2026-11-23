@@ -2,11 +2,11 @@
 import { Suspense, useEffect, useMemo, useRef, useState } from 'react';
 import type { MutableRefObject } from 'react';
 import { useFrame, useLoader, useThree } from '@react-three/fiber';
-import { AdditiveBlending, BackSide, Camera, CanvasTexture, Group, NormalBlending, Sprite, SpriteMaterial, SRGBColorSpace, TextureLoader, Vector3 } from 'three';
+import { AdditiveBlending, BackSide, CanvasTexture, Group, NormalBlending, Sprite, SpriteMaterial, SRGBColorSpace, TextureLoader, Vector3 } from 'three';
 import type { AvatarId, Body } from './universe-data';
 
 export type FlightState={position:Vector3;yaw:number;pitch:number;groundedId:string|null};
-export type InputState=Record<'forward'|'back'|'left'|'right'|'up'|'down',boolean>&{land:boolean;takeoff:boolean;boost:boolean;resting:boolean};
+export type InputState=Record<'forward'|'back'|'left'|'right'|'up'|'down',boolean>&{land:boolean;takeoff:boolean;boost:boolean;resting:boolean;autoFlight:boolean};
 export type RemotePlayer={id:string;nickname:string;avatarId:AvatarId;position:[number,number,number]};
 
 function Stars(){
@@ -57,7 +57,7 @@ function Avatar({avatarId,flightRef,inputRef,bodies}:{avatarId:AvatarId;flightRe
  const texture=useMemo(()=>{const t=loadedTexture.clone();t.colorSpace=SRGBColorSpace;t.needsUpdate=true;return t},[loadedTexture]);
  const sprite=useMemo(()=>{const material=new SpriteMaterial({map:texture,transparent:true,depthWrite:false,depthTest:true,alphaTest:.02,blending:NormalBlending,toneMapped:false});const s=new Sprite(material);s.center.set(.5,.02);const aspect=texture.image.width/texture.image.height||1;s.scale.set(.76*aspect,.76,1);return s},[texture]);
  useEffect(()=>()=>{sprite.material.dispose();texture.dispose()},[sprite,texture]);
- useFrame((state)=>{if(!ref.current)return;const f=flightRef.current,i=inputRef.current,body=f.groundedId?bodies.find(b=>b.id===f.groundedId):undefined;const wave=Math.sin(state.clock.elapsedTime*1.05);ref.current.visible=true;ref.current.position.set(0,0,0);if(body){const normal=f.position.clone().sub(new Vector3(...body.position)).normalize();ref.current.quaternion.setFromUnitVectors(worldUp,normal)}else{ref.current.quaternion.identity()}const seated=!!body&&i.resting;const size=body?Math.max(1.05,Math.min(1.25,body.radius*.72*1.3)):1.12;ref.current.scale.setScalar(size);ref.current.rotateY(Math.sin(state.clock.elapsedTime*.55)*.012);sprite.position.y=.025+wave*.018+(seated?-.085:((i.forward || i.back) ? .025 : 0))});
+ useFrame((state)=>{if(!ref.current)return;const f=flightRef.current,i=inputRef.current,body=f.groundedId?bodies.find(b=>b.id===f.groundedId):undefined;const wave=Math.sin(state.clock.elapsedTime*1.05);ref.current.visible=true;ref.current.position.set(0,0,0);if(body){const normal=f.position.clone().sub(new Vector3(...body.position)).normalize();ref.current.quaternion.setFromUnitVectors(worldUp,normal)}else{ref.current.quaternion.identity()}const seated=!!body&&i.resting;const size=body?Math.max(1.05,Math.min(1.25,body.radius*.72*1.3)):1.12;ref.current.scale.setScalar(size);ref.current.rotateY(Math.sin(state.clock.elapsedTime*.55)*.012);sprite.position.y=seated?-.085:body?0:wave*.018+((i.forward || i.back) ? .025 : 0)});
  return <group ref={ref}><primitive object={sprite}/><SurfaceLabel name={surfaceBody?.name??null}/><pointLight position={[0,.3,.18]} color="#b9d8ff" intensity={.22} distance={2.8}/></group>;
 }
 function OtherAvatar({player,flightRef}:{player:RemotePlayer;flightRef:MutableRefObject<FlightState>}){
@@ -68,55 +68,6 @@ function OtherAvatar({player,flightRef}:{player:RemotePlayer;flightRef:MutableRe
  useEffect(()=>()=>{sprite.material.dispose();texture.dispose()},[sprite,texture]);
  useFrame(()=>{if(ref.current)ref.current.position.set(player.position[0]-flightRef.current.position.x,player.position[1]-flightRef.current.position.y,player.position[2]-flightRef.current.position.z)});
  return <group ref={ref}><primitive object={sprite}/></group>;
-}
-function BeaconName({name,position}:{name:string;position:[number,number,number]}) {
- const [texture,setTexture]=useState<CanvasTexture|null>(null);
- useEffect(()=>{const canvas=document.createElement('canvas');canvas.width=180;canvas.height=42;const ctx=canvas.getContext('2d');if(!ctx)return;ctx.fillStyle='rgba(7,15,31,.84)';ctx.beginPath();ctx.roundRect(4,4,172,34,9);ctx.fill();ctx.font='600 18px Arial,sans-serif';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillStyle='#f4f5ff';ctx.fillText(name,90,21,164);const map=new CanvasTexture(canvas);map.needsUpdate=true;setTexture(map);return()=>map.dispose()},[name]);
- if(!texture)return null;
- return <sprite position={position} scale={[.58,.145,1]}><spriteMaterial map={texture} transparent depthWrite={false}/></sprite>;
-}
-function HomeSystemBeacon({flightRef,camera}:{flightRef:MutableRefObject<FlightState>;camera:Camera}){
- const ref=useRef<Group>(null);
- useFrame(()=>{
-  if(!ref.current)return;
-  const p=flightRef.current.position;
-  const toHome=new Vector3(-15.6-p.x,-p.y,-p.z);
-  const nearHomeSystem=p.length()<75&&!flightRef.current.groundedId;
-  ref.current.visible=nearHomeSystem;
-  if(!nearHomeSystem)return;
-  const local=toHome.normalize().applyQuaternion(camera.quaternion.clone().invert());
-  let sx=local.x,sy=local.y;const planar=Math.hypot(sx,sy);
-  if(planar<.06){sx=0;sy=local.z>0?1:-1}else{sx/=planar;sy/=planar}
-  const edge=Math.max(Math.abs(sx)/.68,Math.abs(sy)/.62,1);
-  const cameraOffset=new Vector3(sx/edge*2.7,sy/edge*1.58,-8.2).applyQuaternion(camera.quaternion);
-  ref.current.position.copy(camera.position).add(cameraOffset);
-  ref.current.quaternion.copy(camera.quaternion);
-  ref.current.scale.setScalar(.8);
- });
- const planets=[
-  {name:'Mercury',x:-1.05,color:'#a9a19b',r:.035,labelY:.25},
-  {name:'Venus',x:-.76,color:'#d8b27e',r:.045,labelY:-.25},
-  {name:'Earth',x:-.47,color:'#4da9df',r:.055,labelY:.25},
-  {name:'Mars',x:-.18,color:'#c87861',r:.043,labelY:-.25},
-  {name:'Jupiter',x:.2,color:'#d4b08e',r:.085,labelY:.25},
-  {name:'Saturn',x:.57,color:'#d8c39f',r:.073,labelY:-.25},
-  {name:'Uranus',x:.94,color:'#91d3d5',r:.06,labelY:.25},
-  {name:'Neptune',x:1.28,color:'#6689df',r:.06,labelY:-.25}
- ];
- return <group ref={ref} visible={false}>
-  <group position={[0,.08,0]}>
-   <mesh position={[-1.36,0,0]}><sphereGeometry args={[.14,16,12]}/><meshBasicMaterial color="#ffd477"/></mesh>
-   <mesh position={[-1.36,0,0]}><sphereGeometry args={[.2,12,8]}/><meshBasicMaterial color="#ffd477" transparent opacity={.12}/></mesh>
-   <mesh position={[-.02,0,0]} scale={[1.42,.012,.012]}><sphereGeometry args={[1,20,12]}/><meshBasicMaterial color="#9bb8e9" transparent opacity={.6}/></mesh>
-   {planets.map((planet)=><group key={planet.name}>
-    <mesh position={[planet.x,0,0]}><sphereGeometry args={[planet.r,12,10]}/><meshBasicMaterial color={planet.color}/></mesh>
-    {planet.name==='Saturn'&&<mesh position={[planet.x,0,0]} rotation={[0,0,.15]}><torusGeometry args={[.12,.012,4,24]}/><meshBasicMaterial color="#d8c39f" transparent opacity={.85}/></mesh>}
-    {planet.name==='Earth'&&<mesh position={[planet.x,0,.01]}><sphereGeometry args={[planet.r*1.04,10,8]}/><meshBasicMaterial color="#75c99a" wireframe transparent opacity={.7}/></mesh>}
-    <BeaconName name={planet.name} position={[planet.x,planet.labelY,0]}/>
-   </group>)}
-   <mesh position={[0,-.38,0]} rotation={[0,0,Math.PI]}><coneGeometry args={[.09,.2,8]}/><meshBasicMaterial color="#fff0bd"/></mesh>
-  </group>
- </group>;
 }
 function moveAvoidingBodies(start:Vector3,displacement:Vector3,bodies:Body[],ignoreId:string|null){
  const length=displacement.length();if(length<1e-8)return start.clone();
@@ -132,20 +83,20 @@ export function FlightScene({bodies,avatarId,flightRef,inputRef,targetId,onArriv
   const dt=Math.min(delta,.04),f=flightRef.current,i=inputRef.current,body=f.groundedId?bodies.find(b=>b.id===f.groundedId):undefined;
   const cruise=(i.boost?8.5:5.2),step=cruise*dt;
   if(!targetId){previousTarget.current=null;targetFlightSpeed.current=2.25;if(!f.groundedId)surfaceBodyId.current=null;}
-  if(targetId){const target=bodies.find(b=>b.id===targetId);if(target){const center=new Vector3(...target.position),dir=center.clone().sub(f.position),distance=dir.length(),stop=target.radius*1.3+(target.landable ? 0.24 : 1.8);if(distance>stop){const remaining=distance-stop;dir.normalize();const maximumSpeed=Math.min(42,3.4+distance*.32)*(i.boost?1.25:1);const brakingSpeed=Math.sqrt(2*9*remaining);const desiredSpeed=Math.min(maximumSpeed,Math.max(.9,brakingSpeed));targetFlightSpeed.current+=(desiredSpeed-targetFlightSpeed.current)*(1-Math.exp(-2.6*dt));const amount=Math.min(targetFlightSpeed.current*dt,remaining);f.position.copy(moveAvoidingBodies(f.position,dir.clone().multiplyScalar(amount),bodies,target.id));const desiredYaw=Math.atan2(dir.x,-dir.z);const yawDelta=Math.atan2(Math.sin(desiredYaw-f.yaw),Math.cos(desiredYaw-f.yaw));f.yaw+=yawDelta*(1-Math.exp(-3.8*dt));const desiredPitch=Math.asin(Math.max(-.95,Math.min(.95,dir.y)));f.pitch+=(desiredPitch-f.pitch)*(1-Math.exp(-3.8*dt))}else if(previousTarget.current!==targetId){previousTarget.current=targetId;f.position.copy(center).addScaledVector(f.position.clone().sub(center).normalize(),stop);if(target.landable){f.groundedId=target.id;f.pitch=0}onArrive(targetId)}}}
+  if(targetId){const target=bodies.find(b=>b.id===targetId);if(target){const center=new Vector3(...target.position),dir=center.clone().sub(f.position),distance=dir.length(),stop=target.radius*1.3+(target.landable ? 0.08 : 1.8);if(distance>stop){const remaining=distance-stop;dir.normalize();const maximumSpeed=Math.min(42,3.4+distance*.32)*(i.boost?1.25:1);const brakingSpeed=Math.sqrt(2*9*remaining);const desiredSpeed=Math.min(maximumSpeed,Math.max(.9,brakingSpeed));targetFlightSpeed.current+=(desiredSpeed-targetFlightSpeed.current)*(1-Math.exp(-2.6*dt));const amount=Math.min(targetFlightSpeed.current*dt,remaining);f.position.copy(moveAvoidingBodies(f.position,dir.clone().multiplyScalar(amount),bodies,target.id));const desiredYaw=Math.atan2(dir.x,-dir.z);const yawDelta=Math.atan2(Math.sin(desiredYaw-f.yaw),Math.cos(desiredYaw-f.yaw));f.yaw+=yawDelta*(1-Math.exp(-3.8*dt));const desiredPitch=Math.asin(Math.max(-.95,Math.min(.95,dir.y)));f.pitch+=(desiredPitch-f.pitch)*(1-Math.exp(-3.8*dt))}else if(previousTarget.current!==targetId){previousTarget.current=targetId;f.position.copy(center).addScaledVector(f.position.clone().sub(center).normalize(),stop);if(target.landable){f.groundedId=target.id;f.pitch=0}onArrive(targetId)}}}
   else if(body){
    const center=new Vector3(...body.position),normal=f.position.clone().sub(center).normalize();playerUp.copy(normal);
    if(surfaceBodyId.current!==body.id){surfaceBodyId.current=body.id;surfaceHeading.current.set(Math.sin(f.yaw),0,-Math.cos(f.yaw)).projectOnPlane(normal);if(surfaceHeading.current.lengthSq()<.001)surfaceHeading.current.set(0,0,-1).projectOnPlane(normal);if(surfaceHeading.current.lengthSq()<.001)surfaceHeading.current.set(1,0,0).projectOnPlane(normal);surfaceHeading.current.normalize();f.yaw=Math.atan2(surfaceHeading.current.x,-surfaceHeading.current.z);f.pitch=Math.asin(Math.max(-.95,Math.min(.95,surfaceHeading.current.y)));lastSurfaceYaw.current=f.yaw}
    const yawDelta=f.yaw-lastSurfaceYaw.current;if(Math.abs(yawDelta)>.00001){surfaceHeading.current.applyAxisAngle(normal,yawDelta).projectOnPlane(normal).normalize();lastSurfaceYaw.current=f.yaw}
    forward.copy(surfaceHeading.current).projectOnPlane(normal).normalize();if(forward.lengthSq()<.001){forward.crossVectors(new Vector3(0,1,0),normal);if(forward.lengthSq()<.001)forward.crossVectors(new Vector3(1,0,0),normal);forward.normalize();surfaceHeading.current.copy(forward)}
    right.crossVectors(forward,normal).normalize();const move=new Vector3();if(i.forward)move.add(forward);if(i.back)move.sub(forward);if(i.right)move.add(right);if(i.left)move.sub(right);
-   if(move.lengthSq()>0){i.resting=false;const tangent=move.normalize();const nextNormal=normal.clone().addScaledVector(tangent,(i.boost?.62:.36)*dt).normalize();surfaceHeading.current.copy(forward).projectOnPlane(nextNormal).normalize();f.position.copy(center).addScaledVector(nextNormal,body.radius*1.3+.22)}
+   if(move.lengthSq()>0){i.resting=false;const tangent=move.normalize();const nextNormal=normal.clone().addScaledVector(tangent,(i.boost?.62:.36)*dt).normalize();surfaceHeading.current.copy(forward).projectOnPlane(nextNormal).normalize();f.position.copy(center).addScaledVector(nextNormal,body.radius*1.3+.08)}
    if(i.takeoff||i.up){f.yaw=Math.atan2(surfaceHeading.current.x,-surfaceHeading.current.z);f.pitch=Math.asin(Math.max(-.95,Math.min(.95,surfaceHeading.current.y)));surfaceBodyId.current=null;f.groundedId=null;f.position.addScaledVector(normal,.9);i.takeoff=false}i.land=false;
   }else{
    forward.set(Math.sin(f.yaw)*Math.cos(f.pitch),Math.sin(f.pitch),-Math.cos(f.yaw)*Math.cos(f.pitch)).normalize();right.set(Math.cos(f.yaw),0,Math.sin(f.yaw)).normalize();
-   const move=new Vector3();if(i.forward)move.add(forward);if(i.back)move.sub(forward);if(i.right)move.add(right);if(i.left)move.sub(right);if(i.up)move.y+=1;if(i.down)move.y-=1;
+   const move=new Vector3();if(i.forward)move.add(forward);if(i.back)move.sub(forward);if(i.right)move.add(right);if(i.left)move.sub(right);if(i.up)move.y+=1;if(i.down)move.y-=1;if(i.autoFlight)move.add(forward);
    if(move.lengthSq()>0)f.position.copy(moveAvoidingBodies(f.position,move.normalize().multiplyScalar(step),bodies,null));
-   if(i.land){const nearest=bodies.filter(b=>b.landable).map(b=>({body:b,d:f.position.distanceTo(new Vector3(...b.position))})).sort((a,b)=>a.d-b.d)[0];if(nearest){if(nearest.d<=nearest.body.radius*1.3+.55){const center=new Vector3(...nearest.body.position),normal=f.position.clone().sub(center).normalize();f.position.copy(center).addScaledVector(normal,nearest.body.radius*1.3+.24);f.groundedId=nearest.body.id;f.pitch=0;onArrive(nearest.body.id)}else{onLandRequest(nearest.body.id)}}i.land=false}
+   if(i.land){const nearest=bodies.filter(b=>b.landable).map(b=>({body:b,d:f.position.distanceTo(new Vector3(...b.position))})).sort((a,b)=>a.d-b.d)[0];if(nearest){if(nearest.d<=nearest.body.radius*1.3+.55){const center=new Vector3(...nearest.body.position),normal=f.position.clone().sub(center).normalize();f.position.copy(center).addScaledVector(normal,nearest.body.radius*1.3+.08);f.groundedId=nearest.body.id;f.pitch=0;onArrive(nearest.body.id)}else{onLandRequest(nearest.body.id)}}i.land=false}
    i.takeoff=false;
   }
   const landedBody=f.groundedId?bodies.find(b=>b.id===f.groundedId):undefined;if(landedBody){playerUp.copy(f.position).sub(new Vector3(...landedBody.position)).normalize();forward.copy(surfaceHeading.current).projectOnPlane(playerUp).normalize();if(forward.lengthSq()<.001){forward.crossVectors(new Vector3(0,1,0),playerUp);if(forward.lengthSq()<.001)forward.crossVectors(new Vector3(1,0,0),playerUp);forward.normalize();surfaceHeading.current.copy(forward)}}else{playerUp.set(0,1,0);forward.set(Math.sin(f.yaw)*Math.cos(f.pitch),Math.sin(f.pitch),-Math.cos(f.yaw)*Math.cos(f.pitch)).normalize()}
@@ -154,6 +105,6 @@ export function FlightScene({bodies,avatarId,flightRef,inputRef,targetId,onArriv
  });
  return <>
   <color attach="background" args={['#080d2b']}/><ambientLight intensity={.5}/><hemisphereLight args={['#c8eaff','#7a3d8f',.42]}/>
-  <Stars/><NebulaBackdrop flightRef={flightRef}/>{bodies.map(body=><Planet key={body.id} body={body} flightRef={flightRef}/>)}<HomeSystemBeacon flightRef={flightRef} camera={camera}/>{remotePlayers.map(player=><Suspense key={player.id} fallback={null}><OtherAvatar player={player} flightRef={flightRef}/></Suspense>)}<Suspense fallback={null}><Avatar avatarId={avatarId} flightRef={flightRef} inputRef={inputRef} bodies={bodies}/></Suspense>
+  <Stars/><NebulaBackdrop flightRef={flightRef}/>{bodies.map(body=><Planet key={body.id} body={body} flightRef={flightRef}/>)}{remotePlayers.map(player=><Suspense key={player.id} fallback={null}><OtherAvatar player={player} flightRef={flightRef}/></Suspense>)}<Suspense fallback={null}><Avatar avatarId={avatarId} flightRef={flightRef} inputRef={inputRef} bodies={bodies}/></Suspense>
  </>;
 }
