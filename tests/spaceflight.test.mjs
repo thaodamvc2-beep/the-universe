@@ -126,7 +126,7 @@ test('angel remains at the floating origin and scales to the destination surface
 });
 test('manual landing enters a short controlled approach instead of snapping from far away',async()=>{
  const scene=await read('apps/web/src/features/game/flight-scene.tsx');
- assert.match(scene,/nearest\.d<=nearest\.body\.radius\*1\.3\+\.55/);
+ assert.match(scene,/nearest\.d<=nearest\.body\.radius\*1\.3\+\.16/);
  assert.match(scene,/brakingSpeed=Math\.sqrt\(2\*9\*remaining\)/);
 });
 
@@ -186,4 +186,33 @@ test('free-flight toggle, manual steering and surface spawn/landing remain wired
  assert.match(game,/cosmic-flight-toggle/);
  assert.match(game,/position:new Vector3\(0,0,2\.94\)/);
  assert.match(game,/cosmic-menu-close/);
+});
+
+
+test('desktop planet destination menu remains available independently of the removed scene beacon',async()=>{
+ const game=await read('apps/web/src/features/game/universe-game.tsx');
+ const css=await read('apps/web/src/app/globals.css');
+ assert.match(game,/Hành tinh &amp; điểm đến/);
+ assert.match(game,/destinationBodies\.map/);
+ assert.match(game,/aria-expanded=\{showDestinations\}/);
+ assert.match(css,/\.universe-explorer \.game-nav\{display:flex/);
+});
+
+test('manual movement immediately cancels destination autopilot and landing approach eases to a low terminal speed',async()=>{
+ const scene=await read('apps/web/src/features/game/flight-scene.tsx');
+ assert.match(scene,/manualMovement=i\.forward\|\|i\.back\|\|i\.left\|\|i\.right\|\|i\.up\|\|i\.down/);
+ assert.match(scene,/onLandRequest\(null\)/);
+ assert.match(scene,/Math\.max\(\.22,brakingSpeed\)/);
+ assert.match(scene,/nearest\.d<=nearest\.body\.radius\*1\.3\+\.16/);
+});
+
+test('distance from Earth is shown as an explicitly simulated light-year value and the nebula background is brighter',async()=>{
+ const game=await read('apps/web/src/features/game/universe-game.tsx');
+ const scene=await read('apps/web/src/features/game/flight-scene.tsx');
+ const css=await read('apps/web/src/app/globals.css');
+ assert.match(game,/distanceFromEarthLy=livePosition\.length\(\)/);
+ assert.match(game,/năm ánh sáng mô phỏng/);
+ assert.match(scene,/args=\{\['#111a3a'\]\}/);
+ assert.match(scene,/opacity=\{\.48\} blending=\{AdditiveBlending\}/);
+ assert.match(css,/rgba\(12,22,48,\.10\)/);
 });

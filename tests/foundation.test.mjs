@@ -16,31 +16,30 @@ test('the application uses the approved web foundation stack', async () => {
   assert.deepEqual(workspace.workspaces, ['apps/web']);
 });
 
-test('the application shell does not introduce downstream product systems', async () => {
+test('the application shell mounts the approved guest-first universe game without downstream social systems', async () => {
   const page = await read('apps/web/src/app/page.tsx');
+  const game = await read('apps/web/src/features/game/universe-game.tsx');
   const forbidden = [/chat/i, /friend list/i, /follow button/i, /player count/i, /social feed/i];
   for (const pattern of forbidden) assert.doesNotMatch(page, pattern);
-  assert.match(page, /THE UNIVERSE/);
-  assert.match(page, /ENTER AS GUEST|enterGuest/);
-  assert.match(page, /home-world/);
+  assert.match(page, /UniverseGame/);
+  assert.match(game, /resetHome/);
+  assert.match(game, /Về Trái Đất|Return to Earth/);
+  assert.match(game, /guestIdentity/);
 });
-
-test('the health endpoint is non-cacheable and exposes no secrets', async () => {
+test('the static health endpoint is exported and exposes no secrets', async () => {
   const route = await read('apps/web/src/app/api/health/route.ts');
-  assert.match(route, /Cache-Control/);
-  assert.match(route, /no-store/);
+  // GitHub Pages is static hosting: a static GET route cannot promise runtime Cache-Control: no-store.
+  assert.match(route, /dynamic = 'force-static'/);
   assert.match(route, /status: 'ok'/);
   assert.doesNotMatch(route, /process\.env|SUPABASE_SERVICE_ROLE_KEY/);
 });
-
-test('baseline security headers are configured', async () => {
+test('static Pages deployment does not claim unsupported runtime security headers', async () => {
   const config = await read('apps/web/next.config.ts');
-  for (const header of ['X-Content-Type-Options', 'X-Frame-Options', 'Referrer-Policy', 'Permissions-Policy', 'Cross-Origin-Opener-Policy']) {
-    assert.ok(config.includes(header), `Missing ${header}`);
-  }
+  assert.match(config, /output: 'export'/);
   assert.match(config, /poweredByHeader: false/);
+  // Response security headers require a configurable hosting/CDN layer; Next config cannot enforce them on GitHub Pages.
+  assert.doesNotMatch(config, /headers\s*\(/);
 });
-
 test('guest exploration and Earth navigation remain product guardrails', async () => {
   const agents = await read('AGENTS.md');
   assert.match(agents, /EARTH is always the Home World/);
