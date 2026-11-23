@@ -277,3 +277,25 @@ test('flight control state machine enforces isolated actions and clears stale di
  assert.equal(input.mode,'grounded');
  assert.equal(input.takeoff,false);
 });
+
+
+test('desktop free-flight control uses a scalable vector angel-wings icon instead of a missing emoji glyph',async()=>{
+ const game=await read('apps/web/src/features/game/universe-game.tsx');
+ const start=game.indexOf('className="cosmic-flight-toggle"');
+ const end=game.indexOf('</button>',start);
+ const button=game.slice(start,end);
+ assert.match(button,/<svg viewBox="0 0 48 32"/);
+ assert.match(button,/<path fill="currentColor"/);
+ assert.doesNotMatch(button,/🪽/);
+ assert.match(button,/<small>\{input\.current\.autoFlight\?'Dừng bay':'Bay'\}<\/small>/);
+});
+
+test('destination arrival rebases the camera outside the landed planet and levels its surface view',async()=>{
+ const scene=await read('apps/web/src/features/game/flight-scene.tsx');
+ assert.match(scene,/cameraBodyId=useRef<string\|null>\(null\)/);
+ assert.match(scene,/const landedNow=!!landedBody&&cameraBodyId\.current!==landedBody\.id/);
+ assert.match(scene,/surfaceHeading\.current\.copy\(forward\);f\.yaw=Math\.atan2\(forward\.x,-forward\.z\);f\.pitch=0/);
+ assert.match(scene,/if\(landedNow\)camera\.position\.copy\(desired\)/);
+ assert.match(scene,/cameraBodyId\.current=landedBody\?\.id\?\?null/);
+ assert.match(scene,/target\.radius\*1\.3\+\(target\.landable \? 0\.08 : 1\.8\)/);
+});
