@@ -320,3 +320,30 @@ test('landing camera keeps a stable tangent frame and cannot stall when surface 
  assert.match(scene,/f\.pitch=0;lastSurfaceYaw\.current=f\.yaw/);
  assert.match(scene,/f\.groundingRevision\+=1;f\.position\.addScaledVector\(normal,\.9\)/);
 });
+
+test('landing camera anchors the planet in world space while the avatar visibly descends',async()=>{
+ const {createLandingCameraAnchor,getLandingCameraLocalFrame}=await import('../apps/web/src/features/game/landing-camera.mjs');
+ const anchor=createLandingCameraAnchor([0,0,20],[0,0,0],10,[0,0,5]);
+ const positions=[[0,0,20],[0,0,16],[0,0,10]];
+ const planetViews=positions.map(player=>{const frame=getLandingCameraLocalFrame(player,anchor);return [0,0,0].map((v,i)=>v-frame.cameraPosition[i])});
+ const avatarViews=positions.map(player=>player.map((v,i)=>v-getLandingCameraLocalFrame(player,anchor).cameraPosition[i]));
+ assert.deepEqual(planetViews,[[0,0,-25],[0,0,-25],[0,0,-25]],'planet must remain fixed relative to the anchored camera');
+ assert.deepEqual(avatarViews,[[0,0,-5],[0,0,-9],[0,0,-15]],'avatar must move toward the landing point in camera space');
+ const landingView=getLandingCameraLocalFrame(positions[2],anchor);
+ assert.deepEqual(landingView.lookAt,[0,0,0],'camera must keep aiming at the same surface contact point');
+});
+
+test('landing camera anchor handles different planetary surface normals and repeated targets',async()=>{
+ const {createLandingCameraAnchor,getLandingCameraLocalFrame}=await import('../apps/web/src/features/game/landing-camera.mjs');
+ for(const [player,center,offset] of [
+  [[20,0,0],[0,0,0],[5,0,0]],
+  [[0,20,0],[0,0,0],[0,5,0]],
+  [[0,0,-20],[0,0,0],[0,0,-5]]
+ ]){
+  const anchor=createLandingCameraAnchor(player,center,10,offset);
+  const before=getLandingCameraLocalFrame(player,anchor);
+  const after=getLandingCameraLocalFrame(center.map((v,i)=>v+(player[i]-v)*.5),anchor);
+  assert.deepEqual(before.cameraPosition.map((v,i)=>v+player[i]),anchor.cameraWorldPosition);
+  assert.deepEqual(after.lookAt.map((v,i)=>v+center[i]+(player[i]-center[i])*.5),anchor.lookAtWorldPosition);
+ }
+});
