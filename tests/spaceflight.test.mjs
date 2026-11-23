@@ -177,8 +177,8 @@ test('3D scene remains visible while avatar textures load and render errors prod
 test('free-flight toggle, manual steering and surface spawn/landing remain wired',async()=>{
  const scene=await read('apps/web/src/features/game/flight-scene.tsx');
  const game=await read('apps/web/src/features/game/universe-game.tsx');
- assert.match(scene,/autoFlight:boolean/);
- assert.match(scene,/if\(i\.autoFlight\)move\.add\(forward\)/);
+ const controller=await read('apps/web/src/features/game/flight-controller.d.mts');assert.match(controller,/autoFlight: boolean/);
+ assert.match(scene,/i\.mode==='flying'&&i\.autoFlight/);
  assert.match(scene,/body\?0:wave/);
  assert.doesNotMatch(scene,/HomeSystemBeacon|BeaconName|name:'Mercury'/);
  assert.match(game,/const toggleFlight=/);
@@ -217,4 +217,63 @@ test('distance from Earth is measured from the home-world surface and the nebula
  assert.match(scene,/args=\{\['#17234a'\]\}/);
  assert.match(scene,/opacity=\{\.68\} blending=\{AdditiveBlending\}/);
  assert.match(css,/rgba\(12,22,48,\.10\)/);
+});
+
+
+test('flight controls use explicit mutually-exclusive modes and dedicated transitions',async()=>{
+ const controller=await read('apps/web/src/features/game/flight-controller.mjs');
+ const scene=await read('apps/web/src/features/game/flight-scene.tsx');
+ const game=await read('apps/web/src/features/game/universe-game.tsx');
+ for(const mode of ['grounded','walking','sitting','flying','landing','approaching'])assert.ok(controller.includes("'"+mode+"'"),mode);
+ for(const action of ['WALK_START','SIT','TOGGLE_FLIGHT','LAND','BEGIN_APPROACH','MANUAL_OVERRIDE','ARRIVED_LANDED','RESET_HOME'])assert.ok(controller.includes("'"+action+"'"),action);
+ assert.match(scene,/i.mode==='flying'&&i.autoFlight/);
+ assert.match(scene,/i.mode==='walking'/);
+ assert.ok(game.includes("transitionFlightControl(input.current,'SIT')"));
+ assert.ok(game.includes("transitionFlightControl(input.current,'LAND')"));
+ assert.ok(game.includes("transitionFlightControl(input.current,'BEGIN_APPROACH')"));
+});
+
+test('flight controller prevents stale movement and illegal sitting/flying overlap',async()=>{
+ const controller=await read('apps/web/src/features/game/flight-controller.mjs');
+ assert.ok(controller.includes('clearMovement(input)'));
+ assert.match(controller,/input.mode = FLIGHT_MODES.SITTING/);
+ assert.match(controller,/input.mode = FLIGHT_MODES.LANDING/);
+ assert.match(controller,/input.mode = FLIGHT_MODES.FLYING/);
+ assert.match(controller,/case 'RELEASE_ALL'/);
+});
+
+
+test('flight control state machine enforces isolated actions and clears stale directional input',async()=>{
+ const {createFlightInputState,transitionFlightControl}=await import('../apps/web/src/features/game/flight-controller.mjs');
+ const input=createFlightInputState();
+ assert.equal(input.mode,'grounded');
+ transitionFlightControl(input,'DIRECTION_START','forward');
+ assert.equal(input.mode,'walking');
+ assert.equal(input.forward,true);
+ transitionFlightControl(input,'DIRECTION_STOP','forward');
+ assert.equal(input.mode,'grounded');
+ transitionFlightControl(input,'SIT');
+ assert.equal(input.mode,'sitting');
+ assert.equal(input.resting,true);
+ assert.equal(input.forward,false);
+ transitionFlightControl(input,'DIRECTION_START','left');
+ assert.equal(input.mode,'walking');
+ assert.equal(input.resting,false);
+ transitionFlightControl(input,'LAND');
+ assert.equal(input.mode,'landing');
+ assert.equal(input.left,false);
+ assert.equal(input.land,true);
+ transitionFlightControl(input,'BEGIN_APPROACH');
+ assert.equal(input.mode,'approaching');
+ assert.equal(input.land,false);
+ transitionFlightControl(input,'MANUAL_OVERRIDE');
+ assert.equal(input.mode,'flying');
+ assert.equal(input.autoFlight,false);
+ transitionFlightControl(input,'TOGGLE_FLIGHT');
+ assert.equal(input.autoFlight,true);
+ transitionFlightControl(input,'TOGGLE_FLIGHT');
+ assert.equal(input.autoFlight,false);
+ transitionFlightControl(input,'ARRIVED_LANDED');
+ assert.equal(input.mode,'grounded');
+ assert.equal(input.takeoff,false);
 });
