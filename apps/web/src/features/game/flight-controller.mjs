@@ -86,7 +86,7 @@ export function transitionFlightControl(input, action, direction) {
         input.mode = FLIGHT_MODES.FLYING;
       }
       if (direction && DIRECTIONS.includes(direction)) input[direction] = true;
-      input.autoFlight = false;
+      if (!(input.mode === FLIGHT_MODES.FLYING && input.autoFlight)) input.autoFlight = false;
       input.land = false;
       input.resting = false;
       break;
