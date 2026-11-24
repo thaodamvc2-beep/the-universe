@@ -347,3 +347,32 @@ test('landing camera anchor handles different planetary surface normals and repe
   assert.deepEqual(after.lookAt.map((v,i)=>v+center[i]+(player[i]-center[i])*.5),anchor.lookAtWorldPosition);
  }
 });
+
+
+test('landing camera uses a finite orthogonal up vector for vertical and near-pole approaches',async()=>{
+ const {createLandingCameraAnchor,getStableLandingCameraUp}=await import('../apps/web/src/features/game/landing-camera.mjs');
+ const cases=[
+  {player:[0,20,0],offset:[0,5,0]},
+  {player:[0,-20,0],offset:[0,-5,0]},
+  {player:[0,20,.00001],offset:[0,5,.00001]},
+  {player:[20,0,0],offset:[5,0,0]},
+  {player:[0,0,-20],offset:[0,0,-5]}
+ ];
+ for(const item of cases){
+  const anchor=createLandingCameraAnchor(item.player,[0,0,0],10,item.offset);
+  const up=anchor.cameraUp;
+  const view=anchor.lookAtWorldPosition.map((value,index)=>value-anchor.cameraWorldPosition[index]);
+  const viewLength=Math.hypot(...view),upLength=Math.hypot(...up);
+  assert.ok(up.every(Number.isFinite),'camera up must never contain NaN or Infinity');
+  assert.ok(Math.abs(upLength-1)<1e-8,'camera up must be normalized');
+  assert.ok(Math.abs(up.reduce((sum,value,index)=>sum+value*view[index],0))<1e-7*viewLength,'camera up must be orthogonal to the viewing direction');
+  assert.deepEqual(up,getStableLandingCameraUp(anchor.cameraWorldPosition,anchor.lookAtWorldPosition),'camera basis must be deterministic across repeated frames');
+ }
+});
+
+test('all generated fictional worlds remain landable, including water-themed worlds',async()=>{
+ const {makeProceduralRegion}=await import('../apps/web/src/features/game/universe-data.ts');
+ const worlds=makeProceduralRegion(3,-2,5);
+ assert.ok(worlds.length>0);
+ assert.ok(worlds.every(world=>world.landable===true),'fictional planets must not be rejected by physical surface type');
+});
