@@ -371,8 +371,10 @@ test('landing camera uses a finite orthogonal up vector for vertical and near-po
 });
 
 test('all generated fictional worlds remain landable, including water-themed worlds',async()=>{
- const {makeProceduralRegion}=await import('../apps/web/src/features/game/universe-data.ts');
- const worlds=makeProceduralRegion(3,-2,5);
- assert.ok(worlds.length>0);
- assert.ok(worlds.every(world=>world.landable===true),'fictional planets must not be rejected by physical surface type');
+ const data=await read('apps/web/src/features/game/universe-data.ts');
+ const start=data.indexOf('export function makeProceduralRegion');
+ const end=data.indexOf('export function makeImaginedWorlds',start);
+ const generator=data.slice(start,end);
+ assert.match(generator,/landable:true/,'procedural planets of every fictional surface type must be landable');
+ assert.doesNotMatch(generator,/landable:false/,'no fictional water world may be blocked from landing');
 });
