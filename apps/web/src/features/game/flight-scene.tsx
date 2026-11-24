@@ -112,27 +112,59 @@ export function FlightScene({bodies,avatarId,flightRef,inputRef,targetId,onArriv
    if(i.land){const nearest=bodies.map(b=>({body:b,d:f.position.distanceTo(new Vector3(...b.position))})).sort((a,b)=>a.d-b.d)[0];if(nearest){if(nearest.d<=getLandingSurfaceRadius(nearest.body.radius)+.08){const center=new Vector3(...nearest.body.position),surfaceRadius=getLandingSurfaceRadius(nearest.body.radius),contact=getLandingContactPoint(center.toArray(),f.position.toArray(),surfaceRadius),anchor=createLandingCameraAnchor(f.position.toArray(),center.toArray(),surfaceRadius,camera.position.toArray());landingCameraAnchor.current={targetId:nearest.body.id,cameraWorldPosition:new Vector3(...anchor.cameraWorldPosition),lookAtWorldPosition:new Vector3(...anchor.lookAtWorldPosition),cameraUp:anchor.cameraUp};landingCameraHandoff.current=null;f.position.set(...contact.position);f.groundedId=nearest.body.id;f.pitch=0;transitionFlightControl(i,'ARRIVED_LANDED');onArrive(nearest.body.id)}else{transitionFlightControl(i,'LAND');onLandRequest(nearest.body.id)}}else{transitionFlightControl(i,'APPROACH_COMPLETE')}}
    if(i.takeoff)transitionFlightControl(i,'TAKEOFF_COMPLETE');
   }
-  const landingCandidate=targetId&&!manualMovement&&!f.groundedId&&(i.mode==='approaching'||i.mode==='landing')?bodies.find(b=>b.id===targetId):undefined;
-  const landingTarget=landingCandidate&&isWithinLandingCameraCaptureRange(f.position.distanceTo(new Vector3(...landingCandidate.position)),landingCandidate.radius*1.3+.08,LANDING_CAMERA_CAPTURE_GAP)?landingCandidate:undefined;
-  if(landingTarget){
-   if(landingCameraAnchor.current?.targetId!==landingTarget.id){
-    const center=new Vector3(...landingTarget.position),normal=f.position.clone().sub(center).normalize();
-    if(normal.lengthSq()<1e-8)normal.set(0,0,1);
-    const approachDirection=center.clone().sub(f.position).normalize();
-    if(approachDirection.lengthSq()<1e-8)approachDirection.set(0,0,-1);
-    const cameraWorldPosition=f.position.clone().addScaledVector(approachDirection,-LANDING_CAMERA_CAPTURE_GAP);
-    const landingFrame=createLandingCameraAnchor(f.position.toArray(),center.toArray(),landingTarget.radius*1.3+.08,cameraWorldPosition.toArray().map((value,index)=>value-f.position.toArray()[index]));
-    landingCameraAnchor.current={targetId:landingTarget.id,cameraWorldPosition:new Vector3(...landingFrame.cameraWorldPosition),lookAtWorldPosition:new Vector3(...landingFrame.lookAtWorldPosition),cameraUp:landingFrame.cameraUp};
+  const landedBody=f.groundedId?bodies.find(b=>b.id===f.groundedId):undefined;
+  const landingCandidate=targetId&&!manualMovement&&!landedBody&&(i.mode==='approaching'||i.mode==='landing')?bodies.find(b=>b.id===targetId):undefined;
+  const landingTarget=landingCandidate&&isWithinLandingCameraCaptureRange(f.position.distanceTo(new Vector3(...landingCandidate.position)),getLandingSurfaceRadius(landingCandidate.radius),LANDING_CAMERA_CAPTURE_GAP)?landingCandidate:undefined;
+  if(landingTarget&&landingCameraAnchor.current?.targetId!==landingTarget.id){
+   const center=new Vector3(...landingTarget.position),cameraOffset=camera.position.clone();
+   const anchor=createLandingCameraAnchor(f.position.toArray(),center.toArray(),getLandingSurfaceRadius(landingTarget.radius),cameraOffset.toArray());
+   landingCameraAnchor.current={targetId:landingTarget.id,cameraWorldPosition:new Vector3(...anchor.cameraWorldPosition),lookAtWorldPosition:new Vector3(...anchor.lookAtWorldPosition),cameraUp:anchor.cameraUp};
+   landingCameraHandoff.current=null;
+  }
+  const anchoredLandingBody=!!landedBody&&landingCameraAnchor.current?.targetId===landedBody.id;
+  if(!landingTarget&&!anchoredLandingBody){landingCameraAnchor.current=null;landingCameraHandoff.current=null;}
+  const landedNow=!!landedBody&&(cameraBodyId.current!==landedBody.id||cameraGroundingRevision.current!==f.groundingRevision);
+  if(landedBody){
+   playerUp.copy(getStableSurfaceNormal(f.position.toArray(),landedBody.position));
+   forward.copy(stableSurfaceTangent(surfaceHeading.current,playerUp));
+   if(landedNow){
+    surfaceHeading.current.copy(forward);f.yaw=Math.atan2(forward.x,-forward.z);f.pitch=0;lastSurfaceYaw.current=f.yaw;
+    surfaceBodyId.current=landedBody.id;surfaceGroundingRevision.current=f.groundingRevision;cameraGroundingRevision.current=f.groundingRevision;smoothedCameraUp.current.copy(playerUp);
    }
-   const anchor=landingCameraAnchor.current!;
+   surfaceHeading.current.copy(forward);
+  }else{
+   cameraBodyId.current=null;playerUp.set(0,1,0);
+   forward.set(Math.sin(f.yaw)*Math.cos(f.pitch),Math.sin(f.pitch),-Math.cos(f.yaw)*Math.cos(f.pitch)).normalize();
+  }
+  if(!landedNow){if(smoothedCameraUp.current.dot(playerUp)<0)smoothedCameraUp.current.copy(playerUp);else smoothedCameraUp.current.lerp(playerUp,1-Math.exp(-4.5*dt)).normalize();}
+  if(landedBody){
+   const cameraUp=smoothedCameraUp.current,cameraTangent=stableSurfaceTangent(forward,cameraUp),surfacePitch=Math.max(-.95,Math.min(.95,f.pitch));
+   cameraForward.copy(cameraTangent).multiplyScalar(Math.cos(surfacePitch)).addScaledVector(cameraUp,Math.sin(surfacePitch)).normalize();
+  }else cameraForward.copy(forward);
+  desired.copy(cameraForward).multiplyScalar(landedBody?-5.35:-5.55);
+  look.copy(cameraForward).multiplyScalar(2.6);
+  if(landingTarget&&landingCameraAnchor.current){
+   const anchor=landingCameraAnchor.current;
    const localFrame=getLandingCameraLocalFrame(f.position.toArray(),{cameraWorldPosition:anchor.cameraWorldPosition.toArray(),lookAtWorldPosition:anchor.lookAtWorldPosition.toArray(),cameraUp:anchor.cameraUp});
    camera.position.set(...localFrame.cameraPosition);camera.up.set(...anchor.cameraUp);look.set(...localFrame.lookAt);camera.lookAt(look);cameraBodyId.current=null;
+  }else if(anchoredLandingBody&&landingCameraAnchor.current){
+   const anchor=landingCameraAnchor.current;
+   if(!landingCameraHandoff.current){
+    const targetCameraWorldPosition=f.position.clone().add(desired),targetLookAtWorldPosition=f.position.clone().add(look);
+    const handoff=createLandingCameraHandoff(anchor,targetCameraWorldPosition.toArray(),targetLookAtWorldPosition.toArray(),smoothedCameraUp.current.toArray(),LANDING_CAMERA_HANDOFF_SECONDS);
+    landingCameraHandoff.current={...handoff,elapsed:0};
+   }
+   const handoff=landingCameraHandoff.current;
+   handoff.elapsed=Math.min(handoff.duration,handoff.elapsed+dt);
+   const frame=getLandingCameraHandoffFrame(handoff,handoff.elapsed);
+   camera.position.copy(new Vector3(...frame.cameraWorldPosition).sub(f.position));
+   camera.up.set(...frame.cameraUp);look.copy(new Vector3(...frame.lookAtWorldPosition).sub(f.position));camera.lookAt(look);
+   cameraBodyId.current=landedBody.id;cameraGroundingRevision.current=f.groundingRevision;
+   if(frame.progress>=1){landingCameraAnchor.current=null;landingCameraHandoff.current=null;}
   }else{
-   landingCameraAnchor.current=null;
+   if(landedNow)camera.position.copy(desired);else camera.position.lerp(desired,1-Math.exp(-4.5*dt));
+   cameraBodyId.current=landedBody?.id??null;camera.up.copy(smoothedCameraUp.current);camera.lookAt(look);
   }
-  const landedBody=f.groundedId?bodies.find(b=>b.id===f.groundedId):undefined;const landedNow=!!landedBody&&(cameraBodyId.current!==landedBody.id||cameraGroundingRevision.current!==f.groundingRevision);if(landedBody){playerUp.copy(f.position).sub(new Vector3(...landedBody.position)).normalize();forward.copy(stableSurfaceTangent(surfaceHeading.current,playerUp));if(landedNow){surfaceHeading.current.copy(forward);f.yaw=Math.atan2(forward.x,-forward.z);f.pitch=0;lastSurfaceYaw.current=f.yaw;surfaceBodyId.current=landedBody.id;surfaceGroundingRevision.current=f.groundingRevision;cameraGroundingRevision.current=f.groundingRevision;smoothedCameraUp.current.copy(playerUp)}surfaceHeading.current.copy(forward)}else{cameraBodyId.current=null;playerUp.set(0,1,0);forward.set(Math.sin(f.yaw)*Math.cos(f.pitch),Math.sin(f.pitch),-Math.cos(f.yaw)*Math.cos(f.pitch)).normalize()}
-  if(!landedNow){if(smoothedCameraUp.current.dot(playerUp)<0)smoothedCameraUp.current.copy(playerUp);else smoothedCameraUp.current.lerp(playerUp,1-Math.exp(-4.5*dt)).normalize()}if(landedBody){const cameraUp=smoothedCameraUp.current;const cameraTangent=stableSurfaceTangent(forward,cameraUp);const surfacePitch=Math.max(-.95,Math.min(.95,f.pitch));cameraForward.copy(cameraTangent).multiplyScalar(Math.cos(surfacePitch)).addScaledVector(cameraUp,Math.sin(surfacePitch)).normalize()}else cameraForward.copy(forward);desired.copy(cameraForward).multiplyScalar(landedBody?-5.35:-5.55);
-  if(!landingTarget){if(landedNow)camera.position.copy(desired);else camera.position.lerp(desired,1-Math.exp(-4.5*dt));cameraBodyId.current=landedBody?.id??null;camera.up.copy(smoothedCameraUp.current);look.copy(cameraForward).multiplyScalar(2.6);camera.lookAt(look);}
  });
  return <>
   <color attach="background" args={['#17234a']}/><ambientLight intensity={.58}/><hemisphereLight args={['#d9edff','#9656b8',.56]}/>
