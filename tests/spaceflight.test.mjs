@@ -451,3 +451,9 @@ test('a repeated approach to the same planet replaces the previous grounded or r
  const scene=await read('apps/web/src/features/game/flight-scene.tsx');
  assert.match(scene,/landingCameraAnchor\.current\?\.targetId!==landingTarget\.id\|\|cameraBodyId\.current===landingTarget\.id\|\|landingCameraHandoff\.current\?\.phase==='grounded'\|\|landingCameraHandoff\.current\?\.phase==='release'/);
 });
+
+test('restarting a same-planet landing captures the live camera pose instead of the stale anchor pose',async()=>{
+ const scene=await read('apps/web/src/features/game/flight-scene.tsx');
+ assert.match(scene,/restartingLanding\?undefined:previousAnchor\?\.cameraWorldPosition/);
+ assert.match(scene,/!restartingLanding&&previousAnchor\?previousAnchor\.cameraWorldPosition\.clone\(\)\.sub\(f\.position\):camera\.position\.clone\(\)/);
+});
