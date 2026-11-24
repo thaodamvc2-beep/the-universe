@@ -123,7 +123,7 @@ export function FlightScene({bodies,avatarId,flightRef,inputRef,targetId,onArriv
    }
    const anchor=landingCameraAnchor.current!;
    const localFrame=getLandingCameraLocalFrame(f.position.toArray(),{cameraWorldPosition:anchor.cameraWorldPosition.toArray(),lookAtWorldPosition:anchor.lookAtWorldPosition.toArray()});
-   camera.position.set(...localFrame.cameraPosition);camera.up.set(0,1,0);look.set(...localFrame.lookAt);camera.lookAt(look);cameraBodyId.current=null;
+   camera.position.set(...localFrame.cameraPosition);camera.up.set(...anchor.cameraUp);look.set(...localFrame.lookAt);camera.lookAt(look);cameraBodyId.current=null;
   }else{
    landingCameraAnchor.current=null;
   }
