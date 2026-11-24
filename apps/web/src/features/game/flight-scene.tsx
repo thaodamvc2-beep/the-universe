@@ -1,11 +1,13 @@
 'use client';
-import { Suspense, useEffect, useMemo, useRef, useState } from 'react';
+import { memo, Suspense, useEffect, useMemo, useRef, useState } from 'react';
 import type { MutableRefObject } from 'react';
 import { useFrame, useLoader, useThree } from '@react-three/fiber';
 import { AdditiveBlending, BackSide, CanvasTexture, Group, NormalBlending, Sprite, SpriteMaterial, SRGBColorSpace, TextureLoader, Vector3 } from 'three';
 import type { Camera } from 'three';
 import type { AvatarId, Body } from './universe-data';
 import { transitionFlightControl } from './flight-controller.mjs';
+import { createCollisionBodies, moveAvoidingBodies } from './flight-collision.mjs';
+import { publicAssetPath } from '@/lib/public-asset-path.mjs';
 import { createLandingCameraAnchor, createLandingCameraHandoff, getLandingCameraHandoffFrame, getLandingCameraLocalFrame, getLandingContactPoint, getLandingSurfaceRadius, getStableSurfaceNormal, isWithinLandingCameraCaptureRange } from './landing-camera.mjs';
 import type { InputState } from './flight-controller.mjs';
 
@@ -13,6 +15,7 @@ export type FlightState={position:Vector3;yaw:number;pitch:number;groundedId:str
 export type RemotePlayer={id:string;nickname:string;avatarId:AvatarId;position:[number,number,number]};
 const LANDING_CAMERA_CAPTURE_GAP=5.55;
 const LANDING_CAMERA_HANDOFF_SECONDS=.6;
+const PLANET_LABEL_RENDER_DISTANCE_SQUARED=72*72;
 
 function Stars(){
  const ref=useRef<Group>(null);
@@ -60,7 +63,7 @@ function SurfaceLabel({name}:{name:string|null}){
 }
 function Avatar({avatarId,flightRef,inputRef,bodies}:{avatarId:AvatarId;flightRef:MutableRefObject<FlightState>;inputRef:MutableRefObject<InputState>;bodies:Body[]}){
  const ref=useRef<Group>(null);const surfaceBody=bodies.find(b=>b.id===flightRef.current.groundedId);const worldUp=new Vector3(0,1,0);
- const loadedTexture=useLoader(TextureLoader,`/the-universe/avatars/${avatarId}.png`);
+ const loadedTexture=useLoader(TextureLoader,publicAssetPath(`/avatars/${avatarId}.png`));
  const texture=useMemo(()=>{const t=loadedTexture.clone();t.colorSpace=SRGBColorSpace;t.needsUpdate=true;return t},[loadedTexture]);
  const sprite=useMemo(()=>{const material=new SpriteMaterial({map:texture,transparent:true,depthWrite:false,depthTest:true,alphaTest:.02,blending:NormalBlending,toneMapped:false});const s=new Sprite(material);s.center.set(.5,.02);const aspect=texture.image.width/texture.image.height||1;s.scale.set(.76*aspect,.76,1);return s},[texture]);
  useEffect(()=>()=>{sprite.material.dispose();texture.dispose()},[sprite,texture]);
@@ -69,7 +72,7 @@ function Avatar({avatarId,flightRef,inputRef,bodies}:{avatarId:AvatarId;flightRe
 }
 function OtherAvatar({player,flightRef}:{player:RemotePlayer;flightRef:MutableRefObject<FlightState>}){
  const ref=useRef<Group>(null);
- const loadedTexture=useLoader(TextureLoader,`/the-universe/avatars/${player.avatarId}.png`);
+ const loadedTexture=useLoader(TextureLoader,publicAssetPath(`/avatars/${player.avatarId}.png`));
  const texture=useMemo(()=>{const t=loadedTexture.clone();t.colorSpace=SRGBColorSpace;t.needsUpdate=true;return t},[loadedTexture]);
  const sprite=useMemo(()=>{const material=new SpriteMaterial({map:texture,transparent:true,depthWrite:false,depthTest:true,alphaTest:.02,blending:NormalBlending,toneMapped:false});const s=new Sprite(material);s.center.set(.5,.02);const aspect=texture.image.width/texture.image.height||1;s.scale.set(.55*aspect,.55,1);return s},[texture]);
  useEffect(()=>()=>{sprite.material.dispose();texture.dispose()},[sprite,texture]);

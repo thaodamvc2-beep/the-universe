@@ -4,7 +4,7 @@
   "private": true,
   "description": "THE UNIVERSE — Homepage, language foundation and mobile 3D prototype (Package 03)",
   "engines": {
-    "node": ">=20.9.0",
+    "node": "22.x",
     "npm": ">=10.0.0"
   },
   "workspaces": [
