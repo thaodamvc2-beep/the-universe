@@ -8,7 +8,6 @@ const read=(p)=>readFile(resolve(root,p),'utf8');
 
 test('spaceflight supports six-axis movement, takeoff and landing',async()=>{
  const scene=await read('apps/web/src/features/game/flight-scene.tsx');
- const game=await read('apps/web/src/features/game/universe-game.tsx');
  for(const key of ['forward','back','left','right','up','down'])assert.match(scene,new RegExp(key));
  assert.match(scene,/groundedId/);
  assert.match(scene,/i\.takeoff/);
