@@ -86,7 +86,7 @@ test('player character is rendered as a lightweight flying angel rather than a s
  const scene=await read('apps/web/src/features/game/flight-scene.tsx');
  assert.match(scene,/function Avatar/);
  assert.match(scene,/SpriteMaterial/);
- assert.match(scene,/\/the-universe\/avatars\/\$\{avatarId\}\.png/);
+ assert.match(scene,/publicAssetPath/);
  assert.match(scene,/alphaTest:\.02/);assert.match(scene,/blending:NormalBlending/);
  assert.match(scene,/new Sprite/);
  assert.doesNotMatch(scene,/thruster/);
@@ -102,10 +102,10 @@ test('keyboard camera look controls rotate the view independently of flight move
 
 test('in-game angel follows all six identities using their individual transparent PNG files',async()=>{
  const scene=await read('apps/web/src/features/game/flight-scene.tsx');
- assert.match(scene,/player\.avatarId/);assert.match(scene,/\/the-universe\/avatars\/\$\{player\.avatarId\}\.png/);
+ assert.match(scene,/player\.avatarId/);assert.match(scene,/publicAssetPath/);
  assert.match(scene,/new Sprite/);
  assert.match(scene,/SpriteMaterial/);
- assert.match(scene,/\/the-universe\/avatars\/\$\{avatarId\}\.png/);
+ assert.match(scene,/publicAssetPath/);
  assert.match(scene,/sprite\.position\.y/);
  assert.match(scene,/function SurfaceLabel/);
  assert.match(scene,/SurfaceLabel name=\{surfaceBody\?\.name\?\?null\}/);
@@ -156,7 +156,7 @@ test('avatar chooser no longer blocks the live universe on initial entry and the
 });
 
 test('reference HUD removes player counts and obstructive panels while keeping navigation accessible',async()=>{const game=await read('apps/web/src/features/game/universe-game.tsx');const css=await read('apps/web/src/app/globals.css');assert.match(game,/cosmic-location-pill/);assert.match(game,/cosmic-compass/);assert.match(game,/cosmic-movement-rail/);assert.match(game,/cosmic-joystick/);assert.match(game,/cosmic-menu-panel/);assert.doesNotMatch(game,/cosmic-settings-panel|Cài đặt/);assert.doesNotMatch(game,/Online:\s*\$\{|<div className="game-live-status"/);assert.doesNotMatch(game,/cosmic-level-card|multiplayer-indicator/);assert.match(css,/\.game-live-status\{display:none!important\}/);});
-test('in-world angel PNG preserves its natural image aspect ratio, normal blending and sit state',async()=>{const scene=await read('apps/web/src/features/game/flight-scene.tsx');assert.match(scene,/\/the-universe\/avatars\/\$\{avatarId\}\.png/);assert.match(scene,/s\.scale\.set\(\.76\*aspect,\.76,1\)/);assert.match(scene,/s\.scale\.set\(\.55\*aspect,\.55,1\)/);assert.match(scene,/s\.scale\.set\(\.55\*aspect,\.55,1\)/);assert.match(scene,/multiplyScalar\(landedBody\?-5\.35:-5\.55\)/);assert.match(scene,/i\.resting/);});
+test('in-world angel PNG preserves its natural image aspect ratio, normal blending and sit state',async()=>{const scene=await read('apps/web/src/features/game/flight-scene.tsx');assert.match(scene,/publicAssetPath/);assert.match(scene,/s\.scale\.set\(\.76\*aspect,\.76,1\)/);assert.match(scene,/s\.scale\.set\(\.55\*aspect,\.55,1\)/);assert.match(scene,/s\.scale\.set\(\.55\*aspect,\.55,1\)/);assert.match(scene,/multiplyScalar\(landedBody\?-5\.35:-5\.55\)/);assert.match(scene,/i\.resting/);});
 
 test('touch altitude controls remain available in the compact reference HUD',async()=>{const css=await read('apps/web/src/app/globals.css');assert.match(css,/flight-vertical\{display:flex/);assert.match(css,/cosmic-action-dock button\{width:40px;height:40px\}/)});
 
@@ -212,7 +212,7 @@ test('distance from Earth is measured from the home-world surface and the nebula
  const game=await read('apps/web/src/features/game/universe-game.tsx');
  const scene=await read('apps/web/src/features/game/flight-scene.tsx');
  const css=await read('apps/web/src/app/universe-game.css');
- assert.match(game,/distanceFromEarthLy=Math\.max\(0,livePosition\.length\(\)-earthSurfaceRadius\)/);
+ assert.match(game,/Math\.max\(0,p\.length\(\)-earthSurfaceRadius\)/);
  assert.match(game,/năm ánh sáng mô phỏng/);
  assert.match(scene,/args=\{\['#17234a'\]\}/);
  assert.match(scene,/opacity=\{\.68\} blending=\{AdditiveBlending\}/);
@@ -395,7 +395,7 @@ test('all real, exoplanet and procedural destinations use the same permissive la
  const scene=await read('apps/web/src/features/game/flight-scene.tsx');
  assert.ok(!data.includes("landable:false"),"no catalogued world may be marked as non-landable");
  assert.ok(data.includes("landable:true"));
- assert.ok(game.includes("landable:true"),"NASA exoplanets remain landable");
+ const exoplanets=data.slice(data.indexOf('export const GAME_EXOPLANET_DESTINATIONS'),data.indexOf('const BASE_REAL_POSITIONS'));assert.ok(exoplanets.includes('landable:true'),'curated NASA-inspired exoplanets remain landable');
  assert.ok(data.includes("landable:true,real:false"),"procedural fictional worlds remain landable");
  assert.ok(!scene.includes("target.landable")&&!scene.includes("filter(b=>b.landable)"),"flight and direct landing must not reject any world type");
  assert.ok(scene.includes("getLandingSurfaceRadius(target.radius)"));

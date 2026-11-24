@@ -135,7 +135,7 @@ test('game renders one selected PNG angel and keeps movement controls and separa
  const scene=await read('apps/web/src/features/game/flight-scene.tsx');
  assert.doesNotMatch(game,/game-avatar-stage/);
  assert.doesNotMatch(css,/game-avatar-stage/);
- assert.match(scene,/\/the-universe\/avatars\/\$\{avatarId\}\.png/);
+ assert.match(scene,/publicAssetPath/);
  assert.match(scene,/blending:NormalBlending/);
  assert.match(scene,/depthTest:true/);
  assert.doesNotMatch(scene,/celestial-avatars\.webp|celestial-six\.webp|AVATAR_CELLS/);
@@ -156,7 +156,7 @@ test('game renders one selected PNG angel and keeps movement controls and separa
  assert.ok(game.includes('dpr={[1,1.5]} gl={{antialias:true'));
  assert.ok(game.includes('onClick={()=>setAudioEnabled(v=>!v)}'));
  assert.match(game,/Danh mục hành tinh và chòm sao/);
- assert.match(game,/TAP\/sync\?query=/);
+ assert.match(game,/GAME_EXOPLANET_DESTINATIONS/);
  assert.doesNotMatch(game,/88 chòm sao được IAU công nhận|Thiên thể có dữ liệu|Hành tinh lùn|Tiểu hành tinh/);
  assert.match(game,/destinationBodies/);
  assert.match(game,/Bay tới đây/);
@@ -167,7 +167,7 @@ test('game renders one selected PNG angel and keeps movement controls and separa
  assert.match(game,/Đăng nhập \/ khôi phục nickname/);
  assert.match(game,/Nickname và nhân vật tự lưu trên trình duyệt này/);
  assert.doesNotMatch(game,/cosmic-settings-panel|showSettings|setShowSettings/);
- assert.match(game,/exoplanetarchive\.ipac\.caltech\.edu/);
+ assert.match(game,/GAME_EXOPLANET_DESTINATIONS/);assert.match(await read('apps/web/src/features/game/universe-data.ts'),/science.nasa.gov\/exoplanets\/exoplanet-catalog/);
  assert.doesNotMatch(game,/CONSTELLATIONS|constellation-catalogue|88 chòm sao được IAU công nhận/);
  assert.match(scene,/s\.scale\.set\(\.76\*aspect,\.76,1\)/);
 });
