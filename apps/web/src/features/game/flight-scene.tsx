@@ -74,8 +74,8 @@ function OtherAvatar({player,flightRef}:{player:RemotePlayer;flightRef:MutableRe
  useFrame(()=>{if(ref.current)ref.current.position.set(player.position[0]-flightRef.current.position.x,player.position[1]-flightRef.current.position.y,player.position[2]-flightRef.current.position.z)});
  return <group ref={ref}><primitive object={sprite}/></group>;
 }
-function captureCameraPose(camera:Camera,playerPosition:Vector3){
- const cameraWorldPosition=playerPosition.clone().add(camera.position);
+function captureCameraPose(camera:Camera,playerPosition:Vector3,fixedCameraWorldPosition?:Vector3){
+ const cameraWorldPosition=fixedCameraWorldPosition?.clone()??playerPosition.clone().add(camera.position);
  const direction=new Vector3(0,0,-1).applyQuaternion(camera.quaternion).normalize();
  const lookAtWorldPosition=cameraWorldPosition.clone().addScaledVector(direction,Math.max(1,camera.position.length()));
  return {cameraWorldPosition:cameraWorldPosition.toArray(),lookAtWorldPosition:lookAtWorldPosition.toArray(),cameraUp:camera.up.toArray()};
@@ -123,7 +123,7 @@ export function FlightScene({bodies,avatarId,flightRef,inputRef,targetId,onArriv
   const landingCandidate=targetId&&!manualMovement&&!landedBody&&(i.mode==='approaching'||i.mode==='landing')?bodies.find(b=>b.id===targetId):undefined;
   const landingTarget=landingCandidate&&isWithinLandingCameraCaptureRange(f.position.distanceTo(new Vector3(...landingCandidate.position)),getLandingSurfaceRadius(landingCandidate.radius),LANDING_CAMERA_CAPTURE_GAP)?landingCandidate:undefined;
   if(landingTarget&&landingCameraAnchor.current?.targetId!==landingTarget.id){
-   const currentPose=captureCameraPose(camera,f.position),center=new Vector3(...landingTarget.position);
+   const previousAnchor=landingCameraAnchor.current,currentPose=captureCameraPose(camera,f.position,previousAnchor?.cameraWorldPosition),center=new Vector3(...landingTarget.position);
    const anchor=createLandingCameraAnchor(f.position.toArray(),center.toArray(),getLandingSurfaceRadius(landingTarget.radius),camera.position.toArray());
    const nextAnchor={targetId:landingTarget.id,cameraWorldPosition:new Vector3(...anchor.cameraWorldPosition),lookAtWorldPosition:new Vector3(...anchor.lookAtWorldPosition),cameraUp:anchor.cameraUp};
    landingCameraAnchor.current=nextAnchor;
@@ -169,7 +169,7 @@ export function FlightScene({bodies,avatarId,flightRef,inputRef,targetId,onArriv
   }else if(anchoredLandingBody&&landingCameraAnchor.current){
    const anchor=landingCameraAnchor.current;
    if(landingCameraHandoff.current?.phase!=='grounded'){
-    const currentPose=captureCameraPose(camera,f.position),targetCameraWorldPosition=f.position.clone().add(desired),targetLookAtWorldPosition=f.position.clone().add(look);
+    const currentPose=captureCameraPose(camera,f.position,anchor.cameraWorldPosition),targetCameraWorldPosition=f.position.clone().add(desired),targetLookAtWorldPosition=f.position.clone().add(look);
     const handoff=createLandingCameraHandoff(currentPose,targetCameraWorldPosition.toArray(),targetLookAtWorldPosition.toArray(),smoothedCameraUp.current.toArray(),LANDING_CAMERA_HANDOFF_SECONDS);
     landingCameraHandoff.current={...handoff,elapsed:0,phase:'grounded'};
    }
@@ -182,7 +182,7 @@ export function FlightScene({bodies,avatarId,flightRef,inputRef,targetId,onArriv
   }else if(releasingLandingAnchor&&landingCameraAnchor.current){
    const anchor=landingCameraAnchor.current;
    if(landingCameraHandoff.current?.phase!=='release'){
-    const currentPose=captureCameraPose(camera,f.position),targetCameraWorldPosition=f.position.clone().add(desired),targetLookAtWorldPosition=f.position.clone().add(look);
+    const currentPose=captureCameraPose(camera,f.position,anchor.cameraWorldPosition),targetCameraWorldPosition=f.position.clone().add(desired),targetLookAtWorldPosition=f.position.clone().add(look);
     const handoff=createLandingCameraHandoff(currentPose,targetCameraWorldPosition.toArray(),targetLookAtWorldPosition.toArray(),smoothedCameraUp.current.toArray(),LANDING_CAMERA_HANDOFF_SECONDS);
     landingCameraHandoff.current={...handoff,elapsed:0,phase:'release'};
    }
