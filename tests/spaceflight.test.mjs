@@ -321,6 +321,16 @@ test('landing camera keeps a stable tangent frame and cannot stall when surface 
  assert.match(scene,/f\.groundingRevision\+=1;f\.position\.addScaledVector\(normal,\.9\)/);
 });
 
+test('landing camera anchoring starts only in the final descent window, not during long-distance autopilot',async()=>{
+ const {isWithinLandingCameraCaptureRange}=await import('../apps/web/src/features/game/landing-camera.mjs');
+ assert.equal(isWithinLandingCameraCaptureRange(100,10,5.55),false,'a distant destination must keep the normal tracking camera');
+ assert.equal(isWithinLandingCameraCaptureRange(15.55,10,5.55),true,'the anchor starts when the avatar is within one camera offset of the surface');
+ assert.equal(isWithinLandingCameraCaptureRange(10,10,5.55),true,'the final contact position remains inside the anchored phase');
+ assert.equal(isWithinLandingCameraCaptureRange(Number.NaN,10,5.55),false,'invalid distances must not activate the anchor');
+ const scene=await read('apps/web/src/features/game/flight-scene.tsx');
+ assert.match(scene,/isWithinLandingCameraCaptureRange\\(f\\.position\\.distanceTo\\(new Vector3\\(\\.\\.\\.landingCandidate\\.position\\)\\)/);
+});
+
 test('landing camera anchors the planet in world space while the avatar visibly descends',async()=>{
  const {createLandingCameraAnchor,getLandingCameraLocalFrame}=await import('../apps/web/src/features/game/landing-camera.mjs');
  const anchor=createLandingCameraAnchor([0,0,20],[0,0,0],10,[0,0,5]);
