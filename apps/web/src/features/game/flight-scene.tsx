@@ -3,6 +3,7 @@ import { Suspense, useEffect, useMemo, useRef, useState } from 'react';
 import type { MutableRefObject } from 'react';
 import { useFrame, useLoader, useThree } from '@react-three/fiber';
 import { AdditiveBlending, BackSide, CanvasTexture, Group, NormalBlending, Sprite, SpriteMaterial, SRGBColorSpace, TextureLoader, Vector3 } from 'three';
+import type { Camera } from 'three';
 import type { AvatarId, Body } from './universe-data';
 import { transitionFlightControl } from './flight-controller.mjs';
 import { createLandingCameraAnchor, createLandingCameraHandoff, getLandingCameraHandoffFrame, getLandingCameraLocalFrame, getLandingContactPoint, getLandingSurfaceRadius, getStableSurfaceNormal, isWithinLandingCameraCaptureRange } from './landing-camera.mjs';
@@ -73,6 +74,12 @@ function OtherAvatar({player,flightRef}:{player:RemotePlayer;flightRef:MutableRe
  useFrame(()=>{if(ref.current)ref.current.position.set(player.position[0]-flightRef.current.position.x,player.position[1]-flightRef.current.position.y,player.position[2]-flightRef.current.position.z)});
  return <group ref={ref}><primitive object={sprite}/></group>;
 }
+function captureCameraPose(camera:Camera,playerPosition:Vector3){
+ const cameraWorldPosition=playerPosition.clone().add(camera.position);
+ const direction=new Vector3(0,0,-1).applyQuaternion(camera.quaternion).normalize();
+ const lookAtWorldPosition=cameraWorldPosition.clone().addScaledVector(direction,Math.max(1,camera.position.length()));
+ return {cameraWorldPosition:cameraWorldPosition.toArray(),lookAtWorldPosition:lookAtWorldPosition.toArray(),cameraUp:camera.up.toArray()};
+}
 function stableSurfaceTangent(direction:Vector3,normal:Vector3){
  const tangent=direction.clone().addScaledVector(normal,-direction.dot(normal));
  if(tangent.lengthSq()<1e-6){const reference=Math.abs(normal.y)<.9?new Vector3(0,1,0):new Vector3(1,0,0);tangent.crossVectors(reference,normal)}
@@ -88,7 +95,7 @@ function moveAvoidingBodies(start:Vector3,displacement:Vector3,bodies:Body[],ign
  return candidate;
 }
 export function FlightScene({bodies,avatarId,flightRef,inputRef,targetId,onArrive,onLandRequest,remotePlayers}:{bodies:Body[];avatarId:AvatarId;flightRef:MutableRefObject<FlightState>;inputRef:MutableRefObject<InputState>;targetId:string|null;onArrive:(id:string)=>void;onLandRequest:(id:string|null)=>void;remotePlayers:RemotePlayer[]}){
- const {camera}=useThree();const forward=new Vector3();const right=new Vector3();const cameraForward=new Vector3();const desired=new Vector3();const look=new Vector3();const playerUp=new Vector3(0,1,0);const smoothedCameraUp=useRef(new Vector3(0,1,0));const cameraBodyId=useRef<string|null>(null);const previousTarget=useRef<string|null>(null);const targetFlightSpeed=useRef(2.25);const surfaceHeading=useRef(new Vector3(0,0,-1));const surfaceBodyId=useRef<string|null>(null);const surfaceGroundingRevision=useRef(0);const cameraGroundingRevision=useRef(0);const lastSurfaceYaw=useRef(0);const landingCameraAnchor=useRef<{targetId:string;cameraWorldPosition:Vector3;lookAtWorldPosition:Vector3;cameraUp:[number,number,number]}|null>(null);const landingCameraHandoff=useRef<{fromCameraWorldPosition:number[];toCameraWorldPosition:number[];fromLookAtWorldPosition:number[];toLookAtWorldPosition:number[];fromCameraUp:number[];toCameraUp:number[];duration:number;elapsed:number}|null>(null);
+ const {camera}=useThree();const forward=new Vector3();const right=new Vector3();const cameraForward=new Vector3();const desired=new Vector3();const look=new Vector3();const playerUp=new Vector3(0,1,0);const smoothedCameraUp=useRef(new Vector3(0,1,0));const cameraBodyId=useRef<string|null>(null);const previousTarget=useRef<string|null>(null);const targetFlightSpeed=useRef(2.25);const surfaceHeading=useRef(new Vector3(0,0,-1));const surfaceBodyId=useRef<string|null>(null);const surfaceGroundingRevision=useRef(0);const cameraGroundingRevision=useRef(0);const lastSurfaceYaw=useRef(0);const landingCameraAnchor=useRef<{targetId:string;cameraWorldPosition:Vector3;lookAtWorldPosition:Vector3;cameraUp:[number,number,number]}|null>(null);const landingCameraHandoff=useRef<{fromCameraWorldPosition:number[];toCameraWorldPosition:number[];fromLookAtWorldPosition:number[];toLookAtWorldPosition:number[];fromCameraUp:number[];toCameraUp:number[];duration:number;elapsed:number;phase:'approach'|'grounded'|'release'}|null>(null);
  useFrame((_s,delta)=>{
   const dt=Math.min(delta,.04),f=flightRef.current,i=inputRef.current,body=f.groundedId?bodies.find(b=>b.id===f.groundedId):undefined;
   const cruise=(i.boost?8.5:5.2),step=cruise*dt;
@@ -116,14 +123,12 @@ export function FlightScene({bodies,avatarId,flightRef,inputRef,targetId,onArriv
   const landingCandidate=targetId&&!manualMovement&&!landedBody&&(i.mode==='approaching'||i.mode==='landing')?bodies.find(b=>b.id===targetId):undefined;
   const landingTarget=landingCandidate&&isWithinLandingCameraCaptureRange(f.position.distanceTo(new Vector3(...landingCandidate.position)),getLandingSurfaceRadius(landingCandidate.radius),LANDING_CAMERA_CAPTURE_GAP)?landingCandidate:undefined;
   if(landingTarget&&landingCameraAnchor.current?.targetId!==landingTarget.id){
-   const previousAnchor=landingCameraAnchor.current,center=new Vector3(...landingTarget.position),cameraOffset=camera.position.clone();
-   const anchor=createLandingCameraAnchor(f.position.toArray(),center.toArray(),getLandingSurfaceRadius(landingTarget.radius),cameraOffset.toArray());
+   const currentPose=captureCameraPose(camera,f.position),center=new Vector3(...landingTarget.position);
+   const anchor=createLandingCameraAnchor(f.position.toArray(),center.toArray(),getLandingSurfaceRadius(landingTarget.radius),camera.position.toArray());
    const nextAnchor={targetId:landingTarget.id,cameraWorldPosition:new Vector3(...anchor.cameraWorldPosition),lookAtWorldPosition:new Vector3(...anchor.lookAtWorldPosition),cameraUp:anchor.cameraUp};
    landingCameraAnchor.current=nextAnchor;
-   if(previousAnchor){
-    const handoff=createLandingCameraHandoff(previousAnchor,nextAnchor.cameraWorldPosition.toArray(),nextAnchor.lookAtWorldPosition.toArray(),nextAnchor.cameraUp,LANDING_CAMERA_HANDOFF_SECONDS);
-    landingCameraHandoff.current={...handoff,elapsed:0};
-   }else landingCameraHandoff.current=null;
+   const handoff=createLandingCameraHandoff(currentPose,nextAnchor.cameraWorldPosition.toArray(),nextAnchor.lookAtWorldPosition.toArray(),nextAnchor.cameraUp,LANDING_CAMERA_HANDOFF_SECONDS);
+   landingCameraHandoff.current={...handoff,elapsed:0,phase:'approach'};
   }
   const anchoredLandingBody=!!landedBody&&landingCameraAnchor.current?.targetId===landedBody.id;
   const releasingLandingAnchor=!!landingCameraAnchor.current&&!landingTarget&&!anchoredLandingBody;
@@ -150,7 +155,7 @@ export function FlightScene({bodies,avatarId,flightRef,inputRef,targetId,onArriv
   look.copy(cameraForward).multiplyScalar(2.6);
   if(landingTarget&&landingCameraAnchor.current){
    const anchor=landingCameraAnchor.current;
-   if(landingCameraHandoff.current){
+   if(landingCameraHandoff.current?.phase==='approach'){
     const handoff=landingCameraHandoff.current;handoff.elapsed=Math.min(handoff.duration,handoff.elapsed+dt);
     const frame=getLandingCameraHandoffFrame(handoff,handoff.elapsed);
     camera.position.copy(new Vector3(...frame.cameraWorldPosition).sub(f.position));camera.up.set(...frame.cameraUp);
@@ -163,10 +168,10 @@ export function FlightScene({bodies,avatarId,flightRef,inputRef,targetId,onArriv
    cameraBodyId.current=null;
   }else if(anchoredLandingBody&&landingCameraAnchor.current){
    const anchor=landingCameraAnchor.current;
-   if(!landingCameraHandoff.current){
-    const targetCameraWorldPosition=f.position.clone().add(desired),targetLookAtWorldPosition=f.position.clone().add(look);
-    const handoff=createLandingCameraHandoff(anchor,targetCameraWorldPosition.toArray(),targetLookAtWorldPosition.toArray(),smoothedCameraUp.current.toArray(),LANDING_CAMERA_HANDOFF_SECONDS);
-    landingCameraHandoff.current={...handoff,elapsed:0};
+   if(landingCameraHandoff.current?.phase!=='grounded'){
+    const currentPose=captureCameraPose(camera,f.position),targetCameraWorldPosition=f.position.clone().add(desired),targetLookAtWorldPosition=f.position.clone().add(look);
+    const handoff=createLandingCameraHandoff(currentPose,targetCameraWorldPosition.toArray(),targetLookAtWorldPosition.toArray(),smoothedCameraUp.current.toArray(),LANDING_CAMERA_HANDOFF_SECONDS);
+    landingCameraHandoff.current={...handoff,elapsed:0,phase:'grounded'};
    }
    const handoff=landingCameraHandoff.current;handoff.elapsed=Math.min(handoff.duration,handoff.elapsed+dt);
    const frame=getLandingCameraHandoffFrame(handoff,handoff.elapsed);
@@ -176,10 +181,10 @@ export function FlightScene({bodies,avatarId,flightRef,inputRef,targetId,onArriv
    if(frame.progress>=1){landingCameraAnchor.current=null;landingCameraHandoff.current=null;}
   }else if(releasingLandingAnchor&&landingCameraAnchor.current){
    const anchor=landingCameraAnchor.current;
-   if(!landingCameraHandoff.current){
-    const targetCameraWorldPosition=f.position.clone().add(desired),targetLookAtWorldPosition=f.position.clone().add(look);
-    const handoff=createLandingCameraHandoff(anchor,targetCameraWorldPosition.toArray(),targetLookAtWorldPosition.toArray(),smoothedCameraUp.current.toArray(),LANDING_CAMERA_HANDOFF_SECONDS);
-    landingCameraHandoff.current={...handoff,elapsed:0};
+   if(landingCameraHandoff.current?.phase!=='release'){
+    const currentPose=captureCameraPose(camera,f.position),targetCameraWorldPosition=f.position.clone().add(desired),targetLookAtWorldPosition=f.position.clone().add(look);
+    const handoff=createLandingCameraHandoff(currentPose,targetCameraWorldPosition.toArray(),targetLookAtWorldPosition.toArray(),smoothedCameraUp.current.toArray(),LANDING_CAMERA_HANDOFF_SECONDS);
+    landingCameraHandoff.current={...handoff,elapsed:0,phase:'release'};
    }
    const handoff=landingCameraHandoff.current;
    handoff.toCameraWorldPosition=f.position.clone().add(desired).toArray();
