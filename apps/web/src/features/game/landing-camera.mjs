@@ -23,7 +23,7 @@ export function getStableLandingCameraUp(cameraWorldPosition,lookAtWorldPosition
  return normalize(up);
 }
 export function createLandingCameraAnchor(playerPosition,bodyCenter,surfaceRadius,cameraOffset){
- const radial=subtract(playerPosition,bodyCenter),length=Math.hypot(...radial),normal=length>1e-8?radial.map(value=>value/length):[0,0,1];
+ const normal=getStableSurfaceNormal(playerPosition,bodyCenter);
  const cameraWorldPosition=add(playerPosition,cameraOffset);
  const lookAtWorldPosition=add(bodyCenter,normal.map(value=>value*surfaceRadius));
  return {cameraWorldPosition,lookAtWorldPosition,cameraUp:getStableLandingCameraUp(cameraWorldPosition,lookAtWorldPosition)};
