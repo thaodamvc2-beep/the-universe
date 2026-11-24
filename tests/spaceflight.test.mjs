@@ -446,3 +446,8 @@ test('landing camera anchor is retained through touchdown and handed off without
  assert.ok(scene.includes("cameraBodyId.current=landedBody.id;cameraGroundingRevision.current=f.groundingRevision"));
  assert.ok(!scene.includes("setWalk(")&&!scene.includes("DIRECTION_START"),"camera stabilization must not depend on walk or direction input");
 });
+
+test('a repeated approach to the same planet replaces the previous grounded or releasing camera anchor',async()=>{
+ const scene=await read('apps/web/src/features/game/flight-scene.tsx');
+ assert.match(scene,/landingCameraAnchor\.current\?\.targetId!==landingTarget\.id\|\|cameraBodyId\.current===landingTarget\.id\|\|landingCameraHandoff\.current\?\.phase==='grounded'\|\|landingCameraHandoff\.current\?\.phase==='release'/);
+});
