@@ -65,7 +65,7 @@ The project owner explicitly authorized Gói 08 **Free Flight & Camera** and Gó
 
 - Working branch: `feat/packages-08-09-integration`.
 - Pull request: https://github.com/thaodamvc2-beep/the-universe/pull/10 (open; mergeable; not merged).
-- Branch head: `aaa346c50f2511f004e189c2881f92de4f2b26fa`.
+- Code integration commit: `aaa346c50f2511f004e189c2881f92de4f2b26fa` (later commits only record project status).
 - Vercel preview: https://the-universe-git-feat-packages-08-09-integration-thao-002f.vercel.app (deployment READY; Vercel SSO protection may require team sign-in).
 - Deployment ID: `dpl_FaGMs5tA7YPwmGtcgwE4iTcEh5QZ`.
 - Verification: 90/90 Node tests; lint/typecheck/static build pass; Chromium emulation at 390×844, 1280×800 and 1280×600; WebGL context-loss/restoration simulated successfully.
