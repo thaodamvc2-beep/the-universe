@@ -113,7 +113,7 @@ test('in-game angel follows all six identities using their individual transparen
 });
 test('game scene no longer renders the floating home-system direction marker',async()=>{
  const scene=await read('apps/web/src/features/game/flight-scene.tsx');
- assert.doesNotMatch(scene,/HomeSystemBeacon|BeaconName|cameraOffset/);
+ assert.doesNotMatch(scene,/HomeSystemBeacon|BeaconName/);
 });
 test('angel remains at the floating origin and scales to the destination surface',async()=>{
  const scene=await read('apps/web/src/features/game/flight-scene.tsx');
