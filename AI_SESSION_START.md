@@ -60,3 +60,13 @@ These files establish a repository-level instruction contract. They make the req
 ## Owner authorization register — 2026-11-24
 
 The project owner explicitly authorized Gói 08 **Free Flight & Camera** and Gói 09 **Mobile Experience** for implementation and integrated verification on an isolated branch. Their scope and decision records are in `docs/packages/PACKAGE_08_FREE_FLIGHT_AND_CAMERA_SCOPE.md`, `docs/decisions/P08-DECISION-LOG.md`, `docs/packages/PACKAGE_09_MOBILE_EXPERIENCE_SCOPE.md` and `docs/decisions/P09-DECISION-LOG.md`. This authorization does not permit production merge or GitHub Pages deployment. Gói 10–15 remain unauthorized.
+
+## Integrated implementation checkpoint — 2026-11-24
+
+- Working branch: `feat/packages-08-09-integration`.
+- Pull request: https://github.com/thaodamvc2-beep/the-universe/pull/10 (open; mergeable; not merged).
+- Branch head: `aaa346c50f2511f004e189c2881f92de4f2b26fa`.
+- Vercel preview: https://the-universe-git-feat-packages-08-09-integration-thao-002f.vercel.app (deployment READY; Vercel SSO protection may require team sign-in).
+- Deployment ID: `dpl_FaGMs5tA7YPwmGtcgwE4iTcEh5QZ`.
+- Verification: 90/90 Node tests; lint/typecheck/static build pass; Chromium emulation at 390×844, 1280×800 and 1280×600; WebGL context-loss/restoration simulated successfully.
+- Next gate: owner performs real-phone validation and reports findings. Do not merge to `main` or deploy GitHub Pages without a separate explicit instruction.
