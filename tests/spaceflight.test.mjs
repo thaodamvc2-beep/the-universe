@@ -457,3 +457,31 @@ test('restarting a same-planet landing captures the live camera pose instead of 
  assert.match(scene,/restartingLanding\?undefined:previousAnchor\?\.cameraWorldPosition/);
  assert.match(scene,/!restartingLanding&&previousAnchor\?previousAnchor\.cameraWorldPosition\.clone\(\)\.sub\(f\.position\):camera\.position\.clone\(\)/);
 });
+
+test('directional input does not cancel continuous flight and supports combined axes',async()=>{
+ const {createFlightInputState,transitionFlightControl}=await import('../apps/web/src/features/game/flight-controller.mjs');
+ const input=createFlightInputState();
+ transitionFlightControl(input,'TOGGLE_FLIGHT');
+ assert.equal(input.autoFlight,true);
+ for(const direction of ['left','right','up','down']){
+  transitionFlightControl(input,'DIRECTION_START',direction);
+  assert.equal(input.mode,'flying');
+  assert.equal(input.autoFlight,true,`pressing ${direction} must not stop continuous flight`);
+ }
+ assert.equal(input.left,true);
+ assert.equal(input.right,true);
+ assert.equal(input.up,true);
+ assert.equal(input.down,true);
+ for(const direction of ['left','right','up','down'])transitionFlightControl(input,'DIRECTION_STOP',direction);
+ assert.equal(input.autoFlight,true,'releasing direction buttons must leave continuous flight enabled');
+ assert.equal(input.mode,'flying');
+});
+
+test('manual directional movement while not in continuous flight remains manual',async()=>{
+ const {createFlightInputState,transitionFlightControl}=await import('../apps/web/src/features/game/flight-controller.mjs');
+ const input=createFlightInputState();
+ transitionFlightControl(input,'DIRECTION_START','right');
+ assert.equal(input.mode,'walking');
+ assert.equal(input.right,true);
+ assert.equal(input.autoFlight,false);
+});
