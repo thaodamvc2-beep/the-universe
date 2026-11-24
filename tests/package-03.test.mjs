@@ -79,7 +79,8 @@ test('integrated game generates coordinate-seeded worlds locally with no AI API 
 test('flight uses slow collision-aware travel, gentle landing, planetary labels and local viewpoint lighting', async () => {
   const scene = await read('apps/web/src/features/game/flight-scene.tsx');
   assert.match(scene, /moveAvoidingBodies/);
-  assert.match(scene, /target\.landable/);
+  assert.match(scene, /getLandingSurfaceRadius/);
+  assert.doesNotMatch(scene, /target\.landable/);
   assert.match(scene, /PlanetLabel/);
   assert.match(scene, /CanvasTexture/);
   assert.ok(scene.includes("body.id==='sun'&&<pointLight"));

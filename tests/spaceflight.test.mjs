@@ -49,7 +49,7 @@ test('ambient audio and optional realtime multiplayer adapters are not misrepres
 test('spaceflight now slows down, avoids planets and lands gently with visible world names',async()=>{
  const scene=await read('apps/web/src/features/game/flight-scene.tsx');
  assert.match(scene,/moveAvoidingBodies/);
- assert.ok(scene.includes("target.landable"));
+ assert.ok(!scene.includes("target.landable")&&!scene.includes("filter(b=>b.landable)"));
  assert.match(scene,/PlanetLabel/);
  assert.ok(scene.includes("camera.lookAt"));
  assert.match(scene,/seated/);
@@ -113,7 +113,7 @@ test('in-game angel follows all six identities using their individual transparen
 });
 test('game scene no longer renders the floating home-system direction marker',async()=>{
  const scene=await read('apps/web/src/features/game/flight-scene.tsx');
- assert.doesNotMatch(scene,/HomeSystemBeacon|BeaconName|cameraOffset/);
+ assert.doesNotMatch(scene,/HomeSystemBeacon|BeaconName/);
 });
 test('angel remains at the floating origin and scales to the destination surface',async()=>{
  const scene=await read('apps/web/src/features/game/flight-scene.tsx');
@@ -126,7 +126,7 @@ test('angel remains at the floating origin and scales to the destination surface
 });
 test('manual landing enters a short controlled approach instead of snapping from far away',async()=>{
  const scene=await read('apps/web/src/features/game/flight-scene.tsx');
- assert.match(scene,/nearest\.d<=nearest\.body\.radius\*1\.3\+\.16/);
+ assert.ok(scene.includes("nearest.d<=getLandingSurfaceRadius(nearest.body.radius)+.08"));
  assert.match(scene,/brakingSpeed=Math\.sqrt\(2\*9\*remaining\)/);
 });
 
@@ -203,10 +203,10 @@ test('manual movement immediately cancels destination autopilot and landing appr
  assert.match(scene,/manualMovement=i\.forward\|\|i\.back\|\|i\.left\|\|i\.right\|\|i\.up\|\|i\.down/);
  assert.match(scene,/onLandRequest\(null\)/);
  assert.match(scene,/Math\.max\(\.22,brakingSpeed\)/);
- assert.match(scene,/nearest\.d<=nearest\.body\.radius\*1\.3\+\.16/);
+ assert.ok(scene.includes("nearest.d<=getLandingSurfaceRadius(nearest.body.radius)+.08"));
 });
 
-test('landing command also aligns an already-grounded avatar and sitting preserves surface contact',async()=>{const scene=await read('apps/web/src/features/game/flight-scene.tsx');assert.match(scene,/if\(i\.land\)\{f\.position\.copy\(center\)\.addScaledVector\(normal,body\.radius\*1\.3\+\.08\)/);assert.match(scene,/sprite\.position\.y=body\?0:/);assert.match(scene,/sprite\.material\.opacity=seated\?\.92:1/);});
+test('landing command also aligns an already-grounded avatar and sitting preserves surface contact',async()=>{const scene=await read('apps/web/src/features/game/flight-scene.tsx');assert.ok(scene.includes("getLandingContactPoint(center.toArray(),f.position.toArray(),getLandingSurfaceRadius(body.radius))"));assert.match(scene,/sprite\.position\.y=body\?0:/);assert.match(scene,/sprite\.material\.opacity=seated\?\.92:1/);});
 
 test('distance from Earth is measured from the home-world surface and the nebula is brighter',async()=>{
  const game=await read('apps/web/src/features/game/universe-game.tsx');
@@ -297,7 +297,7 @@ test('destination arrival rebases the camera outside the landed planet and level
  assert.match(scene,/surfaceHeading\.current\.copy\(forward\);f\.yaw=Math\.atan2\(forward\.x,-forward\.z\);f\.pitch=0/);
  assert.match(scene,/if\(landedNow\)camera\.position\.copy\(desired\)/);
  assert.match(scene,/cameraBodyId\.current=landedBody\?\.id\?\?null/);
- assert.match(scene,/target\.radius\*1\.3\+\(target\.landable \? 0\.08 : 1\.8\)/);
+ assert.ok(scene.includes("stop=getLandingSurfaceRadius(target.radius)"));
 });
 
 
@@ -319,4 +319,219 @@ test('landing camera keeps a stable tangent frame and cannot stall when surface 
  assert.match(scene,/smoothedCameraUp\.current\.dot\(playerUp\)<0\)smoothedCameraUp\.current\.copy\(playerUp\)/);
  assert.match(scene,/f\.pitch=0;lastSurfaceYaw\.current=f\.yaw/);
  assert.match(scene,/f\.groundingRevision\+=1;f\.position\.addScaledVector\(normal,\.9\)/);
+});
+
+test('landing camera anchoring starts only in the final descent window, not during long-distance autopilot',async()=>{
+ const {isWithinLandingCameraCaptureRange}=await import('../apps/web/src/features/game/landing-camera.mjs');
+ assert.equal(isWithinLandingCameraCaptureRange(100,10,5.55),false,'a distant destination must keep the normal tracking camera');
+ assert.equal(isWithinLandingCameraCaptureRange(15.5,10,5.55),true,'the anchor starts when the avatar is within one camera offset of the surface');
+ assert.equal(isWithinLandingCameraCaptureRange(10,10,5.55),true,'the final contact position remains inside the anchored phase');
+ assert.equal(isWithinLandingCameraCaptureRange(Number.NaN,10,5.55),false,'invalid distances must not activate the anchor');
+ const scene=await read('apps/web/src/features/game/flight-scene.tsx');
+ assert.match(scene,/isWithinLandingCameraCaptureRange\(f\.position\.distanceTo\(new Vector3\(\.\.\.landingCandidate\.position\)\)/);
+});
+
+test('landing camera anchors the planet in world space while the avatar visibly descends',async()=>{
+ const {createLandingCameraAnchor,getLandingCameraLocalFrame}=await import('../apps/web/src/features/game/landing-camera.mjs');
+ const anchor=createLandingCameraAnchor([0,0,20],[0,0,0],10,[0,0,5]);
+ const positions=[[0,0,20],[0,0,16],[0,0,10]];
+ const planetViews=positions.map(player=>{const frame=getLandingCameraLocalFrame(player,anchor),planetLocal=[0,0,0].map((v,i)=>v-player[i]);return planetLocal.map((v,i)=>v-frame.cameraPosition[i])});
+ const avatarViews=positions.map(player=>{const frame=getLandingCameraLocalFrame(player,anchor);return [0,0,0].map((v,i)=>v-frame.cameraPosition[i])});
+ assert.deepEqual(planetViews,[[0,0,-25],[0,0,-25],[0,0,-25]],'planet must remain fixed relative to the anchored camera');
+ assert.deepEqual(avatarViews,[[0,0,-5],[0,0,-9],[0,0,-15]],'avatar must move toward the landing point in camera space');
+ const landingView=getLandingCameraLocalFrame(positions[2],anchor);
+ assert.deepEqual(landingView.lookAt,[0,0,0],'camera must keep aiming at the same surface contact point');
+});
+
+test('landing camera anchor handles different planetary surface normals and repeated targets',async()=>{
+ const {createLandingCameraAnchor,getLandingCameraLocalFrame}=await import('../apps/web/src/features/game/landing-camera.mjs');
+ for(const [player,center,offset] of [
+  [[20,0,0],[0,0,0],[5,0,0]],
+  [[0,20,0],[0,0,0],[0,5,0]],
+  [[0,0,-20],[0,0,0],[0,0,-5]]
+ ]){
+  const anchor=createLandingCameraAnchor(player,center,10,offset);
+  const before=getLandingCameraLocalFrame(player,anchor);
+  const after=getLandingCameraLocalFrame(center.map((v,i)=>v+(player[i]-v)*.5),anchor);
+  assert.deepEqual(before.cameraPosition.map((v,i)=>v+player[i]),anchor.cameraWorldPosition);
+  assert.deepEqual(after.lookAt.map((v,i)=>v+center[i]+(player[i]-center[i])*.5),anchor.lookAtWorldPosition);
+ }
+});
+
+
+test('landing camera uses a finite orthogonal up vector for vertical and near-pole approaches',async()=>{
+ const {createLandingCameraAnchor,getStableLandingCameraUp}=await import('../apps/web/src/features/game/landing-camera.mjs');
+ const cases=[
+  {player:[0,20,0],offset:[0,5,0]},
+  {player:[0,-20,0],offset:[0,-5,0]},
+  {player:[0,20,.00001],offset:[0,5,.00001]},
+  {player:[20,0,0],offset:[5,0,0]},
+  {player:[0,0,-20],offset:[0,0,-5]}
+ ];
+ for(const item of cases){
+  const anchor=createLandingCameraAnchor(item.player,[0,0,0],10,item.offset);
+  const up=anchor.cameraUp;
+  const view=anchor.lookAtWorldPosition.map((value,index)=>value-anchor.cameraWorldPosition[index]);
+  const viewLength=Math.hypot(...view),upLength=Math.hypot(...up);
+  assert.ok(up.every(Number.isFinite),'camera up must never contain NaN or Infinity');
+  assert.ok(Math.abs(upLength-1)<1e-8,'camera up must be normalized');
+  assert.ok(Math.abs(up.reduce((sum,value,index)=>sum+value*view[index],0))<1e-7*viewLength,'camera up must be orthogonal to the viewing direction');
+  assert.deepEqual(up,getStableLandingCameraUp(anchor.cameraWorldPosition,anchor.lookAtWorldPosition),'camera basis must be deterministic across repeated frames');
+ }
+});
+
+test('all generated fictional worlds remain landable, including water-themed worlds',async()=>{
+ const data=await read('apps/web/src/features/game/universe-data.ts');
+ const start=data.indexOf('export function makeProceduralRegion');
+ const end=data.indexOf('export function makeImaginedWorlds',start);
+ const generator=data.slice(start,end);
+ assert.match(generator,/landable:true/,'procedural planets of every fictional surface type must be landable');
+ assert.doesNotMatch(generator,/landable:false/,'no fictional water world may be blocked from landing');
+});
+
+test('all real, exoplanet and procedural destinations use the same permissive landing rule',async()=>{
+ const data=await read('apps/web/src/features/game/universe-data.ts');
+ const game=await read('apps/web/src/features/game/universe-game.tsx');
+ const scene=await read('apps/web/src/features/game/flight-scene.tsx');
+ assert.ok(!data.includes("landable:false"),"no catalogued world may be marked as non-landable");
+ assert.ok(data.includes("landable:true"));
+ assert.ok(game.includes("landable:true"),"NASA exoplanets remain landable");
+ assert.ok(data.includes("landable:true,real:false"),"procedural fictional worlds remain landable");
+ assert.ok(!scene.includes("target.landable")&&!scene.includes("filter(b=>b.landable)"),"flight and direct landing must not reject any world type");
+ assert.ok(scene.includes("getLandingSurfaceRadius(target.radius)"));
+ assert.ok(scene.includes("getLandingContactPoint"));
+});
+
+test('every planet type shares a finite surface normal and one contact radius',async()=>{
+ const {getLandingSurfaceRadius,getLandingContactPoint,getStableSurfaceNormal}=await import('../apps/web/src/features/game/landing-camera.mjs');
+ assert.equal(getLandingSurfaceRadius(2),2.68);
+ for(const position of [[20,0,0],[0,20,0],[0,0,-20],[1,2,3]]){
+  const normal=getStableSurfaceNormal(position,[0,0,0]);
+  assert.ok(normal.every(Number.isFinite));
+  assert.ok(Math.abs(Math.hypot(...normal)-1)<1e-10);
+  const contact=getLandingContactPoint([0,0,0],position,getLandingSurfaceRadius(2));
+  assert.ok(Math.abs(Math.hypot(...contact.position)-2.68)<1e-10);
+  assert.ok(contact.normal.every((value,index)=>Math.abs(value-normal[index])<1e-10));
+ }
+ const fallback=getLandingContactPoint([0,0,0],[0,0,0],2,[0,1,0]);
+ assert.deepEqual(fallback.position,[0,2,0],'a degenerate center position must still resolve to a stable contact');
+});
+
+test('camera handoff is continuous, finite and orthogonal from approach through touchdown',async()=>{
+ const {createLandingCameraHandoff,getLandingCameraHandoffFrame}=await import('../apps/web/src/features/game/landing-camera.mjs');
+ const anchor={cameraWorldPosition:[0,0,12],lookAtWorldPosition:[0,0,0],cameraUp:[0,1,0]};
+ const handoff=createLandingCameraHandoff(anchor,[5,0,10],[5,0,0],[0,1,0],.6);
+ const start=getLandingCameraHandoffFrame(handoff,0);
+ const end=getLandingCameraHandoffFrame(handoff,.6);
+ assert.deepEqual(start.cameraWorldPosition,anchor.cameraWorldPosition);
+ assert.deepEqual(start.lookAtWorldPosition,anchor.lookAtWorldPosition);
+ assert.deepEqual(end.cameraWorldPosition,[5,0,10]);
+ assert.deepEqual(end.lookAtWorldPosition,[5,0,0]);
+ for(const elapsed of [0,.1,.2,.3,.4,.5,.6]){
+  const frame=getLandingCameraHandoffFrame(handoff,elapsed);
+  const view=frame.lookAtWorldPosition.map((value,index)=>value-frame.cameraWorldPosition[index]);
+  assert.ok([...frame.cameraWorldPosition,...frame.lookAtWorldPosition,...frame.cameraUp].every(Number.isFinite));
+  assert.ok(Math.abs(Math.hypot(...frame.cameraUp)-1)<1e-8);
+  assert.ok(Math.abs(frame.cameraUp.reduce((sum,value,index)=>sum+value*view[index],0))<1e-7*Math.hypot(...view));
+ }
+});
+
+test('landing camera anchor is retained through touchdown and handed off without player input',async()=>{
+ const scene=await read('apps/web/src/features/game/flight-scene.tsx');
+ assert.ok(scene.includes("anchoredLandingBody=!!landedBody&&landingCameraAnchor.current?.targetId===landedBody.id"));
+ assert.ok(scene.includes("phase:'approach'"));
+ assert.ok(scene.includes("phase:'grounded'"));
+ assert.ok(scene.includes("phase:'release'"));
+ assert.ok(scene.includes("getLandingCameraHandoffFrame"));
+ assert.ok(scene.includes("cameraBodyId.current=landedBody.id;cameraGroundingRevision.current=f.groundingRevision"));
+ assert.ok(!scene.includes("setWalk(")&&!scene.includes("DIRECTION_START"),"camera stabilization must not depend on walk or direction input");
+});
+
+test('a repeated approach to the same planet replaces the previous grounded or releasing camera anchor',async()=>{
+ const scene=await read('apps/web/src/features/game/flight-scene.tsx');
+ assert.match(scene,/landingCameraAnchor\.current\?\.targetId!==landingTarget\.id\|\|cameraBodyId\.current===landingTarget\.id\|\|landingCameraHandoff\.current\?\.phase==='grounded'\|\|landingCameraHandoff\.current\?\.phase==='release'/);
+});
+
+test('restarting a same-planet landing captures the live camera pose instead of the stale anchor pose',async()=>{
+ const scene=await read('apps/web/src/features/game/flight-scene.tsx');
+ assert.match(scene,/restartingLanding\?undefined:previousAnchor\?\.cameraWorldPosition/);
+ assert.match(scene,/!restartingLanding&&previousAnchor\?previousAnchor\.cameraWorldPosition\.clone\(\)\.sub\(f\.position\):camera\.position\.clone\(\)/);
+});
+
+test('directional input does not cancel continuous flight and supports combined axes',async()=>{
+ const {createFlightInputState,transitionFlightControl}=await import('../apps/web/src/features/game/flight-controller.mjs');
+ const input=createFlightInputState();
+ transitionFlightControl(input,'TOGGLE_FLIGHT');
+ assert.equal(input.autoFlight,true);
+ for(const direction of ['left','right','up','down']){
+  transitionFlightControl(input,'DIRECTION_START',direction);
+  assert.equal(input.mode,'flying');
+  assert.equal(input.autoFlight,true,`pressing ${direction} must not stop continuous flight`);
+ }
+ assert.equal(input.left,true);
+ assert.equal(input.right,true);
+ assert.equal(input.up,true);
+ assert.equal(input.down,true);
+ for(const direction of ['left','right','up','down'])transitionFlightControl(input,'DIRECTION_STOP',direction);
+ assert.equal(input.autoFlight,true,'releasing direction buttons must leave continuous flight enabled');
+ assert.equal(input.mode,'flying');
+});
+
+test('manual directional movement while not in continuous flight remains manual',async()=>{
+ const {createFlightInputState,transitionFlightControl}=await import('../apps/web/src/features/game/flight-controller.mjs');
+ const input=createFlightInputState();
+ transitionFlightControl(input,'DIRECTION_START','right');
+ assert.equal(input.mode,'walking');
+ assert.equal(input.right,true);
+ assert.equal(input.autoFlight,false);
+});
+
+
+test('concurrent input sources release only their own direction and preserve continuous flight',async()=>{
+ const {createFlightInputState,createDirectionInputRegistry,setFlightDirectionSource}=await import('../apps/web/src/features/game/flight-controller.mjs');
+ const input=createFlightInputState(),sources=createDirectionInputRegistry();
+ input.mode='flying';input.autoFlight=true;
+ setFlightDirectionSource(input,sources,'left','pointer:11',true);
+ setFlightDirectionSource(input,sources,'left','pointer:12',true);
+ setFlightDirectionSource(input,sources,'up','pointer:13',true);
+ assert.equal(input.left,true);assert.equal(input.up,true);assert.equal(input.autoFlight,true);
+ setFlightDirectionSource(input,sources,'left','pointer:11',false);
+ assert.equal(input.left,true,'second pointer still holds left');
+ setFlightDirectionSource(input,sources,'left','pointer:12',false);
+ assert.equal(input.left,false);assert.equal(input.up,true);assert.equal(input.autoFlight,true);
+ setFlightDirectionSource(input,sources,'up','pointer:13',false);
+ assert.equal(input.up,false);assert.equal(input.autoFlight,true);
+});
+
+test('mobile directional controls use pointer capture and independent source-aware releases',async()=>{
+ const game=await read('apps/web/src/features/game/universe-game.tsx');
+ assert.match(game,/createDirectionInputRegistry/);
+ assert.match(game,/setDirection\(key,true,'pointer:'\+e\.pointerId\)/);
+ assert.match(game,/onLostPointerCapture/);
+ assert.match(game,/drag\.current\.pointerId!==e\.pointerId/);
+});
+
+test('WebGL context loss keeps the canvas mounted and supports restoration',async()=>{
+ const game=await read('apps/web/src/features/game/universe-game.tsx');
+ assert.match(game,/addEventListener\('webglcontextlost',lost\)/);
+ assert.match(game,/addEventListener\('webglcontextrestored',restored\)/);
+ assert.match(game,/removeEventListener\('webglcontextrestored',restored\)/);
+ assert.match(game,/<Canvas[\s\S]*onCreated=\{\(\{gl\}\)=>setRendererCanvas\(gl\.domElement\)\}/);
+ assert.match(game,/contextLost&&<div className="game-fallback game-context-overlay"/);
+ assert.doesNotMatch(game,/contextLost\?<SceneErrorBoundary/);
+ assert.doesNotMatch(game,/thiếu bộ nhớ đồ họa/);
+});
+
+test('mobile flight control styles preserve touch gestures and device safe areas',async()=>{
+ const css=await read('apps/web/src/app/universe-game.css');
+ assert.match(css,/touch-action:none/);
+ assert.match(css,/env\(safe-area-inset-bottom\)/);
+ assert.match(css,/game-context-overlay/);
+});
+
+test('desktop utility rail is separated from movement actions at normal and short heights',async()=>{
+ const css=await read('apps/web/src/app/universe-game.css');
+ assert.match(css,/@media\(min-width:761px\)\{\s*\.universe-explorer \.cosmic-utility-rail\{top:auto;bottom:16px;/);
+ assert.match(css,/@media\(min-width:761px\) and \(max-height:680px\)/);
+ assert.match(css,/\.universe-explorer \.cosmic-utility-rail\{transform:none;/);
 });

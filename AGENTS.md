@@ -1,8 +1,9 @@
 # THE UNIVERSE — AGENT INSTRUCTIONS
 
 **Document:** `AGENTS.md`
-**Version:** 1.2
+**Version:** 1.3
 **Created:** 2026-11-19
+**Last updated:** 2026-11-24
 **Status:** Project-wide working instructions
 **Applies to:** All AI agents, developers, contributors, and work packages (Gói 01–15)
 
@@ -161,4 +162,4 @@ At the end of a task, report:
 
 ## 9. Project baseline and authorization note
 
-Gói 01 Version 1.1 was explicitly approved by the project owner on 2026-11-19. The companion Master Spec is therefore the **APPROVED GÓI 01 BASELINE**. That approval did not automatically approve individually pending decisions (D01–D14) or validate proposed performance targets. The owner authorized Gói 02 on 2026-11-19 and delegated the technical decisions relevant to that package. On 2026-11-19 the owner provisionally approved Gói 02 for transition to Gói 03 and explicitly authorized Gói 03. On 2026-11-20 the owner provisionally accepted all existing packages (Gói 01–06) for consolidation into one integrated game experience. This is provisional acceptance, not a waiver of recorded verification gaps: Gói 02 legacy HTTP-header checks and real-device/browser review remain open; Gói 03 D01 engine comparison and device qualification remain open; Gói 04 avatar review and local-storage edge checks remain open; Gói 05/06 visual review remains open. The owner authorized cross-package integration of the current game baseline. Do not start Gói 07 or later without a separate authorization.
+Gói 01 Version 1.1 was explicitly approved by the project owner on 2026-11-19. The companion Master Spec is therefore the **APPROVED GÓI 01 BASELINE**. That approval did not automatically approve individually pending decisions (D01–D14) or validate proposed performance targets. The owner authorized Gói 02 on 2026-11-19 and delegated the technical decisions relevant to that package. On 2026-11-19 the owner provisionally approved Gói 02 for transition to Gói 03 and explicitly authorized Gói 03. On 2026-11-20 the owner provisionally accepted all existing packages (Gói 01–06) for consolidation into one integrated game experience. This is provisional acceptance, not a waiver of recorded verification gaps: Gói 02 legacy HTTP-header checks and real-device/browser review remain open; Gói 03 D01 engine comparison and device qualification remain open; Gói 04 avatar review and local-storage edge checks remain open; Gói 05/06 visual review remains open. The owner authorized cross-package integration of the current game baseline. Gói 07 was separately authorized on 2026-11-20. On 2026-11-24 the owner explicitly authorized Gói 08 (Free Flight & Camera) and Gói 09 (Mobile Experience), including integrated implementation and assistant-led automated/browser-emulated verification on an isolated branch. No production merge or GitHub Pages deployment is authorized by that instruction. Gói 10–15 remain unauthorized until separately approved.

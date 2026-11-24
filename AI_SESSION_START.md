@@ -1,6 +1,6 @@
 # THE UNIVERSE — AI Session Start Gate
 
-**Version:** 1.0  
+**Version:** 1.1  
 **Created:** 2026-11-19  
 **Applies to:** Every AI coding agent and every new or resumed work session on THE UNIVERSE  
 **Priority:** Mandatory project instruction; read together with the root `AGENTS.md`
@@ -56,3 +56,7 @@ If package acceptance records or required package documents are missing, stop wo
 ## Important limitation
 
 These files establish a repository-level instruction contract. They make the requirement explicit for coding agents that discover and follow `AGENTS.md` or repository instructions. A plain Markdown file cannot technically force a non-compliant AI tool or a platform that does not load repository instructions to read it. For such tools, configure the equivalent mandatory startup instruction in that tool's project/system instructions and ensure it has workspace access to these files.
+
+## Owner authorization register — 2026-11-24
+
+The project owner explicitly authorized Gói 08 **Free Flight & Camera** and Gói 09 **Mobile Experience** for implementation and integrated verification on an isolated branch. Their scope and decision records are in `docs/packages/PACKAGE_08_FREE_FLIGHT_AND_CAMERA_SCOPE.md`, `docs/decisions/P08-DECISION-LOG.md`, `docs/packages/PACKAGE_09_MOBILE_EXPERIENCE_SCOPE.md` and `docs/decisions/P09-DECISION-LOG.md`. This authorization does not permit production merge or GitHub Pages deployment. Gói 10–15 remain unauthorized.

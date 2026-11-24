@@ -86,7 +86,7 @@ export function transitionFlightControl(input, action, direction) {
         input.mode = FLIGHT_MODES.FLYING;
       }
       if (direction && DIRECTIONS.includes(direction)) input[direction] = true;
-      input.autoFlight = false;
+      if (!(input.mode === FLIGHT_MODES.FLYING && input.autoFlight)) input.autoFlight = false;
       input.land = false;
       input.resting = false;
       break;
@@ -130,5 +130,25 @@ export function transitionFlightControl(input, action, direction) {
     default:
       throw new Error('Unknown flight control action: ' + action);
   }
+  return input;
+}
+
+
+/** Track held directions by physical input source so multi-touch and keyboard releases cannot cancel each other. */
+export function createDirectionInputRegistry() {
+  return new Map();
+}
+
+export function setFlightDirectionSource(input, registry, direction, source, active) {
+  if (!DIRECTIONS.includes(direction)) throw new Error('Unknown flight direction: ' + direction);
+  if (!source) throw new Error('A stable input source is required');
+  const sources = registry.get(direction) ?? new Set();
+  const wasActive = sources.size > 0;
+  if (active) sources.add(source);
+  else sources.delete(source);
+  if (sources.size) registry.set(direction, sources);
+  else registry.delete(direction);
+  if (!wasActive && sources.size) transitionFlightControl(input, 'DIRECTION_START', direction);
+  else if (wasActive && !sources.size) transitionFlightControl(input, 'DIRECTION_STOP', direction);
   return input;
 }
