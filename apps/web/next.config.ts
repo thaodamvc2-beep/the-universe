@@ -4,7 +4,8 @@ const nextConfig: NextConfig = {
   poweredByHeader: false,
   reactStrictMode: true,
   output: 'export',
-  basePath: process.env.NEXT_PUBLIC_BASE_PATH ?? '/the-universe',
+  // GitHub Pages serves the app from /the-universe; Vercel serves this project at the domain root.
+  basePath: process.env.VERCEL ? '' : process.env.NEXT_PUBLIC_BASE_PATH ?? '/the-universe',
   trailingSlash: true,
   images: {
     unoptimized: true,
