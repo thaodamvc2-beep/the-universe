@@ -122,7 +122,7 @@ export function FlightScene({bodies,avatarId,flightRef,inputRef,targetId,onArriv
   const landedBody=f.groundedId?bodies.find(b=>b.id===f.groundedId):undefined;
   const landingCandidate=targetId&&!manualMovement&&!landedBody&&(i.mode==='approaching'||i.mode==='landing')?bodies.find(b=>b.id===targetId):undefined;
   const landingTarget=landingCandidate&&isWithinLandingCameraCaptureRange(f.position.distanceTo(new Vector3(...landingCandidate.position)),getLandingSurfaceRadius(landingCandidate.radius),LANDING_CAMERA_CAPTURE_GAP)?landingCandidate:undefined;
-  if(landingTarget&&landingCameraAnchor.current?.targetId!==landingTarget.id){
+  if(landingTarget&&(landingCameraAnchor.current?.targetId!==landingTarget.id||cameraBodyId.current===landingTarget.id||landingCameraHandoff.current?.phase==='grounded'||landingCameraHandoff.current?.phase==='release')){
    const previousAnchor=landingCameraAnchor.current,currentPose=captureCameraPose(camera,f.position,previousAnchor?.cameraWorldPosition),center=new Vector3(...landingTarget.position);
    const cameraOffset=previousAnchor?previousAnchor.cameraWorldPosition.clone().sub(f.position):camera.position.clone();
    const anchor=createLandingCameraAnchor(f.position.toArray(),center.toArray(),getLandingSurfaceRadius(landingTarget.radius),cameraOffset.toArray());
