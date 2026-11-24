@@ -485,3 +485,53 @@ test('manual directional movement while not in continuous flight remains manual'
  assert.equal(input.right,true);
  assert.equal(input.autoFlight,false);
 });
+
+
+test('concurrent input sources release only their own direction and preserve continuous flight',async()=>{
+ const {createFlightInputState,createDirectionInputRegistry,setFlightDirectionSource}=await import('../apps/web/src/features/game/flight-controller.mjs');
+ const input=createFlightInputState(),sources=createDirectionInputRegistry();
+ input.mode='flying';input.autoFlight=true;
+ setFlightDirectionSource(input,sources,'left','pointer:11',true);
+ setFlightDirectionSource(input,sources,'left','pointer:12',true);
+ setFlightDirectionSource(input,sources,'up','pointer:13',true);
+ assert.equal(input.left,true);assert.equal(input.up,true);assert.equal(input.autoFlight,true);
+ setFlightDirectionSource(input,sources,'left','pointer:11',false);
+ assert.equal(input.left,true,'second pointer still holds left');
+ setFlightDirectionSource(input,sources,'left','pointer:12',false);
+ assert.equal(input.left,false);assert.equal(input.up,true);assert.equal(input.autoFlight,true);
+ setFlightDirectionSource(input,sources,'up','pointer:13',false);
+ assert.equal(input.up,false);assert.equal(input.autoFlight,true);
+});
+
+test('mobile directional controls use pointer capture and independent source-aware releases',async()=>{
+ const game=await read('apps/web/src/features/game/universe-game.tsx');
+ assert.match(game,/createDirectionInputRegistry/);
+ assert.match(game,/setDirection\(key,true,'pointer:'\+e\.pointerId\)/);
+ assert.match(game,/onLostPointerCapture/);
+ assert.match(game,/drag\.current\.pointerId!==e\.pointerId/);
+});
+
+test('WebGL context loss keeps the canvas mounted and supports restoration',async()=>{
+ const game=await read('apps/web/src/features/game/universe-game.tsx');
+ assert.match(game,/addEventListener\('webglcontextlost',lost\)/);
+ assert.match(game,/addEventListener\('webglcontextrestored',restored\)/);
+ assert.match(game,/removeEventListener\('webglcontextrestored',restored\)/);
+ assert.match(game,/<Canvas[\s\S]*onCreated=\{\(\{gl\}\)=>setRendererCanvas\(gl\.domElement\)\}/);
+ assert.match(game,/contextLost&&<div className="game-fallback game-context-overlay"/);
+ assert.doesNotMatch(game,/contextLost\?<SceneErrorBoundary/);
+ assert.doesNotMatch(game,/thiếu bộ nhớ đồ họa/);
+});
+
+test('mobile flight control styles preserve touch gestures and device safe areas',async()=>{
+ const css=await read('apps/web/src/app/universe-game.css');
+ assert.match(css,/touch-action:none/);
+ assert.match(css,/env\(safe-area-inset-bottom\)/);
+ assert.match(css,/game-context-overlay/);
+});
+
+test('desktop utility rail is separated from movement actions at normal and short heights',async()=>{
+ const css=await read('apps/web/src/app/universe-game.css');
+ assert.match(css,/@media\(min-width:761px\)\{\s*\.universe-explorer \.cosmic-utility-rail\{top:auto;bottom:16px;/);
+ assert.match(css,/@media\(min-width:761px\) and \(max-height:680px\)/);
+ assert.match(css,/\.universe-explorer \.cosmic-utility-rail\{transform:none;/);
+});
