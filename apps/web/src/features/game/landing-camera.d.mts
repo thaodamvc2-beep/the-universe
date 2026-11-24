@@ -1,5 +1,11 @@
 export type LandingCameraAnchor = { cameraWorldPosition: number[]; lookAtWorldPosition: number[]; cameraUp: [number, number, number] };
+export type LandingCameraHandoff = { fromCameraWorldPosition:number[]; toCameraWorldPosition:number[]; fromLookAtWorldPosition:number[]; toLookAtWorldPosition:number[]; fromCameraUp:number[]; toCameraUp:number[]; duration:number };
+export function getLandingSurfaceRadius(bodyRadius:number):number;
+export function getStableSurfaceNormal(playerPosition:number[],bodyCenter:number[],fallback?:number[]):[number,number,number];
+export function getLandingContactPoint(bodyCenter:number[],playerPosition:number[],surfaceRadius:number,fallback?:number[]):{normal:[number,number,number];position:[number,number,number]};
 export function isWithinLandingCameraCaptureRange(distanceToCenter: number, surfaceRadius: number, captureGap: number): boolean;
 export function getStableLandingCameraUp(cameraWorldPosition: number[], lookAtWorldPosition: number[]): [number, number, number];
 export function createLandingCameraAnchor(playerPosition: number[], bodyCenter: number[], surfaceRadius: number, cameraOffset: number[]): LandingCameraAnchor;
+export function createLandingCameraHandoff(anchor:LandingCameraAnchor,targetCameraWorldPosition:number[],targetLookAtWorldPosition:number[],targetCameraUp:number[],duration?:number):LandingCameraHandoff;
+export function getLandingCameraHandoffFrame(handoff:LandingCameraHandoff,elapsed:number):{cameraWorldPosition:[number,number,number];lookAtWorldPosition:[number,number,number];cameraUp:[number,number,number];progress:number};
 export function getLandingCameraLocalFrame(playerPosition: number[], anchor: LandingCameraAnchor): { cameraPosition: [number, number, number]; lookAt: [number, number, number] };
