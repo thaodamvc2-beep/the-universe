@@ -136,7 +136,7 @@ export function FlightScene({bodies,avatarId,flightRef,inputRef,targetId,onArriv
   if(!landingTarget&&!anchoredLandingBody&&!releasingLandingAnchor){landingCameraAnchor.current=null;landingCameraHandoff.current=null;}
   const landedNow=!!landedBody&&(cameraBodyId.current!==landedBody.id||cameraGroundingRevision.current!==f.groundingRevision);
   if(landedBody){
-   playerUp.copy(getStableSurfaceNormal(f.position.toArray(),landedBody.position));
+   playerUp.set(...getStableSurfaceNormal(f.position.toArray(),landedBody.position));
    forward.copy(stableSurfaceTangent(surfaceHeading.current,playerUp));
    if(landedNow){
     surfaceHeading.current.copy(forward);f.yaw=Math.atan2(forward.x,-forward.z);f.pitch=0;lastSurfaceYaw.current=f.yaw;
