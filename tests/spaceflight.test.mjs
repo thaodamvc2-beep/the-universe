@@ -49,7 +49,7 @@ test('ambient audio and optional realtime multiplayer adapters are not misrepres
 test('spaceflight now slows down, avoids planets and lands gently with visible world names',async()=>{
  const scene=await read('apps/web/src/features/game/flight-scene.tsx');
  assert.match(scene,/moveAvoidingBodies/);
- assert.doesNotMatch(scene,/target\\.landable|filter\\(b=>b\\.landable\\)/);
+ assert.ok(!scene.includes("target.landable")&&!scene.includes("filter(b=>b.landable)"));
  assert.match(scene,/PlanetLabel/);
  assert.ok(scene.includes("camera.lookAt"));
  assert.match(scene,/seated/);
@@ -126,7 +126,7 @@ test('angel remains at the floating origin and scales to the destination surface
 });
 test('manual landing enters a short controlled approach instead of snapping from far away',async()=>{
  const scene=await read('apps/web/src/features/game/flight-scene.tsx');
- assert.match(scene,/nearest\\.d<=getLandingSurfaceRadius\\(nearest\\.body\\.radius\\)\\+\\.08/);
+ assert.ok(scene.includes("nearest.d<=getLandingSurfaceRadius(nearest.body.radius)+.08"));
  assert.match(scene,/brakingSpeed=Math\.sqrt\(2\*9\*remaining\)/);
 });
 
@@ -203,10 +203,10 @@ test('manual movement immediately cancels destination autopilot and landing appr
  assert.match(scene,/manualMovement=i\.forward\|\|i\.back\|\|i\.left\|\|i\.right\|\|i\.up\|\|i\.down/);
  assert.match(scene,/onLandRequest\(null\)/);
  assert.match(scene,/Math\.max\(\.22,brakingSpeed\)/);
- assert.match(scene,/nearest\\.d<=getLandingSurfaceRadius\\(nearest\\.body\\.radius\\)\\+\\.08/);
+ assert.ok(scene.includes("nearest.d<=getLandingSurfaceRadius(nearest.body.radius)+.08"));
 });
 
-test('landing command also aligns an already-grounded avatar and sitting preserves surface contact',async()=>{const scene=await read('apps/web/src/features/game/flight-scene.tsx');assert.match(scene,/getLandingContactPoint\\(center\\.toArray\\(\\),f\\.position\\.toArray\\(\\),getLandingSurfaceRadius\\(body\\.radius\\)\\)/);assert.match(scene,/sprite\\.position\\.y=body\\?0:/);assert.match(scene,/sprite\\.material\\.opacity=seated\\?\\.92:1/);});
+test('landing command also aligns an already-grounded avatar and sitting preserves surface contact',async()=>{const scene=await read('apps/web/src/features/game/flight-scene.tsx');assert.ok(scene.includes("getLandingContactPoint(center.toArray(),f.position.toArray(),getLandingSurfaceRadius(body.radius))"));assert.match(scene,/sprite\.position\.y=body\?0:/);assert.match(scene,/sprite\.material\.opacity=seated\?\.92:1/);});
 
 test('distance from Earth is measured from the home-world surface and the nebula is brighter',async()=>{
  const game=await read('apps/web/src/features/game/universe-game.tsx');
@@ -297,7 +297,7 @@ test('destination arrival rebases the camera outside the landed planet and level
  assert.match(scene,/surfaceHeading\.current\.copy\(forward\);f\.yaw=Math\.atan2\(forward\.x,-forward\.z\);f\.pitch=0/);
  assert.match(scene,/if\(landedNow\)camera\.position\.copy\(desired\)/);
  assert.match(scene,/cameraBodyId\.current=landedBody\?\.id\?\?null/);
- assert.match(scene,/stop=getLandingSurfaceRadius\\(target\\.radius\\)/);
+ assert.ok(scene.includes("stop=getLandingSurfaceRadius(target.radius)"));
 });
 
 
@@ -393,13 +393,13 @@ test('all real, exoplanet and procedural destinations use the same permissive la
  const data=await read('apps/web/src/features/game/universe-data.ts');
  const game=await read('apps/web/src/features/game/universe-game.tsx');
  const scene=await read('apps/web/src/features/game/flight-scene.tsx');
- assert.doesNotMatch(data,/landable:false/,'no catalogued world may be marked as non-landable');
- assert.match(data,/landable:true/);
- assert.match(game,/landable:true/,'NASA exoplanets remain landable');
- assert.match(data,/landable:true,real:false/,'procedural fictional worlds remain landable');
- assert.doesNotMatch(scene,/target\\.landable|filter\\(b=>b\\.landable\\)/,'flight and direct landing must not reject any world type');
- assert.match(scene,/getLandingSurfaceRadius\\(target\\.radius\\)/);
- assert.match(scene,/getLandingContactPoint/);
+ assert.ok(!data.includes("landable:false"),"no catalogued world may be marked as non-landable");
+ assert.ok(data.includes("landable:true"));
+ assert.ok(game.includes("landable:true"),"NASA exoplanets remain landable");
+ assert.ok(data.includes("landable:true,real:false"),"procedural fictional worlds remain landable");
+ assert.ok(!scene.includes("target.landable")&&!scene.includes("filter(b=>b.landable)"),"flight and direct landing must not reject any world type");
+ assert.ok(scene.includes("getLandingSurfaceRadius(target.radius)"));
+ assert.ok(scene.includes("getLandingContactPoint"));
 });
 
 test('every planet type shares a finite surface normal and one contact radius',async()=>{
@@ -438,11 +438,11 @@ test('camera handoff is continuous, finite and orthogonal from approach through 
 
 test('landing camera anchor is retained through touchdown and handed off without player input',async()=>{
  const scene=await read('apps/web/src/features/game/flight-scene.tsx');
- assert.match(scene,/anchoredLandingBody=!!landedBody&&landingCameraAnchor\\.current\\?\\.targetId===landedBody\\.id/);
- assert.match(scene,/phase:'approach'/);
- assert.match(scene,/phase:'grounded'/);
- assert.match(scene,/phase:'release'/);
- assert.match(scene,/getLandingCameraHandoffFrame/);
- assert.match(scene,/cameraBodyId\\.current=landedBody\\.id;cameraGroundingRevision\\.current=f\\.groundingRevision/);
- assert.doesNotMatch(scene,/setWalk\\(|DIRECTION_START/,'camera stabilization must not depend on walk or direction input');
+ assert.ok(scene.includes("anchoredLandingBody=!!landedBody&&landingCameraAnchor.current?.targetId===landedBody.id"));
+ assert.ok(scene.includes("phase:'approach'"));
+ assert.ok(scene.includes("phase:'grounded'"));
+ assert.ok(scene.includes("phase:'release'"));
+ assert.ok(scene.includes("getLandingCameraHandoffFrame"));
+ assert.ok(scene.includes("cameraBodyId.current=landedBody.id;cameraGroundingRevision.current=f.groundingRevision"));
+ assert.ok(!scene.includes("setWalk(")&&!scene.includes("DIRECTION_START"),"camera stabilization must not depend on walk or direction input");
 });
