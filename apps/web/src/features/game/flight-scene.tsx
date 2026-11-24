@@ -123,8 +123,9 @@ export function FlightScene({bodies,avatarId,flightRef,inputRef,targetId,onArriv
   const landingCandidate=targetId&&!manualMovement&&!landedBody&&(i.mode==='approaching'||i.mode==='landing')?bodies.find(b=>b.id===targetId):undefined;
   const landingTarget=landingCandidate&&isWithinLandingCameraCaptureRange(f.position.distanceTo(new Vector3(...landingCandidate.position)),getLandingSurfaceRadius(landingCandidate.radius),LANDING_CAMERA_CAPTURE_GAP)?landingCandidate:undefined;
   if(landingTarget&&(landingCameraAnchor.current?.targetId!==landingTarget.id||cameraBodyId.current===landingTarget.id||landingCameraHandoff.current?.phase==='grounded'||landingCameraHandoff.current?.phase==='release')){
-   const previousAnchor=landingCameraAnchor.current,currentPose=captureCameraPose(camera,f.position,previousAnchor?.cameraWorldPosition),center=new Vector3(...landingTarget.position);
-   const cameraOffset=previousAnchor?previousAnchor.cameraWorldPosition.clone().sub(f.position):camera.position.clone();
+   const previousAnchor=landingCameraAnchor.current,restartingLanding=cameraBodyId.current===landingTarget.id||landingCameraHandoff.current?.phase==='grounded'||landingCameraHandoff.current?.phase==='release';
+   const currentPose=captureCameraPose(camera,f.position,restartingLanding?undefined:previousAnchor?.cameraWorldPosition),center=new Vector3(...landingTarget.position);
+   const cameraOffset=!restartingLanding&&previousAnchor?previousAnchor.cameraWorldPosition.clone().sub(f.position):camera.position.clone();
    const anchor=createLandingCameraAnchor(f.position.toArray(),center.toArray(),getLandingSurfaceRadius(landingTarget.radius),cameraOffset.toArray());
    const nextAnchor={targetId:landingTarget.id,cameraWorldPosition:new Vector3(...anchor.cameraWorldPosition),lookAtWorldPosition:new Vector3(...anchor.lookAtWorldPosition),cameraUp:anchor.cameraUp};
    landingCameraAnchor.current=nextAnchor;
