@@ -5,11 +5,12 @@ import { useFrame, useLoader, useThree } from '@react-three/fiber';
 import { AdditiveBlending, BackSide, CanvasTexture, Group, NormalBlending, Sprite, SpriteMaterial, SRGBColorSpace, TextureLoader, Vector3 } from 'three';
 import type { AvatarId, Body } from './universe-data';
 import { transitionFlightControl } from './flight-controller.mjs';
-import { createLandingCameraAnchor, getLandingCameraLocalFrame } from './landing-camera.mjs';
+import { createLandingCameraAnchor, getLandingCameraLocalFrame, isWithinLandingCameraCaptureRange } from './landing-camera.mjs';
 import type { InputState } from './flight-controller.mjs';
 
 export type FlightState={position:Vector3;yaw:number;pitch:number;groundedId:string|null;groundingRevision:number};
 export type RemotePlayer={id:string;nickname:string;avatarId:AvatarId;position:[number,number,number]};
+const LANDING_CAMERA_CAPTURE_GAP=5.55;
 
 function Stars(){
  const ref=useRef<Group>(null);
@@ -110,14 +111,15 @@ export function FlightScene({bodies,avatarId,flightRef,inputRef,targetId,onArriv
    if(i.land){const nearest=bodies.filter(b=>b.landable).map(b=>({body:b,d:f.position.distanceTo(new Vector3(...b.position))})).sort((a,b)=>a.d-b.d)[0];if(nearest){if(nearest.d<=nearest.body.radius*1.3+.16){const center=new Vector3(...nearest.body.position),normal=f.position.clone().sub(center).normalize();f.position.copy(center).addScaledVector(normal,nearest.body.radius*1.3+.08);f.groundedId=nearest.body.id;f.pitch=0;transitionFlightControl(i,'ARRIVED_LANDED');onArrive(nearest.body.id)}else{transitionFlightControl(i,'LAND');onLandRequest(nearest.body.id)}}else{transitionFlightControl(i,'APPROACH_COMPLETE')}}
    if(i.takeoff)transitionFlightControl(i,'TAKEOFF_COMPLETE');
   }
-  const landingTarget=targetId&&!manualMovement&&!f.groundedId&&(i.mode==='approaching'||i.mode==='landing')?bodies.find(b=>b.id===targetId):undefined;
+  const landingCandidate=targetId&&!manualMovement&&!f.groundedId&&(i.mode==='approaching'||i.mode==='landing')?bodies.find(b=>b.id===targetId):undefined;
+  const landingTarget=landingCandidate&&isWithinLandingCameraCaptureRange(f.position.distanceTo(new Vector3(...landingCandidate.position)),landingCandidate.radius*1.3+.08,LANDING_CAMERA_CAPTURE_GAP)?landingCandidate:undefined;
   if(landingTarget){
    if(landingCameraAnchor.current?.targetId!==landingTarget.id){
     const center=new Vector3(...landingTarget.position),normal=f.position.clone().sub(center).normalize();
     if(normal.lengthSq()<1e-8)normal.set(0,0,1);
     const approachDirection=center.clone().sub(f.position).normalize();
     if(approachDirection.lengthSq()<1e-8)approachDirection.set(0,0,-1);
-    const cameraWorldPosition=f.position.clone().addScaledVector(approachDirection,-5.55);
+    const cameraWorldPosition=f.position.clone().addScaledVector(approachDirection,-LANDING_CAMERA_CAPTURE_GAP);
     const landingFrame=createLandingCameraAnchor(f.position.toArray(),center.toArray(),landingTarget.radius*1.3+.08,cameraWorldPosition.toArray().map((value,index)=>value-f.position.toArray()[index]));
     landingCameraAnchor.current={targetId:landingTarget.id,cameraWorldPosition:new Vector3(...landingFrame.cameraWorldPosition),lookAtWorldPosition:new Vector3(...landingFrame.lookAtWorldPosition),cameraUp:landingFrame.cameraUp};
    }
