@@ -14,3 +14,5 @@ export function transitionFlightControl(input: InputState, action: string, direc
 
 export function createDirectionInputRegistry(): Map<FlightDirection, Set<string>>;
 export function setFlightDirectionSource(input: InputState, registry: Map<FlightDirection, Set<string>>, direction: FlightDirection, source: string, active: boolean): InputState;
+
+export function shouldStartCameraDrag(target: { closest?: (selectors: string) => unknown } | null): boolean;

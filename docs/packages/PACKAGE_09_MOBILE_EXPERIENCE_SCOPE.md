@@ -32,3 +32,8 @@ No engine replacement, arbitrary quality downgrade, avatar/art redesign, feature
 ## Evidence
 
 Verification on 2026-11-24: Chromium emulation passed at 390×844, 1280×800 and 1280×600; WebGL was available and control rails did not overlap. Simulated `WEBGL_lose_context` confirmed the canvas stays mounted, the recovery overlay appears, and the overlay clears after restoration on mobile and desktop emulation. 90/90 Node tests, lint, TypeScript and static production build passed. Physical phone profiling (memory, frame pacing, thermals and battery) remains pending owner validation.
+
+
+## Runtime stability follow-up — 2026-11-24
+
+Owner reported a 3D scene load/WebGL failure in the Vercel preview. Avatar asset URLs now respect the deployment base path: root on Vercel and `/the-universe` on GitHub Pages. High-resolution planet nameplates are created only near the player and disposed outside the 72-unit game-space range; HUD telemetry refresh is isolated from the 3D scene render tree. The full live NASA exoplanet request is replaced by a small curated, game-stylized destination set. Real-device GPU, memory, thermal and touch testing remains open.

@@ -1,6 +1,6 @@
 # THE UNIVERSE — AI Session Start Gate
 
-**Version:** 1.1  
+**Version:** 1.2  
 **Created:** 2026-11-19  
 **Applies to:** Every AI coding agent and every new or resumed work session on THE UNIVERSE  
 **Priority:** Mandatory project instruction; read together with the root `AGENTS.md`
@@ -70,3 +70,16 @@ The project owner explicitly authorized Gói 08 **Free Flight & Camera** and Gó
 - Deployment ID: `dpl_FaGMs5tA7YPwmGtcgwE4iTcEh5QZ`.
 - Verification: 90/90 Node tests; lint/typecheck/static build pass; Chromium emulation at 390×844, 1280×800 and 1280×600; WebGL context-loss/restoration simulated successfully.
 - Next gate: owner performs real-phone validation and reports findings. Do not merge to `main` or deploy GitHub Pages without a separate explicit instruction.
+
+
+## Runtime stability follow-up checkpoint — 2026-11-24
+
+- Owner reported the Vercel preview still showed a 3D scene load/WebGL failure and directional steering did not behave correctly.
+- Root causes identified in the G08/G09 integration: D-pad pointer events bubbled to the canvas parent, which could take pointer capture away from the child control; avatar URLs were hard-coded to the GitHub Pages subpath although Vercel preview serves at domain root.
+- Follow-up branch: `fix/p08-p09-runtime-stability`.
+- PR #11: https://github.com/thaodamvc2-beep/the-universe/pull/11 (draft, targets the G08/G09 integration branch; not merged to main).
+- Code changes: deployment-aware avatar asset paths; explicit pointer-capture ownership; precomputed collision spheres and scalar swept-sphere collision; telemetry isolated to 250 ms; memoized 3D scene; high-resolution planet labels allocated only within 72 game-space units; 11 curated NASA-named game destinations rather than a live bulk TAP request.
+- Explicitly preserved `generatedKeys` and infinite procedural region behavior per owner instruction. Gói 10–15 remain unauthorized and untouched.
+- Local verification on the exact implementation checkpoint: 100/100 tests, lint (no errors; the existing root ESLint pages-directory warning remains), TypeScript and Vercel-mode static build pass.
+- Vercel preview deployment is created from the branch; check the latest deployment state before sharing a test URL. Physical-phone GPU, memory, thermal and touch qualification remains pending owner testing.
+- Production `main`, GitHub Pages and PR #10 were not merged or deployed by this follow-up.

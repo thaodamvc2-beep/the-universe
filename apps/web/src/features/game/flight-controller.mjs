@@ -152,3 +152,8 @@ export function setFlightDirectionSource(input, registry, direction, source, act
   else if (wasActive && !sources.size) transitionFlightControl(input, 'DIRECTION_STOP', direction);
   return input;
 }
+
+/** Return false for controls that own pointer capture; only the scene surface may start camera dragging. */
+export function shouldStartCameraDrag(target) {
+  return !(target && typeof target.closest === 'function' && target.closest('button, a, input, textarea, select, [role="button"]'));
+}

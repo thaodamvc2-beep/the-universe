@@ -36,3 +36,8 @@ No engine replacement, art/avatar/HUD redesign, paid AI, account, wishes, audio 
 ## Evidence
 
 Verification on 2026-11-24: 90/90 Node tests, lint, TypeScript and Next.js static production build passed. Chromium emulation confirmed mobile (390×844) and desktop (1280×800 / 1280×600) canvas/WebGL availability and non-overlapping control rails. Multi-source direction tests confirm one pointer release does not cancel another and continuous flight remains active. Physical phone test remains the owner’s acceptance step.
+
+
+## Runtime stability follow-up — 2026-11-24
+
+Owner reported that directional steering did not work correctly during continuous flight. The D-pad's pointer capture was competing with the parent canvas drag handler due to event bubbling. PR #11 prevents interactive controls from starting canvas drag capture and preserves the existing continuous-flight state. Collision avoidance now precomputes body centers/clearances and uses scalar swept-segment geometry; the clearance formula and behavior are regression-compared with the prior vector implementation. The infinite procedural-region `generatedKeys` mechanism is explicitly preserved. Physical-device flight and landing acceptance remains open.

@@ -4,7 +4,7 @@
 **Repository:** `thaodamvc2-beep/the-universe`  
 **Baseline branch:** `main`  
 **Baseline commit at audit:** `2a7c48e9e176aea7da3cb70439bd7e7ccee2e2ca`  
-**Authority:** `docs/architecture/THE_UNIVERSE_MASTER_SPEC.md` (Version 2.9) and package scope/decision records.
+**Authority:** `docs/architecture/THE_UNIVERSE_MASTER_SPEC.md` (Version 3.0) and package scope/decision records.
 
 This is a tracking aid, not a replacement for the Master Specification or package acceptance records. “Implemented”, “deployed”, “provisionally accepted”, and “accepted” are different states. A passing CI build is not proof of visual/device acceptance.
 
@@ -19,8 +19,8 @@ This is a tracking aid, not a replacement for the Master Specification or packag
 | 05 | Celestial Data | **IMPLEMENTED + DEPLOYED; PROVISIONALLY ACCEPTED** | Canonical Solar System catalogue, real/fictional classification and bilingual detail UI are integrated. Owner allowed corrections; manual browser/device review remains pending. |
 | 06 | Cosmic Travel Map | **IMPLEMENTED + DEPLOYED; PROVISIONALLY ACCEPTED FOR INTEGRATION** | Solar System map at `/map/`, catalogue at `/worlds/`, and Earth recovery/navigation are integrated. Route preview is simulated, not a verified live route service. Manual visual/device review remains open. |
 | 07 | 3D Universe Visual System | **INITIAL 3D/SPACEFLIGHT SLICE IMPLEMENTED; PACKAGE ACCEPTANCE OPEN** | The Master Spec roadmap name remains canonical. The legacy Gói 07 scope file contains the first flight slice, which Gói 08 now hardens. Do not renumber or count the same code twice. |
-| 08 | Free Flight & Camera | **AUTHORIZED; IN PROGRESS** | Owner authorized 2026-11-24. Formal scope: `docs/packages/PACKAGE_08_FREE_FLIGHT_AND_CAMERA_SCOPE.md`. Integrated in PR #10 on `feat/packages-08-09-integration`; Vercel preview READY. 90/90 tests and browser emulation pass; owner real-phone acceptance pending. |
-| 09 | Mobile Experience | **AUTHORIZED; IN PROGRESS** | Owner authorized 2026-11-24. Formal scope: `docs/packages/PACKAGE_09_MOBILE_EXPERIENCE_SCOPE.md`. Integrated in PR #10 on `feat/packages-08-09-integration`; Vercel preview READY. Touch/WebGL emulation passes; owner real-phone qualification remains pending. |
+| 08 | Free Flight & Camera | **AUTHORIZED; IMPLEMENTED IN PR #10; RUNTIME FIX FOLLOW-UP IN PR #11** | Owner authorized 2026-11-24. PR #11 fixes pointer-capture ownership and collision math on `fix/p08-p09-runtime-stability`. 100/100 tests, lint, typecheck and local Vercel-mode build pass; Vercel preview and real-phone acceptance remain separate gates. |
+| 09 | Mobile Experience | **AUTHORIZED; IMPLEMENTED IN PR #10; RUNTIME FIX FOLLOW-UP IN PR #11** | Owner authorized 2026-11-24. PR #11 fixes Vercel asset base paths, label texture lifetime and isolated HUD updates. 100/100 tests, lint, typecheck and local static build pass; physical mobile GPU/thermal/touch qualification remains pending. |
 | 10 | AI Universe Generation | **PAID AI API GENERATION EXPLICITLY OUT OF SCOPE** | Owner chose local coordinate-seeded procedural generation instead. Do not add paid AI API calls or treat procedural generation as an AI service. Any alternative AI use requires separate approval. |
 | 11 | Rest & Wish System | **PARTLY IMPLEMENTED IN CLIENT; PACKAGE ACCEPTANCE NOT RECORDED** | Sitting/resting and wish-related prototype/UI elements exist in project history/current experience. Privacy-by-default, explicit sharing, persistence, moderation and lifecycle must be verified before calling the package complete. |
 | 12 | Audio Experience | **BASIC AMBIENCE IMPLEMENTED; PACKAGE ACCEPTANCE NOT RECORDED** | Optional synthesized ambient audio exists. Full environmental/spatial audio behavior and controls are not evidenced as complete. |

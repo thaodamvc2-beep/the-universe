@@ -2,10 +2,11 @@
 import Image from 'next/image';
 import type { CSSProperties } from 'react';
 import type { AvatarId } from '@/lib/identity/guest-identity.mjs';
+import { publicAssetPath } from '@/lib/public-asset-path.mjs';
 const AVATAR_FILES: Record<AvatarId, string> = {
- solar:'/the-universe/avatars/solar.png', aurora:'/the-universe/avatars/aurora.png',
- crystal:'/the-universe/avatars/crystal.png', nebula:'/the-universe/avatars/nebula.png',
- lunar:'/the-universe/avatars/lunar.png', stardust:'/the-universe/avatars/stardust.png',
+ solar:publicAssetPath('/avatars/solar.png'), aurora:publicAssetPath('/avatars/aurora.png'),
+ crystal:publicAssetPath('/avatars/crystal.png'), nebula:publicAssetPath('/avatars/nebula.png'),
+ lunar:publicAssetPath('/avatars/lunar.png'), stardust:publicAssetPath('/avatars/stardust.png'),
 };
 export function CelestialAvatarArtwork({avatarId,className=''}:{avatarId:AvatarId;className?:string}) {
  const style:CSSProperties={display:'block',position:'relative',width:'100%',height:'100%',minWidth:0,overflow:'visible',pointerEvents:'none'};
