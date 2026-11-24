@@ -181,6 +181,7 @@ export function FlightScene({bodies,avatarId,flightRef,inputRef,targetId,onArriv
    cameraBodyId.current=landedBody.id;cameraGroundingRevision.current=f.groundingRevision;
    if(frame.progress>=1){landingCameraAnchor.current=null;landingCameraHandoff.current=null;}
   }else if(releasingLandingAnchor&&landingCameraAnchor.current){
+   const anchor=landingCameraAnchor.current;
    if(landingCameraHandoff.current?.phase!=='release'){
     const currentPose=captureCameraPose(camera,f.position,anchor.cameraWorldPosition),targetCameraWorldPosition=f.position.clone().add(desired),targetLookAtWorldPosition=f.position.clone().add(look);
     const handoff=createLandingCameraHandoff(currentPose,targetCameraWorldPosition.toArray(),targetLookAtWorldPosition.toArray(),smoothedCameraUp.current.toArray(),LANDING_CAMERA_HANDOFF_SECONDS);
