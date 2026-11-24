@@ -29,7 +29,7 @@ test('real Solar System exploration catalog includes planets, dwarf planets and 
 
 test('procedural worlds are explicitly separated from real astronomical destinations',async()=>{
  const data=await read('apps/web/src/features/game/universe-data.ts');
- const game=await read('apps/web/src/features/game/universe-game.tsx');
+ 
  assert.match(data,/Thế giới hư cấu/);
  assert.match(data,/real:false/);
  assert.match(game,/makeProceduralRegion/);
