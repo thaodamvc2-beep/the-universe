@@ -49,7 +49,7 @@ test('ambient audio and optional realtime multiplayer adapters are not misrepres
 test('spaceflight now slows down, avoids planets and lands gently with visible world names',async()=>{
  const scene=await read('apps/web/src/features/game/flight-scene.tsx');
  assert.match(scene,/moveAvoidingBodies/);
- assert.ok(scene.includes("target.landable"));
+ assert.doesNotMatch(scene,/target\\.landable|filter\\(b=>b\\.landable\\)/);
  assert.match(scene,/PlanetLabel/);
  assert.ok(scene.includes("camera.lookAt"));
  assert.match(scene,/seated/);
@@ -126,7 +126,7 @@ test('angel remains at the floating origin and scales to the destination surface
 });
 test('manual landing enters a short controlled approach instead of snapping from far away',async()=>{
  const scene=await read('apps/web/src/features/game/flight-scene.tsx');
- assert.match(scene,/nearest\.d<=nearest\.body\.radius\*1\.3\+\.16/);
+ assert.match(scene,/nearest\\.d<=getLandingSurfaceRadius\\(nearest\\.body\\.radius\\)\\+\\.08/);
  assert.match(scene,/brakingSpeed=Math\.sqrt\(2\*9\*remaining\)/);
 });
 
@@ -203,10 +203,10 @@ test('manual movement immediately cancels destination autopilot and landing appr
  assert.match(scene,/manualMovement=i\.forward\|\|i\.back\|\|i\.left\|\|i\.right\|\|i\.up\|\|i\.down/);
  assert.match(scene,/onLandRequest\(null\)/);
  assert.match(scene,/Math\.max\(\.22,brakingSpeed\)/);
- assert.match(scene,/nearest\.d<=nearest\.body\.radius\*1\.3\+\.16/);
+ assert.match(scene,/nearest\\.d<=getLandingSurfaceRadius\\(nearest\\.body\\.radius\\)\\+\\.08/);
 });
 
-test('landing command also aligns an already-grounded avatar and sitting preserves surface contact',async()=>{const scene=await read('apps/web/src/features/game/flight-scene.tsx');assert.match(scene,/if\(i\.land\)\{f\.position\.copy\(center\)\.addScaledVector\(normal,body\.radius\*1\.3\+\.08\)/);assert.match(scene,/sprite\.position\.y=body\?0:/);assert.match(scene,/sprite\.material\.opacity=seated\?\.92:1/);});
+test('landing command also aligns an already-grounded avatar and sitting preserves surface contact',async()=>{const scene=await read('apps/web/src/features/game/flight-scene.tsx');assert.match(scene,/getLandingContactPoint\\(center\\.toArray\\(\\),f\\.position\\.toArray\\(\\),getLandingSurfaceRadius\\(body\\.radius\\)\\)/);assert.match(scene,/sprite\\.position\\.y=body\\?0:/);assert.match(scene,/sprite\\.material\\.opacity=seated\\?\\.92:1/);});
 
 test('distance from Earth is measured from the home-world surface and the nebula is brighter',async()=>{
  const game=await read('apps/web/src/features/game/universe-game.tsx');
@@ -297,7 +297,7 @@ test('destination arrival rebases the camera outside the landed planet and level
  assert.match(scene,/surfaceHeading\.current\.copy\(forward\);f\.yaw=Math\.atan2\(forward\.x,-forward\.z\);f\.pitch=0/);
  assert.match(scene,/if\(landedNow\)camera\.position\.copy\(desired\)/);
  assert.match(scene,/cameraBodyId\.current=landedBody\?\.id\?\?null/);
- assert.match(scene,/target\.radius\*1\.3\+\(target\.landable \? 0\.08 : 1\.8\)/);
+ assert.match(scene,/stop=getLandingSurfaceRadius\\(target\\.radius\\)/);
 });
 
 
@@ -387,4 +387,62 @@ test('all generated fictional worlds remain landable, including water-themed wor
  const generator=data.slice(start,end);
  assert.match(generator,/landable:true/,'procedural planets of every fictional surface type must be landable');
  assert.doesNotMatch(generator,/landable:false/,'no fictional water world may be blocked from landing');
+});
+
+test('all real, exoplanet and procedural destinations use the same permissive landing rule',async()=>{
+ const data=await read('apps/web/src/features/game/universe-data.ts');
+ const game=await read('apps/web/src/features/game/universe-game.tsx');
+ const scene=await read('apps/web/src/features/game/flight-scene.tsx');
+ assert.doesNotMatch(data,/landable:false/,'no catalogued world may be marked as non-landable');
+ assert.match(data,/landable:true/);
+ assert.match(game,/landable:true/,'NASA exoplanets remain landable');
+ assert.match(data,/landable:true,real:false/,'procedural fictional worlds remain landable');
+ assert.doesNotMatch(scene,/target\\.landable|filter\\(b=>b\\.landable\\)/,'flight and direct landing must not reject any world type');
+ assert.match(scene,/getLandingSurfaceRadius\\(target\\.radius\\)/);
+ assert.match(scene,/getLandingContactPoint/);
+});
+
+test('every planet type shares a finite surface normal and one contact radius',async()=>{
+ const {getLandingSurfaceRadius,getLandingContactPoint,getStableSurfaceNormal}=await import('../apps/web/src/features/game/landing-camera.mjs');
+ assert.equal(getLandingSurfaceRadius(2),2.68);
+ for(const position of [[20,0,0],[0,20,0],[0,0,-20],[1,2,3]]){
+  const normal=getStableSurfaceNormal(position,[0,0,0]);
+  assert.ok(normal.every(Number.isFinite));
+  assert.ok(Math.abs(Math.hypot(...normal)-1)<1e-10);
+  const contact=getLandingContactPoint([0,0,0],position,getLandingSurfaceRadius(2));
+  assert.ok(Math.abs(Math.hypot(...contact.position)-2.68)<1e-10);
+  assert.ok(contact.normal.every((value,index)=>Math.abs(value-normal[index])<1e-10));
+ }
+ const fallback=getLandingContactPoint([0,0,0],[0,0,0],2,[0,1,0]);
+ assert.deepEqual(fallback.position,[0,2,0],'a degenerate center position must still resolve to a stable contact');
+});
+
+test('camera handoff is continuous, finite and orthogonal from approach through touchdown',async()=>{
+ const {createLandingCameraHandoff,getLandingCameraHandoffFrame}=await import('../apps/web/src/features/game/landing-camera.mjs');
+ const anchor={cameraWorldPosition:[0,0,12],lookAtWorldPosition:[0,0,0],cameraUp:[0,1,0]};
+ const handoff=createLandingCameraHandoff(anchor,[5,0,10],[5,0,0],[0,1,0],.6);
+ const start=getLandingCameraHandoffFrame(handoff,0);
+ const end=getLandingCameraHandoffFrame(handoff,.6);
+ assert.deepEqual(start.cameraWorldPosition,anchor.cameraWorldPosition);
+ assert.deepEqual(start.lookAtWorldPosition,anchor.lookAtWorldPosition);
+ assert.deepEqual(end.cameraWorldPosition,[5,0,10]);
+ assert.deepEqual(end.lookAtWorldPosition,[5,0,0]);
+ for(const elapsed of [0,.1,.2,.3,.4,.5,.6]){
+  const frame=getLandingCameraHandoffFrame(handoff,elapsed);
+  const view=frame.lookAtWorldPosition.map((value,index)=>value-frame.cameraWorldPosition[index]);
+  assert.ok([...frame.cameraWorldPosition,...frame.lookAtWorldPosition,...frame.cameraUp].every(Number.isFinite));
+  assert.ok(Math.abs(Math.hypot(...frame.cameraUp)-1)<1e-8);
+  assert.ok(Math.abs(frame.cameraUp.reduce((sum,value,index)=>sum+value*view[index],0))<1e-7*Math.hypot(...view));
+ }
+});
+
+test('landing camera anchor is retained through touchdown and handed off without player input',async()=>{
+ const scene=await read('apps/web/src/features/game/flight-scene.tsx');
+ assert.match(scene,/anchoredLandingBody=!!landedBody&&landingCameraAnchor\\.current\\?\\.targetId===landedBody\\.id/);
+ assert.match(scene,/phase:'approach'/);
+ assert.match(scene,/phase:'grounded'/);
+ assert.match(scene,/phase:'release'/);
+ assert.match(scene,/getLandingCameraHandoffFrame/);
+ assert.match(scene,/cameraBodyId\\.current=landedBody\\.id;cameraGroundingRevision\\.current=f\\.groundingRevision/);
+ assert.doesNotMatch(scene,/setWalk\\(|DIRECTION_START/,'camera stabilization must not depend on walk or direction input');
 });
