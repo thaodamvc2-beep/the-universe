@@ -7,6 +7,7 @@ const root=resolve(import.meta.dirname,'..');
 const read=(p)=>readFile(resolve(root,p),'utf8');
 
 test('spaceflight supports six-axis movement, takeoff and landing',async()=>{
+ const game=await read('apps/web/src/features/game/universe-game.tsx');
  const scene=await read('apps/web/src/features/game/flight-scene.tsx');
  for(const key of ['forward','back','left','right','up','down'])assert.match(scene,new RegExp(key));
  assert.match(scene,/groundedId/);
@@ -29,7 +30,7 @@ test('real Solar System exploration catalog includes planets, dwarf planets and 
 
 test('procedural worlds are explicitly separated from real astronomical destinations',async()=>{
  const data=await read('apps/web/src/features/game/universe-data.ts');
- 
+ const game=await read('apps/web/src/features/game/universe-game.tsx');
  assert.match(data,/Thế giới hư cấu/);
  assert.match(data,/real:false/);
  assert.match(game,/makeProceduralRegion/);
@@ -390,7 +391,6 @@ test('all generated fictional worlds remain landable, including water-themed wor
 
 test('all real, exoplanet and procedural destinations use the same permissive landing rule',async()=>{
  const data=await read('apps/web/src/features/game/universe-data.ts');
- const game=await read('apps/web/src/features/game/universe-game.tsx');
  const scene=await read('apps/web/src/features/game/flight-scene.tsx');
  assert.ok(!data.includes("landable:false"),"no catalogued world may be marked as non-landable");
  assert.ok(data.includes("landable:true"));
