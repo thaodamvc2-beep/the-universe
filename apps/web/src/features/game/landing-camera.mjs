@@ -2,6 +2,9 @@ const subtract=(a,b)=>[a[0]-b[0],a[1]-b[1],a[2]-b[2]];
 const add=(a,b)=>[a[0]+b[0],a[1]+b[1],a[2]+b[2]];
 const dot=(a,b)=>a[0]*b[0]+a[1]*b[1]+a[2]*b[2];
 const normalize=(v)=>{const length=Math.hypot(...v);return length>1e-10?v.map(value=>value/length):[0,0,1]};
+export function isWithinLandingCameraCaptureRange(distanceToCenter,surfaceRadius,captureGap){
+ return Number.isFinite(distanceToCenter)&&Number.isFinite(surfaceRadius)&&Number.isFinite(captureGap)&&distanceToCenter-surfaceRadius<=captureGap;
+}
 export function getStableLandingCameraUp(cameraWorldPosition,lookAtWorldPosition){
  const view=normalize(subtract(lookAtWorldPosition,cameraWorldPosition));
  const project=(axis)=>{const amount=dot(axis,view);return axis.map((value,index)=>value-amount*view[index])};
