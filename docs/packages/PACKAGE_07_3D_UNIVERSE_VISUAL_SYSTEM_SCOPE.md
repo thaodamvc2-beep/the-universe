@@ -54,7 +54,7 @@ Establish and stabilize the 3D visual system used throughout THE UNIVERSE: coher
 ## 8. Owner-directed second audit and hardening (2026-11-25)
 - Owner confirmed that live website inspection of space/avatar/body proportions remains the accepted baseline and should be preserved; do not undo tested visual geometry without new evidence.
 - The owner directed closure of technical gaps identified in the second audit, with Package 08 requirements consulted for compatibility preparation.
-- A separate hardening branch adds an entry/exit threshold helper for planet labels (enter at 72, remain visible through 80) to avoid threshold flicker and repeated texture creation near the boundary, with focused regression tests.
+- A separate hardening branch adds an entry/exit threshold helper for planet labels (enter at 72, remain visible through 80), caps the nearest active label sprites at 24, and keeps the label render transforms player-relative. Focused regression tests cover the selection helper.
 - A shared Package 07/08 integration contract documents world-coordinate, body-radius/visual-scale, camera-consumer, label/resource and package-boundary expectations. This is architectural preparation only; it does not implement Package 08.
 - Still requires further verification: actual texture allocation ceilings across the full scene, stress test with dense near-body scenes, renderer/context recovery test, visual audit of lighting/materials/background/classification, automated/browser preview review and hardware profiling where available. These gaps are not closed merely by the hysteresis helper.
 - Do not change `generatedKeys`, procedural region generation or Gói 01–06. No production merge/deployment until owner review and explicit permission.
