@@ -1,9 +1,9 @@
 # THE UNIVERSE — PROJECT CONTINUITY BRIEF
 
-**Updated:** 2026-11-20  
+**Updated:** 2026-11-25  
 **Purpose:** Copy this entire document into a new ChatGPT conversation to resume project work without reconstructing decisions from memory.
 
-## 1. Owner's current instruction
+## 1. Owner's current instruction\n\nOwner directive on 2026-11-25: Gói 01–06 are to be treated as the integrated baseline and locked against unrelated changes. Work must proceed strictly in canonical roadmap order: finish Gói 07 (3D Universe Visual System), obtain owner review/acceptance, then Gói 08 (Free Flight & Camera), review/acceptance, then Gói 09 (Mobile Experience), review/acceptance. Correct the historical Gói 07 flight naming drift in documentation without deleting history. PR #10/#11 are unmerged candidate work and must be re-audited/resequenced, not treated as completed packages. Preserve generatedKeys/infinite region generation. No production merge/deployment without explicit owner authorization.
 
 The owner explicitly instructed on 2026-11-20:
 
@@ -15,7 +15,7 @@ The owner explicitly instructed on 2026-11-20:
 - Finish the integrated build and deploy it to GitHub Pages for desktop/mobile testing. The owner gives product direction and does not want technical setup tasks.
 - Continue technical work directly in GitHub and keep this brief current.
 
-This explicitly authorizes Gói 07. Gói 01–06 remain provisionally accepted; their recorded technical/device gaps are not erased. Gói 08+ is not authorized.
+This explicitly authorizes Gói 07. Gói 01–06 remain provisionally accepted; their recorded technical/device gaps are not erased. Gói 08 and Gói 09 are now authorized only in the strict sequence after Gói 07 and Gói 08 review gates, respectively; do not skip ahead. Gói 10–15 remain unauthorized.
 
 ## 2. Repository and public site
 
@@ -144,3 +144,12 @@ Paste this after the document when starting a new conversation:
 - Slow observation-focused flight, collision avoidance, gentle automatic landing, seated idle pose, standing surface movement, readable planetary labels, Sun-position lighting and local camera orientation are included.
 - Earth was reduced slightly and planetary display distances compressed for a wider opening view; this is a stylized game scale, not a true-to-scale astronomical chart.
 - Confirmed latest deployment: commit `c74269965b6d22c7ddb55ff577694f8e1088f3e9`, run 44713629362; 30 tests, lint, typecheck, build and Pages deploy passed. Owner visual review of this new revision is pending.
+
+
+## 10. Canonical sequence correction (2026-11-25)
+
+- Gói 07 = 3D Universe Visual System.
+- Gói 08 = Free Flight & Camera.
+- Gói 09 = Mobile Experience.
+- Legacy scope file `PACKAGE_07_SPACEFLIGHT_AND_OPEN_UNIVERSE_SCOPE.md` records earlier flight work under the mistaken package label. Preserve it for history, but do not use it as canonical Gói 07. Audit/map that work as Gói 08 candidate evidence.
+- Current work branch: `work/package-07-3d-visual-system`; current goal is Gói 07 visual-system work only.
