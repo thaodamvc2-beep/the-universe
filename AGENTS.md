@@ -1,14 +1,14 @@
 # THE UNIVERSE — AGENT INSTRUCTIONS
 
 **Document:** `AGENTS.md`
-**Version:** 1.2
+**Version:** 1.3
 **Created:** 2026-11-19
 **Status:** Project-wide working instructions
 **Applies to:** All AI agents, developers, contributors, and work packages (Gói 01–15)
 
 This file is the mandatory entry point for anyone or any AI system working on THE UNIVERSE. It is a durable project instruction file, not a substitute for the approved Master Specification or package-specific acceptance records.
 
-## 1. Product identity and non-negotiable principles
+## 1. Owner-authorized execution sequence (2026-11-25)\n\n- Gói 01–06 form the integrated baseline; freeze them against unrelated changes.\n- Execute strictly in order: Gói 07 (3D Universe Visual System), then stop for owner review/acceptance; Gói 08 (Free Flight & Camera), then stop for owner review/acceptance; Gói 09 (Mobile Experience), then stop for owner review/acceptance.\n- Historical flight code/docs carrying the old Gói 07 label must not cause future numbering drift. Canonical names/order in Master Spec section 17 govern.\n- Existing PR #10/#11 are candidate work to audit, not accepted package evidence and not a shortcut past package gates.\n- Preserve `generatedKeys`; no production merge/deployment without explicit owner approval.\n\n## 2. Product identity and non-negotiable principles
 
 1. THE UNIVERSE is a 3D universe-exploration experience with a mysterious, tranquil atmosphere and spiritual depth.
 2. **EARTH is always the Home World**: the default starting point and the primary return destination. No observatory, station, planet, or AI-generated location may replace Earth as Home World.
@@ -28,7 +28,7 @@ This file is the mandatory entry point for anyone or any AI system working on TH
 14. Do not independently change approved architecture, technology choices, data contracts, product invariants, or the order/dependency structure of the 15 work packages.
 15. Do not claim that a test passed unless it was actually run and its result is available. Distinguish proposed targets, designed tests, executed tests, and accepted results.
 
-## 2. Mandatory session-start gate — every new AI coding session
+## 3. Mandatory session-start gate — every new AI coding session
 
 **This is a mandatory gate, not an optional recommendation. It applies at the beginning of every new session, conversation, task context, or resumed work period—not merely once per project.**
 
@@ -48,7 +48,7 @@ The agent must not rely on summaries, remembered context, prior chat messages, c
 
 This requirement is repeated in `AI_SESSION_START.md` so that an agent entering through either instruction file encounters the same gate.
 
-## 3. Mandatory pre-work procedure
+## 4. Mandatory pre-work procedure
 
 After passing the session-start gate, before starting any task in any work package:
 
@@ -63,7 +63,7 @@ After passing the session-start gate, before starting any task in any work packa
 
 If a required document or acceptance record is missing, do not invent its contents or assume approval. Report the missing artifact and ask for direction before making consequential changes.
 
-## 4. Conflict and change control
+## 5. Conflict and change control
 
 - If a new request conflicts with an approved Master Spec, an accepted package, or a non-negotiable product principle, stop the conflicting work.
 - Explain the conflict, affected modules/packages, risks, and possible resolution paths.
@@ -72,7 +72,7 @@ If a required document or acceptance record is missing, do not invent its conten
 - Record approved changes in the change history, including date, decision owner/authority, rationale, affected requirements, affected packages, migration/compatibility impact, and rollback considerations.
 - Never silently rewrite an approved document. Preserve prior versions through Git history and a dated change record.
 
-## 5. Versioning, decisions, and Git checkpoints
+## 6. Versioning, decisions, and Git checkpoints
 
 Maintain, at minimum:
 
