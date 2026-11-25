@@ -1,8 +1,8 @@
 # THE UNIVERSE — 15-Package Status Register
 
-**Last audited:** 2026-11-24  
+**Last audited:** 2026-11-25 (owner-directed sequential roadmap alignment)  
 **Repository:** `thaodamvc2-beep/the-universe`  
-**Baseline branch:** `main`  
+**Working branch for this alignment:** `work/package-07-3d-visual-system`; production baseline remains `main`  
 **Baseline commit at audit:** `2a7c48e9e176aea7da3cb70439bd7e7ccee2e2ca`  
 **Authority:** `docs/architecture/THE_UNIVERSE_MASTER_SPEC.md` (Version 2.9) and package scope/decision records.
 
@@ -18,9 +18,9 @@ This is a tracking aid, not a replacement for the Master Specification or packag
 | 04 | Avatar & Nickname | **IMPLEMENTED + DEPLOYED; OWNER REVIEW PARTLY OPEN** | Guest avatar/nickname, six original cute human avatar portraits, homepage identity display and local persistence are implemented. Visual/device review and persistence edge cases remain to be checked. Real sign-in/cloud sync are not implemented. |
 | 05 | Celestial Data | **IMPLEMENTED + DEPLOYED; PROVISIONALLY ACCEPTED** | Canonical Solar System catalogue, real/fictional classification and bilingual detail UI are integrated. Owner allowed corrections; manual browser/device review remains pending. |
 | 06 | Cosmic Travel Map | **IMPLEMENTED + DEPLOYED; PROVISIONALLY ACCEPTED FOR INTEGRATION** | Solar System map at `/map/`, catalogue at `/worlds/`, and Earth recovery/navigation are integrated. Route preview is simulated, not a verified live route service. Manual visual/device review remains open. |
-| 07 | 3D Universe Visual System | **NUMBERING / SCOPE RECORD CONFLICT — SEE NOTE BELOW** | The current package scope file is named “Gói 07: Spaceflight & Open Universe” and records six-axis flight, landing, local procedural sectors and optional ambience as implemented/in progress. The Master Spec roadmap table, however, labels package 07 “3D Universe Visual System”. Do not silently choose one numbering interpretation. |
-| 08 | Free Flight & Camera | **NOT FORMALLY STARTED AS A SEPARATE ROADMAP PACKAGE / NUMBERING CONFLICT** | The actual flight implementation and camera fixes are already in the codebase under the Gói 07 Spaceflight scope. The Master Spec roadmap labels this work Gói 08. Reconcile the package numbering before opening/closing package records. |
-| 09 | Mobile Experience | **NOT ACCEPTED / DEVICE QUALIFICATION OPEN** | Mobile controls exist in the current game, but comprehensive device performance, memory, thermal, recovery and real-device qualification have not been evidenced. |
+| 07 | 3D Universe Visual System | **IN PROGRESS — SEQUENTIAL OWNER AUTHORIZATION (2026-11-25)** | Visual rendering system audit, coherence, lifecycle and regression. Scope defined in `docs/packages/PACKAGE_07_3D_UNIVERSE_VISUAL_SYSTEM_SCOPE.md`. Flight code historically recorded in the legacy P07 Spaceflight file is reclassified as flight-slice implementation evidence, not the canonical Package 07 name. |
+| 08 | Free Flight & Camera | **NEXT — NOT STARTED IN THIS SEQUENCE** | Authorized to follow package 07 review. Flight state machine, controls, camera and landing transition are the scope; PR #10/#11 are prior work candidates to audit, not automatically accepted. |
+| 09 | Mobile Experience | **NEXT AFTER GÓI 08 — NOT STARTED IN THIS SEQUENCE** | Touch UX, mobile performance budgets, recovery and physical-device qualification. PR #10/#11 contain candidate implementation but do not constitute package acceptance. |
 | 10 | AI Universe Generation | **PAID AI API GENERATION EXPLICITLY OUT OF SCOPE** | Owner chose local coordinate-seeded procedural generation instead. Do not add paid AI API calls or treat procedural generation as an AI service. Any alternative AI use requires separate approval. |
 | 11 | Rest & Wish System | **PARTLY IMPLEMENTED IN CLIENT; PACKAGE ACCEPTANCE NOT RECORDED** | Sitting/resting and wish-related prototype/UI elements exist in project history/current experience. Privacy-by-default, explicit sharing, persistence, moderation and lifecycle must be verified before calling the package complete. |
 | 12 | Audio Experience | **BASIC AMBIENCE IMPLEMENTED; PACKAGE ACCEPTANCE NOT RECORDED** | Optional synthesized ambient audio exists. Full environmental/spatial audio behavior and controls are not evidenced as complete. |
@@ -60,5 +60,5 @@ Map prior work into the current 15-package records; never restart or count the s
 3. Record the exact package(s) a change belongs to; a single feature may satisfy part of more than one package, but that does not automatically close either package.
 4. Mark a package accepted only with explicit owner acceptance and its required evidence.
 5. Separate code implementation, CI pass, deployment, manual desktop review, manual mobile review and owner acceptance.
-6. Do not start packages 08+ merely because related code exists; first resolve the Gói 07/Gói 08 numbering conflict and obtain the required authorization.
+6. Follow the owner-authorized sequence 07 → 08 → 09. Do not start 08 before the owner reviews/accepts 07, or 09 before 08 review/acceptance. Existing code/PRs are evidence to audit, not proof of package acceptance.
 7. Preserve protected artwork, avatar scale, interface, controls, content, and previously accepted behavior unless the owner explicitly requests a change.

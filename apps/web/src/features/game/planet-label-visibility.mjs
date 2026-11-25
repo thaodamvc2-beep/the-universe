@@ -1,0 +1,1 @@
+export function isPlanetLabelWithinDistance(playerPosition,bodyPosition,maxDistance=72){const dx=playerPosition[0]-bodyPosition[0],dy=playerPosition[1]-bodyPosition[1],dz=playerPosition[2]-bodyPosition[2];return dx*dx+dy*dy+dz*dz<=maxDistance*maxDistance;}
