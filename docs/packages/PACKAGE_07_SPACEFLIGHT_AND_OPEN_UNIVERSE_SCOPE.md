@@ -76,3 +76,6 @@ Procedural generation is the intentional production choice for infinite explorat
 ## 7. Deployment evidence update (2026-11-20)
 
 GitHub Actions run 44713629362 completed successfully for commit `c74269965b6d22c7ddb55ff577694f8e1088f3e9`: 30 automated tests, ESLint, TypeScript, static production build and GitHub Pages deployment all passed. This is the latest code revision, including the correction that keeps the rendered Moon at the same coordinates used by flight and landing physics. This verifies compilation and deployment, not live visual or two-device multiplayer testing. Manual review of the new flight/landing behavior remains pending. Paid AI generation is intentionally excluded; real networked multiplayer still requires a realtime WebSocket service.
+
+
+> **Canonical numbering correction (2026-11-25):** This historical scope file used “Gói 07” for spaceflight/open-universe work. The canonical 15-package roadmap defines Gói 07 as **3D Universe Visual System**, Gói 08 as **Free Flight & Camera**, and Gói 09 as **Mobile Experience**. Retain this file as historical implementation evidence; it is superseded for package numbering by the Master Spec and the new Gói 07 scope. Do not rename its historical contents retroactively.
