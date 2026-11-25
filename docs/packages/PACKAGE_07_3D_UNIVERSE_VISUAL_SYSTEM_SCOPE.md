@@ -58,3 +58,13 @@ Establish and stabilize the 3D visual system used throughout THE UNIVERSE: coher
 - A shared Package 07/08 integration contract documents world-coordinate, body-radius/visual-scale, camera-consumer, label/resource and package-boundary expectations. This is architectural preparation only; it does not implement Package 08.
 - Still requires further verification: actual texture allocation ceilings across the full scene, stress test with dense near-body scenes, renderer/context recovery test, visual audit of lighting/materials/background/classification, automated/browser preview review and hardware profiling where available. These gaps are not closed merely by the hysteresis helper.
 - Do not change `generatedKeys`, procedural region generation or Gói 01–06. No production merge/deployment until owner review and explicit permission.
+
+
+## 9. Owner art direction — living, colorful game universe (2026-11-25)
+- Preserve the owner's successful real-device inspection of 3D scale and space/avatar proportions. This art direction does not authorize resizing or rebuilding that accepted geometry.
+- THE UNIVERSE is a discovery game and must not look like a cold, bare scientific visualization. Target a vivid, inviting, magical, polished, living environment while retaining readable navigation and performance.
+- Space backdrop: layered colorful nebulae, varied star density and restrained sparkle/glow, depth cues, palette variation and a cohesive atmosphere rather than flat blackness.
+- World/planet environments: where surface-scene implementation is available and compatible, include terrain variety and living nature (mountains, water, vegetation, islands, valleys, clouds and atmospheric color). These should be actual environment assets/geometry or appropriately optimized procedural visuals, not only decorative labels or claims.
+- Fictional/procedural worlds should have their own artistic identity and may be fantastical; avoid one generic sphere treatment across all worlds. Real-world celestial data/classification remain intact.
+- Art effects must be restrained and performance-aware: reusable assets/materials, bounded allocations, graceful fallbacks and responsive behavior. Avoid effects that make navigation/labels unreadable or reduce phone performance.
+- This is an art direction and audit target, not evidence that terrain, water, vegetation or new lighting effects are already implemented. A visual implementation should be previewed and owner-reviewed before acceptance.
