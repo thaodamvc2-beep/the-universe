@@ -6,7 +6,7 @@ import { AdditiveBlending, BackSide, CanvasTexture, Group, NormalBlending, Sprit
 import type { AvatarId, Body } from './universe-data';
 import { transitionFlightControl } from './flight-controller.mjs';
 import type { InputState } from './flight-controller.mjs';
-import { isPlanetLabelVisible } from './planet-label-visibility.mjs';
+import { selectPlanetLabelIds } from './planet-label-visibility.mjs';
 
 export type FlightState={position:Vector3;yaw:number;pitch:number;groundedId:string|null;groundingRevision:number};
 export type RemotePlayer={id:string;nickname:string;avatarId:AvatarId;position:[number,number,number]};
@@ -27,15 +27,20 @@ function NebulaBackdrop({flightRef}:{flightRef:MutableRefObject<FlightState>}){
  if(!glow)return null;
  return <>{clouds.map((cloud,i)=><sprite key={i} ref={refs[i]} scale={[cloud.size[0],cloud.size[1],1]}><spriteMaterial map={glow} color={cloud.color} transparent opacity={.68} blending={AdditiveBlending} depthWrite={false} /></sprite>)}</>;
 }
-function PlanetLabel({body,flightRef}:{body:Body;flightRef:MutableRefObject<FlightState>}){
- const [near,setNear]=useState(false);
+function PlanetLabel({body}:{body:Body}){
  const [texture,setTexture]=useState<CanvasTexture|null>(null);
- useFrame(()=>{const p=flightRef.current.position;const next=isPlanetLabelVisible([p.x,p.y,p.z],body.position,near);if(next!==near)setNear(next)});
- useEffect(()=>{if(!near){setTexture(null);return}const canvas=document.createElement('canvas');canvas.width=512;canvas.height=96;const ctx=canvas.getContext('2d');if(!ctx)return;ctx.fillStyle='rgba(4,10,24,.9)';ctx.beginPath();ctx.roundRect(8,8,496,80,18);ctx.fill();ctx.strokeStyle=body.real?'rgba(158,218,245,.82)':'rgba(205,177,255,.82)';ctx.lineWidth=3;ctx.stroke();ctx.font='600 38px Arial,sans-serif';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillStyle='#ffffff';ctx.fillText(body.name,256,48,456);const map=new CanvasTexture(canvas);map.needsUpdate=true;setTexture(map);return()=>map.dispose()},[body.name,body.real,near]);
- if(!near||!texture)return null;
- // Keep every nameplate narrower than its planet and directly below the visible sphere.
+ useEffect(()=>{const canvas=document.createElement('canvas');canvas.width=512;canvas.height=96;const ctx=canvas.getContext('2d');if(!ctx)return;ctx.fillStyle='rgba(4,10,24,.9)';ctx.beginPath();ctx.roundRect(8,8,496,80,18);ctx.fill();ctx.strokeStyle=body.real?'rgba(158,218,245,.82)':'rgba(205,177,255,.82)';ctx.lineWidth=3;ctx.stroke();ctx.font='600 38px Arial,sans-serif';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillStyle='#ffffff';ctx.fillText(body.name,256,48,456);const map=new CanvasTexture(canvas);map.needsUpdate=true;setTexture(map);return()=>map.dispose()},[body.name,body.real]);
+ if(!texture)return null;
  const width=Math.max(body.radius*.82,Math.min(body.radius*1.55,body.name.length*.024));
  return <sprite position={[0,-body.radius*1.3-width*.18,0]} scale={[width,width*.19,1]}><spriteMaterial map={texture} transparent depthWrite={false} /></sprite>;
+}
+function PlanetLabelLayer({bodies,flightRef}:{bodies:Body[];flightRef:MutableRefObject<FlightState>}){
+ const [ids,setIds]=useState<string[]>([]);
+ const currentIds=useRef<string[]>([]);
+ const lastCheck=useRef(0);
+ useFrame((state)=>{if(state.clock.elapsedTime-lastCheck.current<.25)return;lastCheck.current=state.clock.elapsedTime;const p=flightRef.current.position;const next=selectPlanetLabelIds([p.x,p.y,p.z],bodies,currentIds.current,24,72,80);if(next.length!==currentIds.current.length||next.some((id,i)=>id!==currentIds.current[i])){currentIds.current=next;setIds(next)}});
+ const byId=useMemo(()=>new Map(bodies.map(body=>[body.id,body])),[bodies]);
+ return <>{ids.map(id=>{const body=byId.get(id);return body?<PlanetLabel key={id} body={body}/>:null})}</>;
 }
 function Planet({body,flightRef}:{body:Body;flightRef:MutableRefObject<FlightState>}){
  const ref=useRef<Group>(null);
@@ -45,7 +50,7 @@ function Planet({body,flightRef}:{body:Body;flightRef:MutableRefObject<FlightSta
   {body.id==='earth'&&<mesh scale={1.035}><sphereGeometry args={[body.radius,28,20]}/><meshBasicMaterial color="#73c8ff" transparent opacity={.12} side={BackSide}/></mesh>}
   {body.id==='saturn'&&<mesh rotation={[Math.PI/2.25,0,0]}><torusGeometry args={[body.radius*1.3*1.55,body.radius*1.3*.22,5,64]}/><meshStandardMaterial color="#cdbb9c" transparent opacity={.78}/></mesh>}
   {!body.real&&<><mesh scale={1.1}><sphereGeometry args={[body.radius*1.3,16,12]}/><meshBasicMaterial color="#d6c6ff" wireframe transparent opacity={.12}/></mesh><mesh rotation={[Math.PI/2.2,0,0]}><torusGeometry args={[body.radius*1.3*1.38,.045,4,36]}/><meshBasicMaterial color="#c3a7ff" transparent opacity={.55}/></mesh></>}
-  <PlanetLabel body={body} flightRef={flightRef}/>
+
  </group>;
 }
 function SurfaceLabel({name}:{name:string|null}){
@@ -118,6 +123,6 @@ export function FlightScene({bodies,avatarId,flightRef,inputRef,targetId,onArriv
  });
  return <>
   <color attach="background" args={['#17234a']}/><ambientLight intensity={.58}/><hemisphereLight args={['#d9edff','#9656b8',.56]}/>
-  <Stars/><NebulaBackdrop flightRef={flightRef}/>{bodies.map(body=><Planet key={body.id} body={body} flightRef={flightRef}/>)}{remotePlayers.map(player=><Suspense key={player.id} fallback={null}><OtherAvatar player={player} flightRef={flightRef}/></Suspense>)}<Suspense fallback={null}><Avatar avatarId={avatarId} flightRef={flightRef} inputRef={inputRef} bodies={bodies}/></Suspense>
+  <Stars/><NebulaBackdrop flightRef={flightRef}/>{bodies.map(body=><Planet key={body.id} body={body} flightRef={flightRef}/>)}<PlanetLabelLayer bodies={bodies} flightRef={flightRef}/>{remotePlayers.map(player=><Suspense key={player.id} fallback={null}><OtherAvatar player={player} flightRef={flightRef}/></Suspense>)}<Suspense fallback={null}><Avatar avatarId={avatarId} flightRef={flightRef} inputRef={inputRef} bodies={bodies}/></Suspense>
  </>;
 }
