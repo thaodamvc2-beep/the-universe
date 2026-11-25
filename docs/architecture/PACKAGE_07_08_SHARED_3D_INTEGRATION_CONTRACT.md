@@ -15,9 +15,9 @@
 - Any landing surface or landing clearance assumption must be recorded explicitly and tested against the canonical body radius; the body renderer and flight solver must not drift independently.
 
 ## Labels and GPU resource budgets
-- Labels must have bounded visibility behavior and avoid toggling at a single threshold; Package 07 uses an entry/exit hysteresis gate (72/80 world units) as a focused stabilization change.
+- Labels must have bounded visibility behavior and avoid toggling at a single threshold; Package 07 uses an entry/exit hysteresis gate (72/80 world units), with a nearest-body label layer capped at 24 active labels. The cap is a bounded scene-level limit, not a measured GPU budget.
 - Texture creation/disposal must remain paired. Changes to label logic must not create per-frame texture churn.
-- A bounded label count, broader renderer resource audit, stress profiling and physical-device GPU/memory qualification remain acceptance evidence gaps until measured; do not claim these are solved by hysteresis alone.
+- A bounded 24-label count is implemented; broader renderer resource audit, stress profiling and physical-device GPU/memory qualification remain acceptance evidence gaps until measured.
 
 ## Package boundaries and regression obligations
 - Package 07 owns visual rendering, materials, lighting, environment composition, label presentation, resource lifecycle and visual fallback.
